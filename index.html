@@ -4,41 +4,92 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Playground</title>
-
+    <title>TD Playground</title>
+    <!--Font awesome-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">  
     <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
 
-    <header class="main-header">
+    
+    <header>
         <div class="container">
             <div class="navbar">
-                <div class="logo">
-                    <a href="#"><img src="./img/logo.png" alt=""></a>
+                <div class="navbar__logo">
+                    <p class="logo">TD</p>
                 </div>
-                <div class="page-title">
-                    <p>Thing Description Playground</p>
-                    <span>Validate and play with TDs</span>
+                <div class="navbar__title">
+                    <h1>Thing Description Playground</h1>
                 </div>
-                <nav class="main-nav">
-                    <ul>
-                        <li><a href="#">Create Issue</a></li>
-                        <li><a href="#">Playground CLI</a></li>
-                        <li class="settings"><i class="fa-solid fa-gear"></i></li>
-                    </ul>
-                </nav>
+                <div class="navbar__links">
+                    <a href="#" class="cli-link">Playground CLI</a>
+                    <a href="#" class="git-link"><i class="fa-brands fa-github"></i></a>   
+                </div>
             </div>
         </div>
     </header>
 
     <main>
         <div class="container">
-            <div class="editor-container">
-                <div id="editor"></div>
+            <div class="main-content">
+                <div class="ide">
+                    <div class="ide__tabs">
+                        <ul class="ide__tabs__left">
+                            <li class="active">Thing Description 1</li>
+                            <!-- <li><i class="fa-solid fa-file-circle-plus"></i></li> -->
+                            <li class="ide__tabs__add"><i class="fa-solid fa-plus"></i></li>
+                        </ul>
+
+                        <ul class="ide__tabs__right">
+                            <li class="active">JSON</li>
+                            <li>YAML</li>
+                        </ul>
+                    </div>
+                    <div class="ide__container" id="editor"></div>
+                </div>
+                <div class="vertical-divider"></div>
+                <div class="control-panel">
+                    <button class="control-panel__btn">
+                        <i class="fa-solid fa-play"></i>
+                        <p>Validate</p>
+                    </button>
+
+                    <button class="control-panel__btn">
+                        <i class="fa-solid fa-file-code"></i>
+                        <p>Examples</p>
+                    </button>
+
+                    <button class="control-panel__btn">
+                        <i class="fa-solid fa-file-export"></i>
+                        <p>Export</p>
+                    </button>
+
+                    <button class="control-panel__btn">
+                        <i class="fa-solid fa-gear"></i>
+                        <p>Settings</p>
+                    </button>
+                </div>
             </div>
-            <div class="sidebar-container">
-                <div class="validation-checklist">
-                    <i class="fa-solid fa-angle-down"></i>
+            <div class="horizontal-divider"></div>
+            <div class="console">
+                <div class="console__tabs">
+                    <ul>
+                        <li class="active">Validation</li>
+                        <li>OpenAPI</li>
+                        <li>AsyncAPI</li>
+                        <li>Defaults</li>
+                        <li>Linting</li>
+                        <li>Canonicalize</li>
+                        <li>Visualize</li>
+                    </ul>
+                    <div class="console__tabs__trash">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </div>
+                </div>
+                <div class="console__content">
+
                 </div>
             </div>
         </div>
