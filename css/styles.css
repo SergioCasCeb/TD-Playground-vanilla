@@ -192,6 +192,7 @@ main {
   height: 92svh;
   padding: 2rem 0;
   width: 100%;
+  position: relative;
 }
 main .container {
   height: 100%;
@@ -389,4 +390,82 @@ main .console {
 .console ul li:hover {
   color: var(--clr-neutral-900);
   cursor: pointer;
+}
+
+/***** settings menu *****/
+.settings-menu {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 25%;
+  height: 100%;
+  background-color: var(--clr-primary-500);
+  border-radius: 0 0 0 50px;
+  padding: 2rem;
+  color: var(--clr-neutral-50);
+}
+.settings-menu__close {
+  width: 100%;
+  text-align: right;
+  margin-bottom: 2rem;
+}
+.settings-menu__close i {
+  font-size: var(--fs-h4);
+  cursor: pointer;
+}
+.settings-menu__title {
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--clr-neutral-50);
+}
+.settings-menu__validator {
+  width: 100%;
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: center;
+  justify-content: space-between;
+}
+.settings-menu__validator .form-field {
+  width: calc(50% - 2rem);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--fs-p);
+}
+.settings-menu__validator .form-field input[type=checkbox] {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  width: 6rem;
+  height: 3rem;
+  border-radius: 50vw;
+  background-color: var(--clr-primary-700);
+  position: relative;
+  transition: background-color 250ms ease-in-out;
+  cursor: pointer;
+}
+.settings-menu__validator .form-field input[type=checkbox]::before {
+  content: "";
+  position: absolute;
+  top: 0.4rem;
+  left: 0.4rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background-color: var(--clr-neutral-50);
+  transition: all 500ms cubic-bezier(0.68, -0.75, 0.27, 1.75);
+}
+.settings-menu__validator .form-field input[type=checkbox]:checked {
+  background-color: var(--clr-success-500);
+}
+.settings-menu__validator .form-field input[type=checkbox]:checked::before {
+  left: 3.2rem;
+  background-color: var(--clr-neutral-50);
+}
+.settings-menu__preferences {
+  padding: 4rem 0 2rem 0;
+  border-bottom: 1px solid var(--clr-neutral-50);
 }/*# sourceMappingURL=styles.css.map */
