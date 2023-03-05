@@ -171,74 +171,6 @@ img {
     margin: 0 auto;
 }
 
-/** Uitlities **/
-
-// .hidden{
-//     display: none;
-// }
-
-
-/*
-
-
-
-
-button{
-    cursor: pointer;
-}
-
-.btn{
-    color: var(--clr-dark);
-    display: block;
-    padding: .25em 1.5em;
-    background-color: var(--clr-accent);
-    border: 2px solid var(--clr-accent);
-    border-radius: 50vw;
-    font-weight: bold;
-    font-size: var(--fs-btn);
-    font-family: var(--ff-secondary);
-    text-align: center;
-    -webkit-transition: all 250ms ease-in-out;
-    transition: all 250ms ease-in-out;
-}
-
-.btn.btn-secondary{
-    color: var(--clr-light);
-    background-color: transparent;
-}
-
-.btn:hover{
-    background-color: var(--clr-hvr);
-    border-color: var(--clr-hvr);
-    color: var(--clr-light);
-}
-
-
-@media screen and (min-width: 768px) {
-    :root {
-        --fs-h1: 6rem;
-        --fs-h2: 4.5rem;
-        --fs-h3: 3rem;
-        --fs-i: 2.25rem;
-    }
-
-    .btn{
-        display: inline;
-    }
-}
-
-@media screen and (min-width: 1024px) {
-    :root {
-        --fs-h1: 8rem;
-        --fs-h2: 6rem;
-        --fs-h3: 3.5rem;
-        --fs-h4: 3rem;
-        --fs-body: 2rem;
-        --fs-btn: 2rem;
-        --fs-i: 2.5rem;
-    }
-}
-*/
 
 /***** Header *****/
 header{
@@ -403,6 +335,7 @@ main{
             }
         }
     }
+    
 }
 
 //Control panel
@@ -467,9 +400,6 @@ main{
         }
     }
 }
-
-
-
 
 /*** Console ***/
 .console{

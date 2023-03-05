@@ -8,7 +8,8 @@ editor.setOptions({
   theme: "ace/theme/chrome",
   showPrintMargin: false,
   displayIndentGuides: true,
-  scrollPastEnd: 0.5
+  scrollPastEnd: 0.5,
+  fontSize: 16,
 });
 
 /***** Resizing functionality *****/
