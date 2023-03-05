@@ -18,7 +18,7 @@
         <div class="container">
             <div class="navbar">
                 <div class="navbar__logo">
-                    <p class="logo">TD</p>
+                    <a href="https://www.thingweb.io/" target="_blank"><img src="./img/logo-white.png" alt=""></a>
                 </div>
                 <div class="navbar__title">
                     <h1>Thing Description Playground</h1>
@@ -34,6 +34,28 @@
     <main>
         <div class="container">
             <div class="main-content">
+                <div class="control-panel">
+                    <button class="control-panel__btn">
+                        <i class="fa-solid fa-play"></i>
+                        <p class="text-icon">Validate</p>
+                    </button>
+
+                    <button class="control-panel__btn">
+                        <i class="fa-solid fa-file-code"></i>
+                        <p class="text-icon">Examples</p>
+                    </button>
+
+                    <button class="control-panel__btn">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                        <p class="text-icon">Export</p>
+                    </button>
+
+                    <button class="control-panel__btn">
+                        <i class="fa-solid fa-gear"></i>
+                        <p class="text-icon">Settings</p>
+                    </button>
+                </div>
+                <div class="vertical-divider"></div>
                 <div class="ide">
                     <div class="ide__tabs">
                         <ul class="ide__tabs__left">
@@ -48,28 +70,6 @@
                         </ul>
                     </div>
                     <div class="ide__container" id="editor"></div>
-                </div>
-                <div class="vertical-divider"></div>
-                <div class="control-panel">
-                    <button class="control-panel__btn">
-                        <i class="fa-solid fa-play"></i>
-                        <p>Validate</p>
-                    </button>
-
-                    <button class="control-panel__btn">
-                        <i class="fa-solid fa-file-code"></i>
-                        <p>Examples</p>
-                    </button>
-
-                    <button class="control-panel__btn">
-                        <i class="fa-solid fa-file-export"></i>
-                        <p>Export</p>
-                    </button>
-
-                    <button class="control-panel__btn">
-                        <i class="fa-solid fa-gear"></i>
-                        <p>Settings</p>
-                    </button>
                 </div>
             </div>
             <div class="horizontal-divider"></div>

@@ -171,6 +171,12 @@ img {
     margin: 0 auto;
 }
 
+/** Uitlities **/
+
+// .hidden{
+//     display: none;
+// }
+
 
 /*
 
@@ -247,10 +253,8 @@ header{
         align-items: center;
         justify-content: space-between;
 
-        .logo{
-            font-size: var(--fs-h1);
-            font-weight: var(--fw-bold);
-            color: var(--clr-neutral-50);
+        &__logo{
+            width: 15rem;
         }
         
         &__links{
@@ -316,7 +320,7 @@ main{
         }
 
         .ide{
-            width: calc(100%);
+            width: 100%;
             overflow: hidden;
             border-bottom-left-radius: 10px;
             border-bottom-right-radius: 10px;
@@ -409,21 +413,21 @@ main{
     align-items: center;
     justify-content: space-between;
     overflow: hidden;
+    height: fit-content;
     &__btn{
-        flex: 1;
-        width: 100%;
-        background-color: inherit;
-        border: none;
-        border-bottom: 2px solid var(--clr-primary-500);
-        color: var(--clr-primary-500);
-        cursor: pointer;
-        transition: all 250ms ease;
-        font-family: var(--ff-primary);
-        padding: 1rem;
+        height: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        width: 8rem;
+        color: var(--clr-primary-500);
+        background-color: inherit;
+        border: none;
+        border-bottom: 2px solid var(--clr-primary-500);
+        font-family: var(--ff-primary);
+        cursor: pointer;
+        transition: all 250ms ease;
 
         &:last-child{
             border-bottom: none;
@@ -435,12 +439,32 @@ main{
         }
 
         i{
-            margin-bottom: 1rem;
             font-size: var(--fs-sub-header);
         }
 
         p{
             font-weight: var(--fw-bold);
+        }
+        .text-icon{
+            width: fit-content;
+            opacity: 1;
+            margin-top: 1rem;
+            transform: scaleX(1);
+            transition: all 250ms ease-in-out;
+        }
+        .text-icon.hiddenV{
+            opacity: 0;
+            margin: 0;
+            transform: scaleX(0);
+            height: 0;
+            flex: 0;
+        }
+        .text-icon.hiddenH{
+            opacity: 0;
+            margin: 0;
+            transform: scaleX(0);
+            height: 0;
+            flex: 0;
         }
     }
 }
@@ -456,6 +480,7 @@ main{
         align-items: center;
         justify-content: space-between;
         border-bottom: 2px solid var(--clr-primary-500);
+        padding: 0 1rem;
 
         &__trash{
             padding: 1rem;
