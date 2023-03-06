@@ -157,8 +157,8 @@ header {
   color: var(--clr-neutral-50);
 }
 header .navbar {
-  min-height: 8vh;
-  min-height: 8svh;
+  max-height: 8vh;
+  max-height: 8svh;
   padding: 1rem 0;
   display: flex;
   flex-direction: row;
