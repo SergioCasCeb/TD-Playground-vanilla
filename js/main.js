@@ -1,4 +1,7 @@
 const textIcon = document.querySelectorAll(".text-icon");
+const closeSettings = document.querySelector(".settings-menu__close i");
+const settingsMenu = document.querySelector(".settings-menu");
+const settingsBtn = document.querySelector("#settings-btn");
 /**** Ace editor ****/
 const editorElement = document.querySelector("#editor");
 const editor = ace.edit("editor");
@@ -9,7 +12,7 @@ editor.setOptions({
   showPrintMargin: false,
   displayIndentGuides: true,
   scrollPastEnd: 0.5,
-  fontSize: 16,
+  fontSize: 16
 });
 
 /***** Resizing functionality *****/
@@ -127,3 +130,16 @@ function onmouseupY(e) {
   document.removeEventListener("mouseup", onmouseupY);
   delete e._clientY;
 }
+
+
+/* main page functionality */
+
+//settings menu
+
+closeSettings.addEventListener("click", () => {
+  settingsMenu.classList.add("closed");
+})
+
+settingsBtn.addEventListener("click", () => {
+  settingsMenu.classList.toggle("closed");
+})

@@ -76,6 +76,7 @@
   --clr-error-900: #DE3A3A;
   --clr-monochrome-500: #549087;
   --clr-monochrome-900: rgba(84, 144, 135, 0.7);
+  --trans-bouncy: cubic-bezier(0.68, -0.75, 0.27, 1.75);
 }
 
 html {
@@ -173,14 +174,18 @@ header .navbar__links {
   justify-content: center;
 }
 header .navbar__links a {
-  font-size: var(--fs-sub-header);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-p);
   transition: color 250ms ease;
 }
 header .navbar__links a:hover {
   color: var(--clr-neutral-100);
 }
 header .navbar__links .cli-link {
-  margin-right: 2rem;
+  margin-right: 3rem;
 }
 header .navbar__links i {
   font-size: var(--fs-h4);
@@ -329,7 +334,7 @@ main .console {
   opacity: 1;
   margin-top: 1rem;
   transform: scaleX(1);
-  transition: all 250ms ease-in-out;
+  transition: all 250ms var(--trans-bouncy);
 }
 .control-panel__btn .text-icon.hiddenV {
   opacity: 0;
@@ -403,6 +408,12 @@ main .console {
   border-radius: 0 0 0 50px;
   padding: 2rem;
   color: var(--clr-neutral-50);
+  transform-origin: right;
+  transition: width 0s ease, height 0s ease, opacity 150ms ease-in-out, transform 500ms var(--trans-bouncy) 150ms;
+  display: flex;
+  flex-direction: column;
+  align-items: self-start;
+  justify-content: space-between;
 }
 .settings-menu__close {
   width: 100%;
@@ -413,17 +424,21 @@ main .console {
   font-size: var(--fs-h4);
   cursor: pointer;
 }
-.settings-menu__title {
+.settings-menu__title, .settings-menu__preferences {
   padding-bottom: 2rem;
   border-bottom: 1px solid var(--clr-neutral-50);
+  width: 100%;
+}
+.settings-menu__preferences {
+  padding-top: 4rem;
 }
 .settings-menu__validator {
   width: 100%;
   margin: 2rem 0;
   display: flex;
+  gap: 2rem;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 2rem;
   align-items: center;
   justify-content: space-between;
 }
@@ -434,6 +449,9 @@ main .console {
   align-items: center;
   justify-content: space-between;
   font-size: var(--fs-p);
+}
+.settings-menu__validator .form-field label {
+  width: 50%;
 }
 .settings-menu__validator .form-field input[type=checkbox] {
   -webkit-appearance: none;
@@ -456,7 +474,7 @@ main .console {
   height: 2.2rem;
   border-radius: 50%;
   background-color: var(--clr-neutral-50);
-  transition: all 500ms cubic-bezier(0.68, -0.75, 0.27, 1.75);
+  transition: all 500ms var(--trans-bouncy);
 }
 .settings-menu__validator .form-field input[type=checkbox]:checked {
   background-color: var(--clr-success-500);
@@ -465,7 +483,121 @@ main .console {
   left: 3.2rem;
   background-color: var(--clr-neutral-50);
 }
-.settings-menu__preferences {
-  padding: 4rem 0 2rem 0;
-  border-bottom: 1px solid var(--clr-neutral-50);
+.settings-menu__editor {
+  margin: 2rem 0;
+  width: 100%;
+}
+.settings-menu__editor .form-field {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--fs-p);
+  margin-bottom: 2rem;
+}
+.settings-menu__editor .form-field span {
+  font-weight: var(--fw-bold);
+}
+.settings-menu__editor .form-field select {
+  width: 60%;
+  background-color: var(--clr-neutral-50);
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+.settings-menu__editor .form-field .font-range-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 0;
+}
+.settings-menu__editor .form-field .font-range-container span {
+  width: -moz-fit-content;
+  width: fit-content;
+}
+.settings-menu__editor .form-field input[type=range] {
+  flex: 1;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  height: 4px;
+  border-radius: 50vw;
+  background-color: var(--clr-primary-700);
+  cursor: pointer;
+  /* All the same stuff for Firefox */
+}
+.settings-menu__editor .form-field input[type=range]::-moz-range-thumb {
+  height: 2rem;
+  width: 2rem;
+  border-radius: 50%;
+  background-color: var(--clr-neutral-50);
+  border: none;
+}
+.settings-menu__editor .form-field input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: none;
+  height: 2rem;
+  width: 2rem;
+  border-radius: 50%;
+  background-color: var(--clr-neutral-50);
+}
+.settings-menu__editor .form-field input[type=range] input[type=range]::-ms-thumb {
+  height: 2rem;
+  width: 2rem;
+  border-radius: 50%;
+  background-color: var(--clr-neutral-50);
+  border: none;
+}
+.settings-menu__editor .form-field .reset-settings {
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 5px;
+  background-color: var(--clr-primary-700);
+  color: var(--clr-neutral-50);
+  font-size: var(--fs-p);
+  font-weight: var(--fw-bold);
+  font-family: var(--ff-primary);
+  cursor: pointer;
+  transition: background-color 250ms ease-in-out;
+}
+.settings-menu__editor .form-field .reset-settings:hover {
+  background-color: var(--clr-primary-900);
+}
+.settings-menu__editor .form-field:nth-child(2) {
+  flex-direction: column;
+  align-items: self-start;
+}
+.settings-menu footer {
+  width: 100%;
+  text-align: center;
+}
+.settings-menu footer p {
+  margin-bottom: 1rem;
+}
+.settings-menu footer .footer-links {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.settings-menu footer a {
+  font-size: 1.2rem;
+  padding: 0 1rem;
+  height: 100%;
+}
+.settings-menu footer a:nth-child(1) {
+  border-right: 1px solid var(--clr-neutral-50);
+}
+
+.settings-menu.closed {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  transform: scaleX(0);
+  transition: transform 500ms var(--trans-bouncy), opacity 250ms ease-in-out 250ms, width 0s ease 500ms, height 0s ease 500ms;
 }/*# sourceMappingURL=styles.css.map */
