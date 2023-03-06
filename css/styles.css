@@ -198,6 +198,7 @@ main {
   padding: 2rem 0;
   width: 100%;
   position: relative;
+  overflow: hidden;
 }
 main .container {
   height: 100%;
