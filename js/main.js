@@ -135,11 +135,97 @@ function onmouseupY(e) {
 /* main page functionality */
 
 //settings menu
-
 closeSettings.addEventListener("click", () => {
   settingsMenu.classList.add("closed");
 })
 
 settingsBtn.addEventListener("click", () => {
-  settingsMenu.classList.toggle("closed");
+  settingsMenu.classList.toggle("closed")
 })
+
+//adding new editor views
+const addTab = document.querySelector(".ide__tabs__add")
+const tabsLeftContainer = document.querySelector(".ide__tabs__left")
+let closeTabs = document.querySelectorAll(".close-tab")
+let tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
+
+let i = 1
+let j = 1
+addTab.addEventListener("click",  () => {
+  const newTab = document.createElement("li")
+  newTab.innerText =`Thing Description ${++i}`
+  newTab.setAttribute("data-tab", `${((newTab.innerText).toLowerCase()).replace(/\s/g, '')}`)
+  const closeBtn = document.createElement("div")
+  closeBtn.classList.add("close-tab")
+  const closeIcon = document.createElement("i")
+  closeIcon.classList.add("fa-solid", "fa-xmark")
+  closeBtn.appendChild(closeIcon)
+  newTab.appendChild(closeBtn)
+  tabsLeftContainer.insertBefore(newTab, tabsLeftContainer.children[(tabsLeftContainer.children.length) - 1])
+
+  tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
+    tabsLeft.forEach(tab => {
+      tab.addEventListener("contextmenu", (e) => {
+        e.preventDefault()
+        alert("success")
+        return false
+      }, false)
+
+      tab.addEventListener("click", (e) => {
+        console.log(e.target.localName);
+
+        if(e.target.localName == "li"){
+          tabsLeft.forEach(tab => {
+            tab.classList.remove("active")
+          })
+          tab.classList.add("active")
+        }
+
+        if(e.target.localName == "i" || e.target.localName == "div"){
+          tab.remove()
+          tabsLeft[0].classList.add("active")
+        }
+
+      })
+    })
+
+    // closeTabs = document.querySelectorAll(".close-tab")
+    // closeTabs.forEach(tab => {
+    //   tab.addEventListener("click", () => {
+    //     tab.parentElement.remove()
+    //   })
+    // })
+
+    // checkActive()
+})
+
+
+// tabsLeft.forEach(tab => {
+//   tab.addEventListener("contextmenu", (e) => {
+//     e.preventDefault()
+//     alert("success")
+//     return false
+//   }, false)
+// })
+
+// function checkActive(){
+//   let change = true;
+//   tabsLeft.forEach(tab => {
+//     if(tab.classList == "active")
+//     {
+//       change = false
+//     }
+//     else{
+//       tabsLeft[0].classList.add("active")
+//     }
+//   })
+// }
+
+
+
+
+
+
+
+
+

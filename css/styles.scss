@@ -312,9 +312,11 @@ main{
 
             li{
                 height: 100%;
-                padding: 0 1rem;
-                display: grid;
-                place-items: center;
+                padding: 1rem;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
                 border-top-left-radius: 5px;
                 border-top-right-radius: 5px;
                 background-color: var(--clr-shades-white-trans);
@@ -322,25 +324,62 @@ main{
                 margin-right: 2px;
                 font-weight: var(--fw-bold);
                 transition: all 250ms ease;
+                overflow: hidden;
+                white-space: nowrap;
 
-                &.active{
-                    background-color: var(--clr-neutral-50);
-                    color: var(--clr-neutral-900);
-                }
-
-                &:last-child{
-                    margin-right: 0;
+                i{
+                    font-size: var(--fs-p);
                 }
 
                 &:hover{
                     background-color: var(--clr-neutral-50);
                     color: var(--clr-neutral-900);
                     cursor: pointer;
+    
+                    .close-tab{
+                        opacity: 1;
+                    }
                 }
 
-                i{
-                    font-size: var(--fs-p);
+                &:last-child{
+                    margin-right: 0;
                 }
+            }
+        }
+
+        &__left{
+            max-width: 80%;
+            li:not(:last-child){
+                position: relative;
+                padding-right: 3rem;
+                .close-tab{
+                    position: absolute;
+                    content: '';
+                    top: 50%;
+                    right: 0;
+                    width: 2rem;
+                    height: 2rem;
+                    transform: translate(-.5rem, -50%);
+                    background-color: var(--clr-neutral-100);
+                    opacity: 0;
+                    border-radius: 5px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 250ms ease-in-out;
+                    &:hover{
+                        background-color: var(--clr-neutral-200);
+                    }
+                }
+            }
+
+            li.active{
+                background-color: var(--clr-neutral-50);
+                color: var(--clr-neutral-900);
+            }
+
+            li:last-child{
+                min-width: fit-content;
             }
         }
     }  

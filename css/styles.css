@@ -266,9 +266,11 @@ main .console {
 }
 .ide__tabs ul li {
   height: 100%;
-  padding: 0 1rem;
-  display: grid;
-  place-items: center;
+  padding: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
   background-color: var(--clr-shades-white-trans);
@@ -276,21 +278,56 @@ main .console {
   margin-right: 2px;
   font-weight: var(--fw-bold);
   transition: all 250ms ease;
+  overflow: hidden;
+  white-space: nowrap;
 }
-.ide__tabs ul li.active {
-  background-color: var(--clr-neutral-50);
-  color: var(--clr-neutral-900);
-}
-.ide__tabs ul li:last-child {
-  margin-right: 0;
+.ide__tabs ul li i {
+  font-size: var(--fs-p);
 }
 .ide__tabs ul li:hover {
   background-color: var(--clr-neutral-50);
   color: var(--clr-neutral-900);
   cursor: pointer;
 }
-.ide__tabs ul li i {
-  font-size: var(--fs-p);
+.ide__tabs ul li:hover .close-tab {
+  opacity: 1;
+}
+.ide__tabs ul li:last-child {
+  margin-right: 0;
+}
+.ide__tabs__left {
+  max-width: 80%;
+}
+.ide__tabs__left li:not(:last-child) {
+  position: relative;
+  padding-right: 3rem;
+}
+.ide__tabs__left li:not(:last-child) .close-tab {
+  position: absolute;
+  content: "";
+  top: 50%;
+  right: 0;
+  width: 2rem;
+  height: 2rem;
+  transform: translate(-0.5rem, -50%);
+  background-color: var(--clr-neutral-100);
+  opacity: 0;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 250ms ease-in-out;
+}
+.ide__tabs__left li:not(:last-child) .close-tab:hover {
+  background-color: var(--clr-neutral-200);
+}
+.ide__tabs__left li.active {
+  background-color: var(--clr-neutral-50);
+  color: var(--clr-neutral-900);
+}
+.ide__tabs__left li:last-child {
+  min-width: -moz-fit-content;
+  min-width: fit-content;
 }
 
 .control-panel {
