@@ -181,45 +181,20 @@ addTab.addEventListener("click",  () => {
           tab.classList.add("active")
         }
 
-        if(e.target.localName == "i" || e.target.localName == "div"){
-          tab.remove()
-          tabsLeft[0].classList.add("active")
-        }
+        if((e.target.localName == "i" || e.target.localName == "div")){
 
+          if(tab.classList == "active"){
+            tab.remove()
+            tabsLeft[0].classList.add("active")
+          }
+          else{
+            tab.remove()
+          }
+        }
       })
     })
-
-    // closeTabs = document.querySelectorAll(".close-tab")
-    // closeTabs.forEach(tab => {
-    //   tab.addEventListener("click", () => {
-    //     tab.parentElement.remove()
-    //   })
-    // })
-
-    // checkActive()
 })
 
-
-// tabsLeft.forEach(tab => {
-//   tab.addEventListener("contextmenu", (e) => {
-//     e.preventDefault()
-//     alert("success")
-//     return false
-//   }, false)
-// })
-
-// function checkActive(){
-//   let change = true;
-//   tabsLeft.forEach(tab => {
-//     if(tab.classList == "active")
-//     {
-//       change = false
-//     }
-//     else{
-//       tabsLeft[0].classList.add("active")
-//     }
-//   })
-// }
 
 
 
