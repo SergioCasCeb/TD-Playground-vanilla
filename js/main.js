@@ -195,6 +195,54 @@ addTab.addEventListener("click",  () => {
     })
 })
 
+/** Themes picker functionality **/
+const themePicker = document.querySelector("#theme-picker")
+console.log(themePicker);
+
+//Store the selected theme
+const storeTheme = function(theme) {
+  localStorage.setItem("theme", theme)
+}
+
+const setTheme = function() {
+  const activeTheme = localStorage.getItem("theme")
+  themePicker.value = activeTheme
+  document.documentElement.className = activeTheme
+
+  if(activeTheme == "dark-mode"){
+    editor.setOptions({
+      theme: "ace/theme/merbivore_soft"
+    });
+  }
+  
+  if(activeTheme == "light-mode"){
+    editor.setOptions({
+      theme: "ace/theme/chrome"
+    });
+  }
+}
+
+themePicker.addEventListener("change", () => {
+  storeTheme(themePicker.value)
+  document.documentElement.className = themePicker.value
+
+  if(themePicker.value == "dark-mode"){
+    editor.setOptions({
+      theme: "ace/theme/merbivore_soft"
+    });
+  }
+  
+  if(themePicker.value == "light-mode"){
+    editor.setOptions({
+      theme: "ace/theme/chrome"
+    });
+  }
+  
+})
+
+// Select the previous them once page reloads
+document.onload = setTheme()
+
 
 
 
