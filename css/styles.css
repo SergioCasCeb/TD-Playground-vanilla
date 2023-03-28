@@ -95,6 +95,23 @@
   --clr-shades-black-trans: rgba(255, 255, 255, 0.6);
 }
 
+.monochrome-mode {
+  --clr-neutral-50: #549087;
+  --clr-neutral-100: #4C4D4C;
+  --clr-neutral-200: #656666;
+  --clr-neutral-300: #7E807F;
+  --clr-neutral-400: #979999;
+  --clr-neutral-500: #B1B3B3;
+  --clr-neutral-600: #CACCCC;
+  --clr-neutral-700: #E4E6E6;
+  --clr-neutral-900: #FFFFFE;
+  --clr-primary-500: #FFFFFE;
+  --clr-shades-white: #000000;
+  --clr-shades-white-trans: rgba(84, 144, 135, 0.7);
+  --clr-shades-black: #FFFFFF;
+  --clr-shades-black-trans: rgba(255, 255, 255, 0.6);
+}
+
 html {
   font-size: 62.5%;
   scroll-behavior: smooth;
@@ -169,7 +186,8 @@ img {
 
 /***** Header *****/
 header {
-  background-color: var(--clr-primary-500);
+  background-color: #33B8A4;
+  color: #ffbb00;
   color: #FFFFFE;
 }
 header .navbar {
@@ -436,7 +454,6 @@ main .console {
   padding: 1rem;
   display: grid;
   place-items: center;
-  background-color: var(--clr-shades-white-trans);
   color: var(--clr-neutral-300);
   transition: color 250ms ease;
   font-weight: var(--fw-bold);
