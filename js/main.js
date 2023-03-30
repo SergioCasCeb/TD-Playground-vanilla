@@ -3,6 +3,7 @@ const closeSettings = document.querySelector(".settings-menu__close i");
 const settingsMenu = document.querySelector(".settings-menu");
 const settingsBtn = document.querySelector("#settings-btn");
 
+/** New monaco theme **/
 const themeData = {
   "base": "vs-dark",
   "inherit": true,
@@ -70,7 +71,7 @@ const themeData = {
   }
   
 }
-
+/** Monaco editor **/
 require.config({ paths: { vs: '../monaco-editor/min/vs' } });
 require(['vs/editor/editor.main'], function () {
 
@@ -102,39 +103,6 @@ require(['vs/editor/editor.main'], function () {
   monaco.editor.defineTheme('monochrome', themeData);
   document.onload = setTheme()
 });
-
-/**** Monaco editor ****/
-// require.config({ paths: { vs: '../node_modules/monaco-editor/min/vs' } });
-// require(['vs/editor/editor.main'], function () {
-//   var editor = monaco.editor.create(document.getElementById('editor'), {
-//     value: ['{',
-//       '  "id": "urn:simple",',
-//       '  "@context": "https://www.w3.org/2022/wot/td/v1.1",',
-//       '  "title": "MyLampThing",',
-//       '  "description": "Valid TD copied from the specs first example",',
-//       '  "securityDefinitions": {',
-//           '    "basic_sc": {',
-//               '      "scheme": "basic",',
-//               '      "in": "header"',
-//          '    }',
-//       '  },',
-//       '  "security": [',
-//           '    "basic_sc"',
-//       '  ],',
-//       '  "properties": {',
-//       '  },',
-//       '  "actions": {',
-//       '  },',
-//       '  "events": {',
-//       '  }',
-//   '}'].join('\n'),
-//     language: 'json'
-//   });
-
-//   monaco.editor.defineTheme('monochrome', themeData);
-//   document.onload = setTheme()
-// });
-
 
 /***** Resizing functionality *****/
 const resizerY = document.querySelector(".horizontal-divider");
