@@ -16,11 +16,11 @@
   --fw-bold: 700;
   --fw-black: 900;
   /*Font sizes*/
-  --fs-h1: 4rem;
-  --fs-h2: 3.5rem;
-  --fs-h3: 3rem;
-  --fs-h4: 2.5rem;
-  --fs-sub-header: 2rem;
+  --fs-h1: 3.5rem;
+  --fs-h2: 3rem;
+  --fs-h3: 2.5rem;
+  --fs-h4: 2rem;
+  --fs-sub-header: 1.8rem;
   --fs-p: 1.4rem;
   --fs-footer: 1rem;
   --fs-i: 1.8rem;
@@ -216,13 +216,14 @@ header .navbar__links a {
   transition: color 250ms ease;
 }
 header .navbar__links a:hover {
-  color: var(--clr-neutral-100);
+  color: var(--clr-neutral-200);
 }
 header .navbar__links .cli-link {
   margin-right: 3rem;
 }
 header .navbar__links i {
   font-size: var(--fs-h4);
+  margin-bottom: 0.5rem;
 }
 
 /***** Main *****/
@@ -255,6 +256,7 @@ main .main-content {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 14.5rem;
   height: calc(60% - 1rem);
 }
 main .main-content .ide, main .main-content .control-panel, main .main-content .vertical-divider {
@@ -268,6 +270,11 @@ main .main-content .ide {
 }
 main .main-content .ide__container {
   height: calc(100% - 3rem);
+  padding-top: 1rem;
+  background-color: var(--clr-neutral-50);
+}
+main .main-content .ide__container .editor {
+  min-height: 100%;
 }
 main .main-content .ide__tabs {
   height: 3rem;
@@ -494,12 +501,9 @@ main .console {
   cursor: pointer;
 }
 .settings-menu__title, .settings-menu__preferences {
-  padding-bottom: 2rem;
+  padding-bottom: 1rem;
   border-bottom: 1px solid var(--clr-neutral-50);
   width: 100%;
-}
-.settings-menu__preferences {
-  padding-top: 4rem;
 }
 .settings-menu__validator {
   width: 100%;

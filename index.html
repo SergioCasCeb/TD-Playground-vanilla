@@ -82,7 +82,9 @@
                             <li>YAML</li>
                         </ul>
                     </div>
-                    <div class="ide__container" id="editor" data-ide="thingdescription1"></div>
+                    <div class="ide__container" >
+                        <div class="editor" id="editor" data-ide="thingdescription1"></div>
+                    </div>
                 </div>
             </div>
             <div class="horizontal-divider"></div>
@@ -118,15 +120,15 @@
                 </div>
                 <div class="form-field">
                     <label for="theme">Reset Logging: </label>
-                    <input type="checkbox" name="reset-logging" id="reset-logging" class="reset-logging">
+                    <input type="checkbox" name="reset-logging" id="reset-logging" class="reset-logging" checked>
                 </div>
                 <div class="form-field">
                     <label for="theme">Validate JSON-LD: </label>
-                    <input type="checkbox" name="validate-jsonld" id="validate-jsonld" class="validate-jsonld">
+                    <input type="checkbox" name="validate-jsonld" id="validate-jsonld" class="validate-jsonld" checked>
                 </div>
                 <div class="form-field">
                     <label for="theme">Check TM Conf.: </label>
-                    <input type="checkbox" name="tm-confromance" id="tm-confromance" class="tm-confromance">
+                    <input type="checkbox" name="tm-confromance" id="tm-confromance" class="tm-confromance" checked>
                 </div>
             </form>
             <h3 class="settings-menu__preferences">Preferences</h3>
@@ -134,7 +136,7 @@
                 <div class="form-field">
                     <label for="theme-picker">Theme:</label>
                     <select name="theme" id="theme-picker">
-                        <option value="light-mode">Light Mode</option>
+                        <option value="light-mode" selected>Light Mode</option>
                         <option value="dark-mode">Dark Mode</option>
                         <option value="monochrome-mode">Monochrome Mode</option>
                     </select>

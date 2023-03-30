@@ -97,7 +97,8 @@ require(['vs/editor/editor.main'], function () {
       '  "events": {',
       '  }',
   '}'].join('\n'),
-    language: 'json'
+    language: 'json',
+    automaticLayout: true
   });
 
   monaco.editor.defineTheme('monochrome', themeData);
@@ -296,8 +297,6 @@ const setTheme = function() {
   const activeTheme = localStorage.getItem("theme")
   themePicker.value = activeTheme
   document.documentElement.className = activeTheme
-
-  console.log(activeTheme);
 
   if(activeTheme == "dark-mode"){
     monaco.editor.setTheme('vs-dark')

@@ -19,11 +19,11 @@
   --fw-black: 900;
 
   /*Font sizes*/
-  --fs-h1: 4rem;
-  --fs-h2: 3.5rem;
-  --fs-h3: 3rem;
-  --fs-h4: 2.5rem;
-  --fs-sub-header: 2rem;
+  --fs-h1: 3.5rem;
+  --fs-h2: 3rem;
+  --fs-h3: 2.5rem;
+  --fs-h4: 2rem;
+  --fs-sub-header: 1.8rem;
   --fs-p: 1.4rem;
   --fs-footer: 1rem;
   --fs-i: 1.8rem;
@@ -242,7 +242,7 @@ header{
                 font-size: var(--fs-p);
                 transition: color 250ms ease;
                 &:hover{
-                    color: var(--clr-neutral-100);
+                    color: var(--clr-neutral-200);
                 }
             }
 
@@ -252,6 +252,7 @@ header{
             
             i{
                 font-size: var(--fs-h4);
+                margin-bottom: .5rem;
             }
         }
     }
@@ -292,6 +293,7 @@ main{
         display: flex;
         align-items: center;
         justify-content: center;
+        min-height: 14.5rem;
         height: calc(60% - 1rem);
 
         .ide, .control-panel, .vertical-divider{
@@ -306,6 +308,12 @@ main{
 
             &__container{
                 height: calc(100% - 3rem);
+                padding-top: 1rem;
+                background-color: var(--clr-neutral-50);
+
+                .editor{
+                    min-height: 100%;
+                }
             }
 
             &__tabs{
@@ -566,13 +574,9 @@ main{
     }
 
     &__title, &__preferences{
-        padding-bottom: 2rem;
+        padding-bottom: 1rem;
         border-bottom: 1px solid var(--clr-neutral-50);
         width: 100%;
-    }
-
-    &__preferences{
-        padding-top: 4rem;
     }
 
     &__validator{
