@@ -1,5 +1,5 @@
 const textIcon = document.querySelectorAll(".text-icon");
-const closeSettings = document.querySelector(".settings-menu__close i");
+const closeSettings = document.querySelector(".settings__close i");
 const settingsMenu = document.querySelector(".settings-menu");
 const settingsBtn = document.querySelector("#settings-btn");
 

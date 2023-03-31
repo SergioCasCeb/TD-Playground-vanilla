@@ -38,27 +38,13 @@
   --clr-neutral-100: #E4E6E6;
   --clr-neutral-200: #CACCCC;
   --clr-neutral-300: #B1B3B3;
-  --clr-neutral-400: #979999;
-  --clr-neutral-500: #7E807F;
-  --clr-neutral-600: #656666;
-  --clr-neutral-700: #4C4D4C;
-  --clr-neutral-800: #1E1E1E;
   --clr-neutral-900: #141414;
   --clr-primary-100: #95E5D9;
   --clr-primary-300: #5ED1C0;
   --clr-primary-500: #33B8A4;
   --clr-primary-700: #179985;
   --clr-primary-900: #067362;
-  --clr-secondary-100: #A870B2;
-  --clr-secondary-300: #9756A3;
-  --clr-secondary-500: #884196;
-  --clr-secondary-700: #7B2D8A;
-  --clr-secondary-900: #641A73;
-  --clr-shades-white: #FFFFFF;
-  --clr-shades-white-trans: rgba(255, 255, 255, 0.6);
-  --clr-shades-black: #000000;
-  --clr-shades-black-trans: rgba(30, 30, 30, 0.7);
-  --clr-shades-green-trans: rgba(6, 115, 98, 0.7);
+  --clr-shades-trans: rgba(255, 255, 255, 0.6);
   --clr-success-100: #80F2AA;
   --clr-success-300: #63E592;
   --clr-success-500: #4ADE80;
@@ -74,8 +60,9 @@
   --clr-error-500: #F87171;
   --clr-error-700: #EB5454;
   --clr-error-900: #DE3A3A;
-  --clr-monochrome-500: #549087;
-  --clr-monochrome-900: rgba(84, 144, 135, 0.7);
+  --clr-controls: var(--clr-neutral-50);
+  --clr-controls-bg: var(--clr-primary-700);
+  /* transitions */
   --trans-bouncy: cubic-bezier(0.68, -0.75, 0.27, 1.75);
 }
 
@@ -84,15 +71,8 @@
   --clr-neutral-100: #4C4D4C;
   --clr-neutral-200: #656666;
   --clr-neutral-300: #7E807F;
-  --clr-neutral-400: #979999;
-  --clr-neutral-500: #B1B3B3;
-  --clr-neutral-600: #CACCCC;
-  --clr-neutral-700: #E4E6E6;
   --clr-neutral-900: #FFFFFE;
-  --clr-shades-white: #000000;
-  --clr-shades-white-trans: rgba(30, 30, 30, 0.7);
-  --clr-shades-black: #FFFFFF;
-  --clr-shades-black-trans: rgba(255, 255, 255, 0.6);
+  --clr-shades-trans: rgba(30, 30, 30, 0.7);
 }
 
 .monochrome-mode {
@@ -100,16 +80,11 @@
   --clr-neutral-100: #4C4D4C;
   --clr-neutral-200: #656666;
   --clr-neutral-300: #7E807F;
-  --clr-neutral-400: #979999;
-  --clr-neutral-500: #B1B3B3;
-  --clr-neutral-600: #CACCCC;
-  --clr-neutral-700: #E4E6E6;
   --clr-neutral-900: #FFFFFE;
   --clr-primary-500: #FFFFFE;
-  --clr-shades-white: #000000;
-  --clr-shades-white-trans: rgba(84, 144, 135, 0.7);
-  --clr-shades-black: #FFFFFF;
-  --clr-shades-black-trans: rgba(255, 255, 255, 0.6);
+  --clr-controls: #FFFFFE;
+  --clr-controls-bg: var(--clr-neutral-50);
+  --clr-shades-trans: rgba(84, 144, 135, 0.7);
 }
 
 html {
@@ -186,9 +161,8 @@ img {
 
 /***** Header *****/
 header {
-  background-color: #33B8A4;
-  color: #ffbb00;
-  color: #FFFFFE;
+  background-color: var(--clr-primary-500);
+  color: var(--clr-neutral-50);
 }
 header .navbar {
   max-height: 8vh;
@@ -201,6 +175,9 @@ header .navbar {
 }
 header .navbar__logo {
   width: 15rem;
+}
+header .navbar__logo .logo path {
+  fill: var(--clr-neutral-50);
 }
 header .navbar__links {
   display: flex;
@@ -314,7 +291,7 @@ main .console {
   justify-content: space-between;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
-  background-color: var(--clr-shades-white-trans);
+  background-color: var(--clr-shades-trans);
   color: var(--clr-neutral-300);
   margin-right: 2px;
   font-weight: var(--fw-bold);
@@ -413,7 +390,7 @@ main .console {
   opacity: 1;
   margin-top: 1rem;
   transform: scaleX(1);
-  transition: all 250ms var(--trans-bouncy);
+  transition: opacity 250ms var(--trans-bouncy), transform 250ms var(--trans-bouncy);
 }
 .control-panel__btn .text-icon.hiddenV {
   opacity: 0;
@@ -488,26 +465,26 @@ main .console {
   transition: width 0s ease, height 0s ease, opacity 150ms ease-in-out, transform 500ms var(--trans-bouncy);
   display: flex;
   flex-direction: column;
-  align-items: self-start;
+  align-items: center;
   justify-content: space-between;
 }
-.settings-menu__close {
+.settings-menu .settings__close {
   width: 100%;
   text-align: right;
   margin-bottom: 2rem;
 }
-.settings-menu__close i {
+.settings-menu .settings__close i {
   font-size: var(--fs-h4);
   cursor: pointer;
 }
-.settings-menu__title, .settings-menu__preferences {
+.settings-menu .settings__title, .settings-menu .settings__preferences {
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--clr-neutral-50);
   width: 100%;
+  margin: 4rem 0;
 }
-.settings-menu__validator {
+.settings-menu .settings__validator {
   width: 100%;
-  margin: 2rem 0;
   display: flex;
   gap: 2rem;
   flex-direction: row;
@@ -515,7 +492,7 @@ main .console {
   align-items: center;
   justify-content: space-between;
 }
-.settings-menu__validator .form-field {
+.settings-menu .settings__validator .form-field {
   width: calc(50% - 2rem);
   display: flex;
   flex-direction: row;
@@ -523,22 +500,22 @@ main .console {
   justify-content: space-between;
   font-size: var(--fs-p);
 }
-.settings-menu__validator .form-field label {
+.settings-menu .settings__validator .form-field label {
   width: 50%;
 }
-.settings-menu__validator .form-field input[type=checkbox] {
+.settings-menu .settings__validator .form-field input[type=checkbox] {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
   width: 6rem;
   height: 3rem;
   border-radius: 50vw;
-  background-color: var(--clr-primary-700);
+  background-color: var(--clr-controls-bg);
   position: relative;
   transition: background-color 250ms ease-in-out;
   cursor: pointer;
 }
-.settings-menu__validator .form-field input[type=checkbox]::before {
+.settings-menu .settings__validator .form-field input[type=checkbox]::before {
   content: "";
   position: absolute;
   top: 0.4rem;
@@ -546,20 +523,19 @@ main .console {
   width: 2.2rem;
   height: 2.2rem;
   border-radius: 50%;
-  background-color: var(--clr-neutral-50);
+  background-color: var(--clr-controls);
   transition: left 500ms var(--trans-bouncy);
 }
-.settings-menu__validator .form-field input[type=checkbox]:checked {
+.settings-menu .settings__validator .form-field input[type=checkbox]:checked {
   background-color: var(--clr-success-500);
 }
-.settings-menu__validator .form-field input[type=checkbox]:checked::before {
+.settings-menu .settings__validator .form-field input[type=checkbox]:checked::before {
   left: 3.2rem;
 }
-.settings-menu__editor {
-  margin: 2rem 0;
+.settings-menu .settings__editor {
   width: 100%;
 }
-.settings-menu__editor .form-field {
+.settings-menu .settings__editor .form-field {
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -568,10 +544,10 @@ main .console {
   font-size: var(--fs-p);
   margin-bottom: 2rem;
 }
-.settings-menu__editor .form-field span {
+.settings-menu .settings__editor .form-field span {
   font-weight: var(--fw-bold);
 }
-.settings-menu__editor .form-field select {
+.settings-menu .settings__editor .form-field select {
   width: 60%;
   background-color: var(--clr-neutral-50);
   color: var(--clr-neutral-900);
@@ -580,7 +556,7 @@ main .console {
   border: none;
   cursor: pointer;
 }
-.settings-menu__editor .form-field .font-range-container {
+.settings-menu .settings__editor .form-field .font-range-container {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -589,29 +565,29 @@ main .console {
   width: 100%;
   padding: 1rem 0;
 }
-.settings-menu__editor .form-field .font-range-container span {
+.settings-menu .settings__editor .form-field .font-range-container span {
   width: -moz-fit-content;
   width: fit-content;
 }
-.settings-menu__editor .form-field input[type=range] {
+.settings-menu .settings__editor .form-field input[type=range] {
   flex: 1;
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
   height: 4px;
   border-radius: 50vw;
-  background-color: var(--clr-primary-700);
+  background-color: var(--clr-controls-bg);
   cursor: pointer;
   /* All the same stuff for Firefox */
 }
-.settings-menu__editor .form-field input[type=range]::-moz-range-thumb {
+.settings-menu .settings__editor .form-field input[type=range]::-moz-range-thumb {
   height: 2rem;
   width: 2rem;
   border-radius: 50%;
   background-color: var(--clr-neutral-50);
   border: none;
 }
-.settings-menu__editor .form-field input[type=range]::-webkit-slider-thumb {
+.settings-menu .settings__editor .form-field input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   border: none;
   height: 2rem;
@@ -619,29 +595,32 @@ main .console {
   border-radius: 50%;
   background-color: var(--clr-neutral-50);
 }
-.settings-menu__editor .form-field input[type=range] input[type=range]::-ms-thumb {
+.settings-menu .settings__editor .form-field input[type=range] input[type=range]::-ms-thumb {
   height: 2rem;
   width: 2rem;
   border-radius: 50%;
   background-color: var(--clr-neutral-50);
   border: none;
 }
-.settings-menu__editor .form-field .reset-settings {
+.settings-menu .settings__editor .form-field .reset-settings {
   border: none;
   padding: 1rem 2rem;
   border-radius: 5px;
-  background-color: var(--clr-primary-700);
-  color: var(--clr-neutral-50);
+  background-color: var(--clr-controls-bg);
+  color: var(--clr-controls);
   font-size: var(--fs-p);
   font-weight: var(--fw-bold);
   font-family: var(--ff-primary);
   cursor: pointer;
   transition: background-color 250ms ease-in-out;
 }
-.settings-menu__editor .form-field .reset-settings:hover {
+.settings-menu .settings__editor .form-field .reset-settings:hover {
   background-color: var(--clr-primary-900);
 }
-.settings-menu__editor .form-field:nth-child(2) {
+.settings-menu .settings__editor .form-field .reset-settings:active {
+  transform: scale(0.98);
+}
+.settings-menu .settings__editor .form-field:nth-child(2) {
   flex-direction: column;
   align-items: self-start;
 }
