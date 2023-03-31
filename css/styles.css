@@ -343,6 +343,9 @@ main .console {
 .ide__tabs__left li:not(:last-child) .close-tab:hover {
   background-color: var(--clr-neutral-200);
 }
+.ide__tabs__left li:not(:last-child) .close-tab i {
+  pointer-events: none;
+}
 .ide__tabs__left li:last-child {
   min-width: -moz-fit-content;
   min-width: fit-content;

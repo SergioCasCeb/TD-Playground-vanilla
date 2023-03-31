@@ -242,48 +242,56 @@ let tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
 let i = 1
 let j = 1
 addTab.addEventListener("click",  () => {
+  createTab(++i)
+})
+
+tabsLeftContainer.addEventListener("click", (e) => {
+  const selectedElement = e.target
+  
+
+  if(selectedElement.id == "tab"){
+    tabsLeft.forEach(tab => {
+      tab.classList.remove("active")
+    })
+    selectedElement.classList.add("active")
+  }
+
+  if(selectedElement.className == "close-tab" && tabsLeft.length > 1){
+    if(selectedElement.parentElement.className == "active"){
+      selectedElement.parentElement.remove()
+      tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
+      tabsLeft[0].classList.add("active")
+    }
+    else{
+      selectedElement.parentElement.remove()
+    }
+  }
+
+  if(selectedElement.className == "close-tab" && tabsLeft.length < 1){
+    i = 0
+    createTab(++i)
+    tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
+    tabsLeft[0].classList.add("active")
+  }
+
+})
+
+
+function createTab (tabNumber){
   const newTab = document.createElement("li")
-  newTab.innerText =`Thing Description ${++i}`
+  newTab.innerText =`Thing Description ${tabNumber}`
   newTab.setAttribute("data-tab", `${((newTab.innerText).toLowerCase()).replace(/\s/g, '')}`)
+  newTab.setAttribute('id','tab');
   const closeBtn = document.createElement("div")
   closeBtn.classList.add("close-tab")
   const closeIcon = document.createElement("i")
   closeIcon.classList.add("fa-solid", "fa-xmark")
   closeBtn.appendChild(closeIcon)
   newTab.appendChild(closeBtn)
+
   tabsLeftContainer.insertBefore(newTab, tabsLeftContainer.children[(tabsLeftContainer.children.length) - 1])
-
   tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
-    tabsLeft.forEach(tab => {
-      tab.addEventListener("contextmenu", (e) => {
-        e.preventDefault()
-        alert("success")
-        return false
-      }, false)
-
-      tab.addEventListener("click", (e) => {
-        console.log(e.target.localName);
-
-        if(e.target.localName == "li"){
-          tabsLeft.forEach(tab => {
-            tab.classList.remove("active")
-          })
-          tab.classList.add("active")
-        }
-
-        if((e.target.localName == "i" || e.target.localName == "div")){
-
-          if(tab.classList == "active"){
-            tab.remove()
-            tabsLeft[0].classList.add("active")
-          }
-          else{
-            tab.remove()
-          }
-        }
-      })
-    })
-})
+}
 
 /** Themes picker functionality **/
 const themePicker = document.querySelector("#theme-picker")
