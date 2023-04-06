@@ -24,6 +24,14 @@
   --fs-p: 1.4rem;
   --fs-footer: 1rem;
   --fs-i: 1.8rem;
+  --fs-h1: clamp(3rem, 2.8rem + 0.625vw, 4rem);
+  --fs-h2: clamp(2.5rem, 2.3rem + 0.625vw, 3.5rem);
+  --fs-h3: clamp(2rem, 1.8rem + 0.625vw, 3rem);
+  --fs-h4: clamp(1.5rem, 1.3rem + 0.625vw, 2.5rem);
+  --fs-sub-header: clamp(1.4rem, 1.239rem + 0.5vw, 2.2rem);
+  --fs-p: clamp(1.2rem, 1.119rem + 0.25vw, 1.6rem);
+  --fs-footer: clamp(0.8rem, 0.7200000000000001rem + 0.24999999999999997vw, 1.2rem);
+  --fs-i: clamp(1.4rem, 1.239rem + 0.5vw, 2.2rem);
   /*line heights*/
   --lh-h1: 4.5rem;
   --lh-h2: 4rem;
@@ -61,7 +69,7 @@
   --clr-error-700: #EB5454;
   --clr-error-900: #DE3A3A;
   --clr-controls: var(--clr-neutral-50);
-  --clr-controls-bg: var(--clr-primary-700);
+  --clr-controls-bg: var(--clr-primary-500);
   /* transitions */
   --trans-bouncy: cubic-bezier(0.68, -0.75, 0.27, 1.75);
 }
@@ -82,6 +90,7 @@
   --clr-neutral-300: #7E807F;
   --clr-neutral-900: #FFFFFE;
   --clr-primary-500: #FFFFFE;
+  --clr-primary-700: #E4E6E6;
   --clr-controls: #FFFFFE;
   --clr-controls-bg: var(--clr-neutral-50);
   --clr-shades-trans: rgba(84, 144, 135, 0.7);
@@ -128,7 +137,8 @@ h5 {
   font-weight: var(--fw-bold);
 }
 
-p, li {
+p,
+li {
   font-size: var(--fs-p);
   line-height: var(--lh-p);
   font-weight: var(--fw-regular);
@@ -157,6 +167,10 @@ img {
 .container {
   padding: 0 2rem;
   margin: 0 auto;
+}
+
+[contenteditable=true]:focus {
+  outline: 2px solid var(--clr-primary-500);
 }
 
 /***** Header *****/
@@ -219,14 +233,18 @@ main .container {
   align-items: center;
   justify-content: center;
 }
-main .control-panel, main .console {
+main .control-panel,
+main .console {
   background-color: var(--clr-neutral-50);
   border-radius: 10px;
 }
-main .horizontal-divider, main .vertical-divider {
+main .horizontal-divider,
+main .vertical-divider {
   background-color: var(--clr-neutral-100);
 }
-main .horizontal-divider, main .main-content, main .console {
+main .horizontal-divider,
+main .main-content,
+main .console {
   width: 100%;
 }
 main .main-content {
@@ -236,7 +254,9 @@ main .main-content {
   min-height: 14.5rem;
   height: calc(60% - 1rem);
 }
-main .main-content .ide, main .main-content .control-panel, main .main-content .vertical-divider {
+main .main-content .ide,
+main .main-content .control-panel,
+main .main-content .vertical-divider {
   height: 100%;
 }
 main .main-content .ide {
@@ -249,9 +269,6 @@ main .main-content .ide__container {
   height: calc(100% - 3rem);
   padding-top: 1rem;
   background-color: var(--clr-neutral-50);
-}
-main .main-content .ide__container .editor {
-  min-height: 100%;
 }
 main .main-content .ide__tabs {
   height: 3rem;
@@ -294,10 +311,12 @@ main .console {
   background-color: var(--clr-shades-trans);
   color: var(--clr-neutral-300);
   margin-right: 2px;
-  font-weight: var(--fw-bold);
   transition: all 250ms ease;
   overflow: hidden;
   white-space: nowrap;
+}
+.ide__tabs ul li p {
+  font-weight: var(--fw-bold);
 }
 .ide__tabs ul li i {
   font-size: var(--fs-p);
@@ -349,6 +368,19 @@ main .console {
 .ide__tabs__left li:last-child {
   min-width: -moz-fit-content;
   min-width: fit-content;
+}
+.ide__container .editor {
+  pointer-events: none;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+.ide__container .editor.active {
+  pointer-events: all;
+  min-height: 100%;
+  width: 100%;
+  opacity: 1;
+  transition: opacity 300ms ease-in-out;
 }
 
 .control-panel {
@@ -458,11 +490,11 @@ main .console {
   position: absolute;
   top: 0;
   right: 0;
-  width: 25%;
+  width: 50rem;
   height: 100%;
-  background-color: var(--clr-primary-500);
+  background-color: var(--clr-primary-700);
   border-radius: 0 0 0 10px;
-  padding: 2rem;
+  padding: 4rem;
   color: var(--clr-neutral-50);
   transform-origin: right;
   transition: width 0s ease, height 0s ease, opacity 150ms ease-in-out, transform 500ms var(--trans-bouncy);
@@ -470,9 +502,12 @@ main .console {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  z-index: 100;
+}
+.settings-menu .settings {
+  width: 100%;
 }
 .settings-menu .settings__close {
-  width: 100%;
   text-align: right;
   margin-bottom: 2rem;
 }
@@ -482,31 +517,29 @@ main .console {
 }
 .settings-menu .settings__title, .settings-menu .settings__preferences {
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--clr-neutral-50);
-  width: 100%;
+  border-bottom: 2px solid var(--clr-neutral-50);
   margin: 4rem 0;
 }
-.settings-menu .settings__validator {
-  width: 100%;
+.settings-menu .settings__validate-options {
   display: flex;
-  gap: 2rem;
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  gap: 2rem;
 }
-.settings-menu .settings__validator .form-field {
+.settings-menu .settings__validate-options .form-field {
   width: calc(50% - 2rem);
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+}
+.settings-menu .settings__validate-options .form-field label {
   font-size: var(--fs-p);
+  max-width: 10ch;
 }
-.settings-menu .settings__validator .form-field label {
-  width: 50%;
-}
-.settings-menu .settings__validator .form-field input[type=checkbox] {
+.settings-menu .settings__validate-options .form-field input[type=checkbox] {
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
@@ -518,7 +551,7 @@ main .console {
   transition: background-color 250ms ease-in-out;
   cursor: pointer;
 }
-.settings-menu .settings__validator .form-field input[type=checkbox]::before {
+.settings-menu .settings__validate-options .form-field input[type=checkbox]::before {
   content: "";
   position: absolute;
   top: 0.4rem;
@@ -529,10 +562,10 @@ main .console {
   background-color: var(--clr-controls);
   transition: left 500ms var(--trans-bouncy);
 }
-.settings-menu .settings__validator .form-field input[type=checkbox]:checked {
+.settings-menu .settings__validate-options .form-field input[type=checkbox]:checked {
   background-color: var(--clr-success-500);
 }
-.settings-menu .settings__validator .form-field input[type=checkbox]:checked::before {
+.settings-menu .settings__validate-options .form-field input[type=checkbox]:checked::before {
   left: 3.2rem;
 }
 .settings-menu .settings__editor {
@@ -587,7 +620,7 @@ main .console {
   height: 2rem;
   width: 2rem;
   border-radius: 50%;
-  background-color: var(--clr-neutral-50);
+  background-color: var(--clr-controls);
   border: none;
 }
 .settings-menu .settings__editor .form-field input[type=range]::-webkit-slider-thumb {
@@ -596,13 +629,13 @@ main .console {
   height: 2rem;
   width: 2rem;
   border-radius: 50%;
-  background-color: var(--clr-neutral-50);
+  background-color: var(--clr-controls);
 }
 .settings-menu .settings__editor .form-field input[type=range] input[type=range]::-ms-thumb {
   height: 2rem;
   width: 2rem;
   border-radius: 50%;
-  background-color: var(--clr-neutral-50);
+  background-color: var(--clr-controls);
   border: none;
 }
 .settings-menu .settings__editor .form-field .reset-settings {
@@ -655,4 +688,20 @@ main .console {
   opacity: 0;
   transform: scaleX(0);
   transition: transform 500ms var(--trans-bouncy), opacity 250ms ease-in-out 250ms, width 0s ease 500ms, height 0s ease 500ms;
+}
+
+/**** Examples Menu ****/
+.examples-menu {
+  position: absolute;
+  inset: 0;
+  background-color: var(--clr-shades-trans);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.examples-menu__container {
+  background-color: var(--clr-neutral-900);
+  width: 80%;
+  height: 50%;
+  border-radius: 10px;
 }/*# sourceMappingURL=styles.css.map */

@@ -89,8 +89,17 @@
                 <div class="ide">
                     <div class="ide__tabs">
                         <ul class="ide__tabs__left">
-                            <li class="active" id="tab" data-tab="thingdescription1">Thing Description 1 <div class="close-tab"><i class="fa-solid fa-xmark"></i></div></li>
-                            <li class="ide__tabs__add"><i class="fa-solid fa-plus"></i></li>
+
+                            <li class="active" id="tab" data-tab-id="1">
+                                <p class="content-tab">Thing Description 1 </p>
+                                <div class="close-tab">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </div>
+                            </li>
+
+                            <li class="ide__tabs__add">
+                                <i class="fa-solid fa-plus"></i>
+                            </li>
                         </ul>
 
                         <ul class="ide__tabs__right">
@@ -99,7 +108,7 @@
                         </ul>
                     </div>
                     <div class="ide__container" >
-                        <div class="editor" id="editor" data-ide="thingdescription1"></div>
+                        <div class="editor active" id="editor" data-ide-id="1"></div>
                     </div>
                 </div>
             </div>
@@ -130,7 +139,7 @@
                     <i class="fa-solid fa-xmark"></i>
                 </div>
                 <h3 class="settings__title">Settings</h3>
-                <form action="#" class="settings__validator">
+                <form action="#" class="settings__validate-options">
                     <div class="form-field">
                         <label for="auto-validate">Auto Validate: </label>
                         <input type="checkbox" name="auto-validate" id="auto-validate" class="auto-validate">
@@ -160,10 +169,10 @@
                     </div>
 
                     <div class="form-field">
-                        <label for="font-size">Font size: <span class="editor-font-size">10</span></label>
+                        <label for="font-size">Font size: <span class="editor-font-size">14</span></label>
                         <div class="font-range-container">
-                            <span>0</span>
-                            <input type="range" name="font-size" id="font-size" class="font-size" min="0" max="40" value="10">
+                            <span>6</span>
+                            <input type="range" name="font-size" id="font-size" class="font-size" min="6" max="40" value="14">
                             <span>40</span>
                         </div>
                     </div>
@@ -186,6 +195,12 @@
                 </div>
             </footer>
         </div>
+
+        <!-- <div class="examples-menu">
+            <div class="examples-menu__container">
+
+            </div>
+        </div> -->
     </main>
     
     <script src="https://kit.fontawesome.com/d66d421276.js" crossorigin="anonymous"></script>
