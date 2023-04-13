@@ -497,3 +497,73 @@ themePicker.addEventListener("change", () => {
     monaco.editor.setTheme('monochrome')
   }
 })
+
+/*** Setting functionality ***/
+const closeExamples = document.querySelector(".examples-menu-container__close i")
+const examplesMenu = document.querySelector(".examples-menu")
+const examplesBtn = document.querySelector("#examples-btn")
+const thingTypeSelect = document.querySelector('#thing-type')
+const categorySelect = document.querySelector('#thing-category')
+const filterForm = document.querySelector('.examples-menu-container__filter')
+
+const tdCategories = ["Basic", "Properties", "Actions", "Events", "Protocols", "Security", "Complex Data", "Meta Interactions", "Versioning", "Response/Additional Response", "Multilanguage", "URI Variables", "Semantic Annotations", "Nonstandard", "Link Relation Type", "TD/TM relationshiops"]
+const tmCategories = ["Basic", "Versioning", "Extends/Imports", "Optional", "Submodel", "Placeholder"]
+
+closeExamples.addEventListener("click", () => {
+  examplesMenu.classList.add("closed")
+})
+
+examplesBtn.addEventListener("click", () => {
+  examplesMenu.classList.remove("closed")
+})
+
+//Function that checks if TD or TM and updated the category list
+function checkThingType(){
+  const selectOptions = [...categorySelect.options]
+  selectOptions.forEach(option => {
+    option.remove()
+  })
+
+  if(thingTypeSelect.value === "thing-description"){
+    tdCategories.forEach(category => {
+      const opt = document.createElement('option')
+      opt.value = category
+      opt.innerText = category
+      categorySelect.appendChild(opt)
+    })
+  }
+
+  if(thingTypeSelect.value === "thing-model"){
+    tmCategories.forEach(category => {
+      const opt = document.createElement('option')
+      opt.value = category
+      opt.innerText = category
+      categorySelect.appendChild(opt)
+    })
+  }
+}
+
+checkThingType()
+
+thingTypeSelect.addEventListener("change", checkThingType)
+
+filterForm.addEventListener("submit", (e) => {
+  e.preventDefault()
+})
+
+/* examples functionality */
+
+const examples = document.querySelectorAll('.example__name')
+const examplesCloseBtns = document.querySelectorAll('.example__btn--close')
+
+examples.forEach(example => {
+  example.addEventListener('click', () => {
+    example.parentElement.classList.add("open")
+  })
+})
+
+examplesCloseBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    btn.parentElement.parentElement.parentElement.classList.remove("open")
+  })
+})
