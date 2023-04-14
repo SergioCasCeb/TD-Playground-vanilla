@@ -554,4 +554,4 @@ let stateCheck = setInterval(() => {
     clearInterval(stateCheck);
     loader.classList.add("hidden")
   }
-}, 1000);
+}, 100);
