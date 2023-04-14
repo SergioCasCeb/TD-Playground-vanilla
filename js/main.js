@@ -71,50 +71,12 @@ const themeData = {
   }
 
 }
-/** Monaco editor **/
+// /** Monaco editor **/
 require.config({ paths: { vs: '../monaco-editor/min/vs' } });
 require(['vs/editor/editor.main'], function () {
 
-  var editor = monaco.editor.create(document.getElementById('editor'), {
-    value: ['{',
-      '  "id": "urn:simple",',
-      '  "@context": "https://www.w3.org/2022/wot/td/v1.1",',
-      '  "title": "My Thing 1",',
-      '  "description": "Empty thing description",',
-      '  "securityDefinitions": {',
-      '    "basic_sc": {',
-      '      "scheme": "basic",',
-      '      "in": "header"',
-      '    }',
-      '  },',
-      '  "security": [',
-      '    "basic_sc"',
-      '  ],',
-      '  "properties": {',
-      '  },',
-      '  "actions": {',
-      '  },',
-      '  "events": {',
-      '  }',
-      '}'].join('\n'),
-    language: 'json',
-    automaticLayout: true
-  });
-
   monaco.editor.defineTheme('monochrome', themeData);
   document.onload = setTheme()
-  document.onload = setFontSize(editor)
-  fontSizeSlider.addEventListener("input", () => {
-    fontSizeTxt.innerText = fontSizeSlider.value
-    storeFontSize(fontSizeSlider.value)
-    setFontSize(editor)
-  })
-  editorForm.addEventListener("reset", (e) => {
-    e.preventDefault()
-    fontSizeSlider.value = 14
-    storeFontSize(fontSizeSlider.value)
-    setFontSize(editor)
-  })
 });
 
 /***** Resizing functionality *****/
@@ -239,9 +201,13 @@ const tabsLeftContainer = document.querySelector(".ide__tabs__left")
 let closeTabs = document.querySelectorAll(".close-tab")
 let tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
 let ideList = document.querySelectorAll(".editor")
+const ideContainer = document.querySelector(".ide__container")
 
 let i = 1
 let j = 1
+
+createTab(i)
+createIde(i)
 
 //Function to create new tabs
 function createTab(tabNumber) {
@@ -265,6 +231,11 @@ function createTab(tabNumber) {
 
   tabsLeftContainer.insertBefore(newTab, tabsLeftContainer.children[(tabsLeftContainer.children.length) - 1])
   tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
+  tabsLeft.forEach(tab => {
+    tab.classList.remove("active")
+    tab.children[0].removeAttribute("contenteditable")
+  })
+  newTab.classList.add("active")
 }
 
 function createIde(ideNumber){
@@ -301,27 +272,26 @@ function createIde(ideNumber){
         '}'].join('\n'),
       language: 'json',
       automaticLayout: true
-    });
-    document.onload = setTheme()
+    })
+
     document.onload = setFontSize(editor)
     fontSizeSlider.addEventListener("input", () => {
-      fontSizeTxt.innerText = fontSizeSlider.value
-      storeFontSize(fontSizeSlider.value)
       setFontSize(editor)
     })
+
     editorForm.addEventListener("reset", (e) => {
-      e.preventDefault()
-      fontSizeSlider.value = 14
-      storeFontSize(fontSizeSlider.value)
       setFontSize(editor)
     })
   })
 
   ideList = document.querySelectorAll(".editor")
+  ideList.forEach(ide => {
+    ide.classList.remove("active")
+  })
+  newIde.classList.add("active")
 }
 
 //Create a new tab when clicking on the plus tab
-const ideContainer = document.querySelector(".ide__container")
 addTab.addEventListener("click", () => {
   createTab(++i)
   createIde(i)
@@ -407,6 +377,14 @@ tabsLeftContainer.addEventListener("dblclick", (e) => {
   if (selectedElement.className == "content-tab") {
     selectedElement.setAttribute("contenteditable", "true")
     selectedElement.focus()
+
+    selectedElement.addEventListener("keypress", (e) => {
+      if(e.key === "Enter"){
+        e.preventDefault()
+        selectedElement.setAttribute("contenteditable", "false")
+        selectedElement.blur()
+      }
+    })
   }
 
 })
@@ -419,20 +397,14 @@ const fontSizeSlider = document.querySelector("#font-size")
 
 fontSizeTxt.innerText = fontSizeSlider.value
 
-// fontSizeSlider.addEventListener("input", () => {
-//   fontSizeTxt.innerText = fontSizeSlider.value
-//   storeFontSize(fontSizeSlider.value)
-//   setFontSize(editor)
-// })
-
 editorForm.addEventListener("reset", (e) => {
   e.preventDefault()
   fontSizeSlider.value = 14
   fontSizeTxt.innerText = fontSizeSlider.value
   themePicker.value = "light-mode"
+  document.documentElement.className = themePicker.value
   storeTheme(themePicker.value)
   storeFontSize(fontSizeSlider.value)
-  document.documentElement.className = themePicker.value
   if (themePicker.value == "dark-mode") {
     monaco.editor.setTheme('vs-dark')
   }else if (themePicker.value == "light-mode") {
@@ -458,11 +430,12 @@ const storeTheme = function (theme) {
   localStorage.setItem("theme", theme)
 }
 
+//store the selected font size
 const storeFontSize = function (fontSize) {
   localStorage.setItem("fontSize", fontSize)
 }
 
-//Function which get the value from the localStorage and sets the new theme
+//Function which gets the value from the localStorage and sets the new theme
 const setTheme = function () {
   const activeTheme = localStorage.getItem("theme")
   themePicker.value = activeTheme
@@ -476,7 +449,7 @@ const setTheme = function () {
     monaco.editor.setTheme('monochrome')
   }
 }
-
+//Function which gets the value from the localStorage and sets the new font size
 const setFontSize = function (editor) {
   const activeFontSize = localStorage.getItem("fontSize")
   editor.updateOptions({
@@ -498,7 +471,13 @@ themePicker.addEventListener("change", () => {
   }
 })
 
-/*** Setting functionality ***/
+//Event listener to change the font size when the font size input is changed
+fontSizeSlider.addEventListener("input", () => {
+  fontSizeTxt.innerText = fontSizeSlider.value
+  storeFontSize(fontSizeSlider.value)
+})
+
+/*** Examples menu functionality ***/
 const closeExamples = document.querySelector(".examples-menu-container__close i")
 const examplesMenu = document.querySelector(".examples-menu")
 const examplesBtn = document.querySelector("#examples-btn")
@@ -567,3 +546,12 @@ examplesCloseBtns.forEach(btn => {
     btn.parentElement.parentElement.parentElement.classList.remove("open")
   })
 })
+
+/**** Loader ****/
+const loader = document.querySelector(".loader-container")
+let stateCheck = setInterval(() => {
+  if (document.readyState === 'complete') {
+    clearInterval(stateCheck);
+    loader.classList.add("hidden")
+  }
+}, 1000);

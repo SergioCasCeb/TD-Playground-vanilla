@@ -108,6 +108,7 @@ body {
   background-color: var(--clr-neutral-100);
   font-family: var(--ff-primary);
   color: var(--clr-neutral-900);
+  position: relative;
 }
 
 h1 {
@@ -269,12 +270,12 @@ main .main-content .ide {
   border-bottom-right-radius: 10px;
 }
 main .main-content .ide__container {
-  height: calc(100% - 3rem);
+  height: calc(100% - 3.5rem);
   padding-top: 1rem;
   background-color: var(--clr-neutral-50);
 }
 main .main-content .ide__tabs {
-  height: 3rem;
+  height: 3.5rem;
 }
 main .main-content .vertical-divider {
   width: 2rem;
@@ -288,6 +289,53 @@ main .console {
   height: calc(40% - 1rem);
 }
 
+/**Loader**/
+.loader-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--clr-neutral-50);
+  display: grid;
+  place-items: center;
+  opacity: 1;
+  transition: opacity 500ms ease-in-out;
+}
+.loader-container .loader {
+  width: 20rem;
+  animation: fade 1.5s infinite ease-in-out, pulsate 1.5s infinite ease-in-out;
+}
+.loader-container .loader svg {
+  width: 100%;
+}
+.loader-container.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes fade {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes pulsate {
+  0% {
+    transform: scale(1.1);
+  }
+  50% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}
 /*** Main Content ***/
 /*** Editor ***/
 .ide__tabs {
@@ -300,12 +348,13 @@ main .console {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   height: 100%;
 }
 .ide__tabs ul li {
   height: 100%;
   padding: 1rem;
+  text-align: left;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -318,6 +367,12 @@ main .console {
   transition: all 250ms ease;
   overflow: hidden;
   white-space: nowrap;
+  cursor: pointer;
+}
+.ide__tabs ul li span {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-right: 1rem;
 }
 .ide__tabs ul li p {
   font-weight: var(--fw-bold);
@@ -329,11 +384,6 @@ main .console {
   background-color: var(--clr-neutral-50);
   color: var(--clr-neutral-900);
 }
-.ide__tabs ul li:hover {
-  background-color: var(--clr-neutral-50);
-  color: var(--clr-neutral-900);
-  cursor: pointer;
-}
 .ide__tabs ul li:hover .close-tab {
   opacity: 1;
 }
@@ -342,6 +392,8 @@ main .console {
 }
 .ide__tabs__left {
   max-width: 80%;
+  overflow-y: hidden;
+  overflow-x: auto;
 }
 .ide__tabs__left li:not(:last-child) {
   position: relative;
@@ -370,8 +422,44 @@ main .console {
   pointer-events: none;
 }
 .ide__tabs__left li:last-child {
-  min-width: -moz-fit-content;
-  min-width: fit-content;
+  min-width: 3.5rem;
+}
+.ide__tabs__right {
+  height: 100%;
+}
+.ide__tabs__right input[type=radio] {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  width: 6rem;
+  height: 100%;
+  background-color: var(--clr-shades-trans);
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  color: var(--clr-neutral-300);
+  font-family: var(--ff-primary);
+  font-size: var(--fs-p);
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 250ms ease-in-out;
+}
+.ide__tabs__right input[type=radio]::before {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ide__tabs__right input[type=radio]:nth-child(1)::before {
+  content: "JSON";
+}
+.ide__tabs__right input[type=radio]:nth-child(2)::before {
+  content: "YAML";
+}
+.ide__tabs__right input[type=radio]:checked {
+  background-color: var(--clr-neutral-50);
+  color: var(--clr-neutral-900);
 }
 .ide__container .editor {
   pointer-events: none;
