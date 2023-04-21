@@ -580,7 +580,7 @@ getTMCategories()
 //function to get all the td examples categories from github repo
 async function getTDCategories(){
   const res = await fetch('https://api.github.com/repos/thingweb/thingweb-playground/contents/examples/td?ref=master', {
-    headers: {Authorization: 'Bearer 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'}
+    headers: {Authorization: 'Bearer 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'}
   })
   const data = await res.json()
   data.forEach(category => {
@@ -600,7 +600,7 @@ async function getTDCategories(){
 //function to get all the tm examples categories from github repo
 async function getTMCategories(){
   const res = await fetch('https://api.github.com/repos/thingweb/thingweb-playground/contents/examples/tm?ref=master', {
-    headers: {Authorization: 'Bearer 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'}
+    headers: {Authorization: 'Bearer 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'}
   })
   const data = await res.json()
   data.forEach(category => {
@@ -666,7 +666,7 @@ function populateExamples(){
 
 async function getAllExamples(name, type){
   const res = await fetch(`https://api.github.com/repos/thingweb/thingweb-playground/contents/examples/${type}/${name}?ref=master`, {
-    headers: {Authorization: 'Bearer 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'}
+    headers: {Authorization: 'Bearer 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'}
   })
   const data = await res.json()
   //test data
