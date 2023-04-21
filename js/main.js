@@ -554,21 +554,21 @@ categorySelect.addEventListener("change", () => {
 
 //Listener when search input is used
 //TODO
-// filterForm.addEventListener("submit", (e) => {
-//   e.preventDefault()
-//   console.log(searchInput.value);
+filterForm.addEventListener("submit", (e) => {
+  e.preventDefault()
 
-//   const categories = tdExamplesContainer.querySelectorAll(".examples-category")
-//   categories.forEach(category => {
-//     const examples = [...category.children[1].children]
-//     examples.forEach( example => {
-      
-//       if(example.firstChild.childNodes[1].innerText.toLowerCase()  .includes(searchInput.value)){
-//         console.log(example.firstChild.childNodes[1].innerText);
-//       }
-//     })
-//   })
-// })
+  const categories = tdExamplesContainer.querySelectorAll(".examples-category")
+  for(let j = 0; j < categories.length; j++){
+    const examples = [...categories[j].children[1].children]
+    for(let i = 0; i < examples.length; i++){
+      if(examples[i].firstChild.childNodes[1].innerText.toLowerCase().includes(searchInput.value.toLowerCase())){
+        // examples[i].parentElement.parentElement.scrollIntoView({behavior: "smooth", block: "start"})
+        console.log(examples[i].parentElement.parentElement);
+        break
+      }
+    }
+  }
+})
 
 
 // Creating categories arrays and populating them with async call
@@ -580,7 +580,7 @@ getTMCategories()
 //function to get all the td examples categories from github repo
 async function getTDCategories(){
   const res = await fetch('https://api.github.com/repos/thingweb/thingweb-playground/contents/examples/td?ref=master', {
-    headers: {Authorization: 'Bearer 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 '}
+    headers: {Authorization: 'Bearer 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'}
   })
   const data = await res.json()
   data.forEach(category => {
@@ -600,7 +600,7 @@ async function getTDCategories(){
 //function to get all the tm examples categories from github repo
 async function getTMCategories(){
   const res = await fetch('https://api.github.com/repos/thingweb/thingweb-playground/contents/examples/tm?ref=master', {
-    headers: {Authorization: 'Bearer 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 '}
+    headers: {Authorization: 'Bearer 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'}
   })
   const data = await res.json()
   data.forEach(category => {
@@ -666,7 +666,7 @@ function populateExamples(){
 
 async function getAllExamples(name, type){
   const res = await fetch(`https://api.github.com/repos/thingweb/thingweb-playground/contents/examples/${type}/${name}?ref=master`, {
-    headers: {Authorization: 'Bearer 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 '}
+    headers: {Authorization: 'Bearer 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'}
   })
   const data = await res.json()
   //test data
