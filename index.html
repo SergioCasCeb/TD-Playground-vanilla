@@ -112,25 +112,13 @@
                 <div class="ide">
                     <div class="ide__tabs">
                         <ul class="ide__tabs__left">
-
-                            <!-- <li class="active" id="tab" data-tab-id="1">
-                                <div class="file-type-icon">
-                                    <img src="./img/td-icon.png" alt="">
-                                </div>
-                                <span>TD</span>
-                                <p class="content-tab">Thing Description 1 </p>
-                                <div class="close-tab">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </div>
-                            </li> -->
-
                             <li class="ide__tabs__add">
                                 <i class="fa-solid fa-plus"></i>
                             </li>
                         </ul>
 
                         <div class="ide__tabs__right">
-                            <input type="radio" name="file-type" id="file-type-json">
+                            <input type="radio" name="file-type" id="file-type-json" checked>
                             <input type="radio" name="file-type" id="file-type-yaml">
                         </div>
                     </div>
@@ -235,7 +223,7 @@
                     <div class="form-field">
                         <label for="thing-type"></label>
                         <div class="select-container">
-                            <select name="thing-type" id="thing-type">
+                            <select name="thing-type" id="thing-type" class="thing-type">
                                 <option value="thing-description" selected>Thing Description</option>
                                 <option value="thing-model">Thing Model</option>
                             </select>
@@ -244,7 +232,7 @@
                     <div class="form-field">
                         <label for="thing-category"></label>
                         <div class="select-container">
-                            <select name="thing-category" id="thing-category">
+                            <select name="thing-category" id="thing-category" class="thing-category">
                             </select>
                         </div>
                     </div>
@@ -258,202 +246,11 @@
                     </div>
                 </form>
 
-                <div class="examples-menu-container__td">
-                    <div class="examples-category">
-                        <div class="examples-category__title">
-                            <h3>Basic</h3>
-                        </div>
-                        <div class="examples-category__container">
+                <div class="examples-container">
+                    <div class="examples-container__td"></div>
 
-                            <div class="example">
-                                <div class="example__name">
-                                    <i class="fa-solid fa-file-code"></i>
-                                    <p>Basic-td.td.jsonld</p>
-                                </div>
-
-                                <div class="example__content">
-                                    <p class="example__description">This is an example of the most basic form of a td</p>
-                                    <div class="example__btn">
-                                        <button class="example__btn--show"><i class="fa-solid fa-eye"></i>Show snipet</button>
-                                        <button class="example__btn--close"><i class="fa-solid fa-xmark"></i>Close</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="example">
-                                <div class="example__name">
-                                    <i class="fa-solid fa-file-code"></i>
-                                    <p>contentMedia-&-contentEncoding.td.jsonld</p>
-                                </div>
-
-                                <div class="example__content">
-                                    <p class="example__description">In some cases binary data is embedded in text-based values, e.g., a JSON string-based value embeds a base64 encoded image. The terms contentMediaType and contentEncoding can be used to clarify the context and encoding format of such name-value pairs.</p>
-                                    <div class="example__btn">
-                                        <button class="example__btn--show"><i class="fa-solid fa-eye"></i>Show snipet</button>
-                                        <button class="example__btn--close"><i class="fa-solid fa-xmark"></i>Close</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="example">
-                                <div class="example__name">
-                                    <i class="fa-solid fa-file-code"></i>
-                                    <p>contentType.td.jsonld</p>
-                                </div>
-
-                                <div class="example__content">
-                                    <p class="example__description">The contentType member is used to assign a media type [RFC2046] including media type parameters as attribute-value pairs separated by a ; character.</p>
-                                    <div class="example__btn">
-                                        <button class="example__btn--show"><i class="fa-solid fa-eye"></i>Show snipet</button>
-                                        <button class="example__btn--close"><i class="fa-solid fa-xmark"></i>Close</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="example">
-                                <div class="example__name">
-                                    <i class="fa-solid fa-file-code"></i>
-                                    <p>defaults.td.jsonld</p>
-                                </div>
-
-                                <div class="example__content">
-                                    <p class="example__description">A basic TD with all default values</p>
-                                    <div class="example__btn">
-                                        <button class="example__btn--show"><i class="fa-solid fa-eye"></i>Show snipet</button>
-                                        <button class="example__btn--close"><i class="fa-solid fa-xmark"></i>Close</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="example">
-                                <div class="example__name">
-                                    <i class="fa-solid fa-file-code"></i>
-                                    <p>form-serialization.td.jsonld</p>
-                                </div>
-
-                                <div class="example__content">
-                                    <p class="example__description">This is an example showcasing proper form serialization</p>
-                                    <div class="example__btn">
-                                        <button class="example__btn--show"><i class="fa-solid fa-eye"></i>Show snipet</button>
-                                        <button class="example__btn--close"><i class="fa-solid fa-xmark"></i>Close</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="example">
-                                <div class="example__name">
-                                    <i class="fa-solid fa-file-code"></i>
-                                    <p>simple-context.td.jsonld</p>
-                                </div>
-
-                                <div class="example__content">
-                                    <p class="example__description">A member with the name @context and a value of type string is generally used to identify the TD representation format version defined by this specification.</p>
-                                    <div class="example__btn">
-                                        <button class="example__btn--show"><i class="fa-solid fa-eye"></i>Show snipet</button>
-                                        <button class="example__btn--close"><i class="fa-solid fa-xmark"></i>Close</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <!--end of catergory-->
-
-                    <div class="examples-category">
-                        <div class="examples-category__title">
-                            <h3>Properties</h3>
-                        </div>
-                        <div class="examples-category__container">
-
-                            <div class="example">
-                                <div class="example__name">
-                                    <i class="fa-solid fa-file-code"></i>
-                                    <p>properties-serializations.td.jsonld</p>
-                                </div>
-
-                                <div class="example__content">
-                                    <p class="example__description">All name-value pairs of a map of PropertyAffordance instances MUST be serialized as members of the JSON object that results from serializing the Map.</p>
-                                    <div class="example__btn">
-                                        <button class="example__btn--show"><i class="fa-solid fa-eye"></i>Show snipet</button>
-                                        <button class="example__btn--close"><i class="fa-solid fa-xmark"></i>Close</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="example">
-                                <div class="example__name">
-                                    <i class="fa-solid fa-file-code"></i>
-                                    <p>readOnly.td.jsonld</p>
-                                </div>
-
-                                <div class="example__content">
-                                    <p class="example__description">readOnly can be used to signal which data items are exchanged in read interactions (i.e., when reading a Property).</p>
-                                    <div class="example__btn">
-                                        <button class="example__btn--show"><i class="fa-solid fa-eye"></i>Show snipet</button>
-                                        <button class="example__btn--close"><i class="fa-solid fa-xmark"></i>Close</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="example">
-                                <div class="example__name">
-                                    <i class="fa-solid fa-file-code"></i>
-                                    <p>writeOnly.td.jsonld</p>
-                                </div>
-
-                                <div class="example__content">
-                                    <p class="example__description">writeOnly can be used to signal which data items are exchanged in write interactions (i.e., when writing a Property).</p>
-                                    <div class="example__btn">
-                                        <button class="example__btn--show"><i class="fa-solid fa-eye"></i>Show snipet</button>
-                                        <button class="example__btn--close"><i class="fa-solid fa-xmark"></i>Close</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <!--end of category-->
-
-                    <div class="examples-category">
-                        <div class="examples-category__title">
-                            <h3>Actions</h3>
-                        </div>
-                        <div class="examples-category__container">
-
-                            <div class="example">
-                                <div class="example__name">
-                                    <i class="fa-solid fa-file-code"></i>
-                                    <p>action-serialization.td.jsonld</p>
-                                </div>
-
-                                <div class="example__content">
-                                    <p class="example__description">All name-value pairs of a Map of ActionAffordance instances MUST be serialized as members of the JSON object that results from serializing the Map.</p>
-                                    <div class="example__btn">
-                                        <button class="example__btn--show"><i class="fa-solid fa-eye"></i>Show snipet</button>
-                                        <button class="example__btn--close"><i class="fa-solid fa-xmark"></i>Close</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="example">
-                                <div class="example__name">
-                                    <i class="fa-solid fa-file-code"></i>
-                                    <p>response.td.jsonld</p>
-                                </div>
-
-                                <div class="example__content">
-                                    <p class="example__description">In some use cases, the form metadata of the Interaction Affordance not only describes the request, but also provides metadata for the expected response. The response must be a JSON object and contain a contentType.</p>
-                                    <div class="example__btn">
-                                        <button class="example__btn--show"><i class="fa-solid fa-eye"></i>Show snipet</button>
-                                        <button class="example__btn--close"><i class="fa-solid fa-xmark"></i>Close</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="examples-container__tm hidden"></div>
                 </div>
-
-                <div class="examples-container__tm"></div>
             </div>
         </div>
     </main>

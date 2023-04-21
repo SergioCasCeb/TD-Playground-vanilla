@@ -484,16 +484,30 @@ const examplesBtn = document.querySelector("#examples-btn")
 const thingTypeSelect = document.querySelector('#thing-type')
 const categorySelect = document.querySelector('#thing-category')
 const filterForm = document.querySelector('.examples-menu-container__filter')
+const tdExamplesContainer = document.querySelector(".examples-container__td")
+const tmExamplesContainer = document.querySelector(".examples-container__tm")
+const searchInput = document.querySelector(".search-input")
 
-const tdCategories = ["Basic", "Properties", "Actions", "Events", "Protocols", "Security", "Complex Data", "Meta Interactions", "Versioning", "Response/Additional Response", "Multilanguage", "URI Variables", "Semantic Annotations", "Nonstandard", "Link Relation Type", "TD/TM relationshiops"]
-const tmCategories = ["Basic", "Versioning", "Extends/Imports", "Optional", "Submodel", "Placeholder"]
-
+//Close examples menu when clicking on x icon
 closeExamples.addEventListener("click", () => {
   examplesMenu.classList.add("closed")
+
+  //Clear all info inside the examples menu
+  while(tdExamplesContainer.children.length > 0){
+    tdExamplesContainer.firstElementChild.remove()
+  }
+
+  while(tmExamplesContainer.children.length > 0){
+    tmExamplesContainer.firstElementChild.remove()
+  }
 })
 
+//Open examples menu when clicking on examples btn as well as giving a preset value to the dropdown
 examplesBtn.addEventListener("click", () => {
   examplesMenu.classList.remove("closed")
+  thingTypeSelect.value = "thing-description"
+  checkThingType()
+  populateExamples()
 })
 
 //Function that checks if TD or TM and updated the category list
@@ -504,48 +518,239 @@ function checkThingType(){
   })
 
   if(thingTypeSelect.value === "thing-description"){
+    tdExamplesContainer.classList.remove("hidden")
+    tmExamplesContainer.classList.add("hidden")
     tdCategories.forEach(category => {
       const opt = document.createElement('option')
-      opt.value = category
-      opt.innerText = category
+      opt.value = category.fullName
+      opt.innerText = category.name
       categorySelect.appendChild(opt)
     })
   }
 
   if(thingTypeSelect.value === "thing-model"){
+    tmExamplesContainer.classList.remove("hidden")
+    tdExamplesContainer.classList.add("hidden")
     tmCategories.forEach(category => {
       const opt = document.createElement('option')
-      opt.value = category
-      opt.innerText = category
+      opt.value = category.fullName
+      opt.innerText = category.name
       categorySelect.appendChild(opt)
     })
   }
 }
 
-checkThingType()
-
-thingTypeSelect.addEventListener("change", checkThingType)
-
-filterForm.addEventListener("submit", (e) => {
-  e.preventDefault()
+//Fucntion to update the categories dropdown when thing type dropdown changes
+thingTypeSelect.addEventListener("change", () => {
+  checkThingType()
+  const element = document.getElementById(categorySelect.value);
+  element.scrollIntoView({behavior: "smooth", block: "start"})
 })
 
-/* examples functionality */
+categorySelect.addEventListener("change", () => {
+  const element = document.getElementById(categorySelect.value);
+  element.scrollIntoView({behavior: "smooth", block: "start"})
+})
 
-const examples = document.querySelectorAll('.example__name')
-const examplesCloseBtns = document.querySelectorAll('.example__btn--close')
+//Listener when search input is used
+//TODO
+// filterForm.addEventListener("submit", (e) => {
+//   e.preventDefault()
+//   console.log(searchInput.value);
 
-examples.forEach(example => {
-  example.addEventListener('click', () => {
-    example.parentElement.classList.add("open")
+//   const categories = tdExamplesContainer.querySelectorAll(".examples-category")
+//   categories.forEach(category => {
+//     const examples = [...category.children[1].children]
+//     examples.forEach( example => {
+      
+//       if(example.firstChild.childNodes[1].innerText.toLowerCase()  .includes(searchInput.value)){
+//         console.log(example.firstChild.childNodes[1].innerText);
+//       }
+//     })
+//   })
+// })
+
+
+// Creating categories arrays and populating them with async call
+let tdCategories = []
+let tmCategories = []
+getTDCategories()
+getTMCategories()
+
+//function to get all the td examples categories from github repo
+async function getTDCategories(){
+  const res = await fetch('https://api.github.com/repos/thingweb/thingweb-playground/contents/examples/td?ref=master', {
+    headers: {Authorization: 'Bearer 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 '}
   })
-})
+  const data = await res.json()
+  data.forEach(category => {
+    const categoryId = category.name.split("-")[0]
+    const categoryName = (category.name.substring(category.name.indexOf("-") + 1)).replaceAll('-', ' ');
 
-examplesCloseBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    btn.parentElement.parentElement.parentElement.classList.remove("open")
+    const newObject = {
+      name: categoryName,
+      id: categoryId,
+      fullName: category.name
+    }
+    tdCategories.push(newObject)
   })
-})
+  tdCategories.sort((a, b) => a.id - b.id)
+}
+
+//function to get all the tm examples categories from github repo
+async function getTMCategories(){
+  const res = await fetch('https://api.github.com/repos/thingweb/thingweb-playground/contents/examples/tm?ref=master', {
+    headers: {Authorization: 'Bearer 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 '}
+  })
+  const data = await res.json()
+  data.forEach(category => {
+    const categoryId = category.name.split("-")[0]
+    const categoryName = (category.name.substring(category.name.indexOf("-") + 1)).replaceAll('-', ' ');
+
+    const newObject = {
+      name: categoryName,
+      id: categoryId,
+      fullName: category.name
+    }
+    tmCategories.push(newObject)
+  })
+  tmCategories.sort((a, b) => a.id - b.id)
+}
+
+function populateExamples(){
+
+  tdCategories.forEach(category => {
+    const categoryContainer = document.createElement('div')
+    categoryContainer.classList.add("examples-category")
+    categoryContainer.setAttribute("data-category", category.fullName)
+    categoryContainer.setAttribute("id", category.fullName)
+    tdExamplesContainer.appendChild(categoryContainer)
+
+    const categoryTitle = document.createElement('div')
+    categoryTitle.classList.add("examples-category__title")
+    categoryContainer.appendChild(categoryTitle)
+
+    const title = document.createElement('h3')
+    title.innerText = category.name
+    categoryTitle.appendChild(title)
+
+    const categoryContent = document.createElement('div')
+    categoryContent.classList.add("examples-category__container")
+    categoryContainer.appendChild(categoryContent)
+
+    getAllExamples(category.fullName, "td")
+  })
+
+  tmCategories.forEach(category => {
+    const categoryContainer = document.createElement('div')
+    categoryContainer.classList.add("examples-category")
+    categoryContainer.setAttribute("data-category", category.fullName)
+    categoryContainer.setAttribute("id", category.fullName)
+    tmExamplesContainer.appendChild(categoryContainer)
+
+    const categoryTitle = document.createElement('div')
+    categoryTitle.classList.add("examples-category__title")
+    categoryContainer.appendChild(categoryTitle)
+
+    const title = document.createElement('h3')
+    title.innerText = category.name
+    categoryTitle.appendChild(title)
+
+    const categoryContent = document.createElement('div')
+    categoryContent.classList.add("examples-category__container")
+    categoryContainer.appendChild(categoryContent)
+
+    getAllExamples(category.fullName, "tm")
+  })
+}
+
+async function getAllExamples(name, type){
+  const res = await fetch(`https://api.github.com/repos/thingweb/thingweb-playground/contents/examples/${type}/${name}?ref=master`, {
+    headers: {Authorization: 'Bearer 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 '}
+  })
+  const data = await res.json()
+  //test data
+  // const data = [{name: "basic-td.td.jsonld"}, {name: "contentMedia-&-contentEncoding.td.jsonld"}, {name: "contentType.td.jsonld"}, {name: "resadme.txt"}]
+  // let examplesArray = []
+  data.forEach(file => {
+    let index = file.name.lastIndexOf('.')
+    let fileExt = file.name.substring(index + 1)
+    if(fileExt === "jsonld"){
+      // examplesArray.push(file.name)
+      createExample(name, file.name, type)
+    }
+  })
+}
+
+async function createExample(folderName, fileName, type){
+  const res = await fetch(`https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/${type}/${folderName}/${fileName}`)
+  const data = await res.json()
+
+  //get category
+  const categoryContainer = document.querySelector(`[data-category='${folderName}'] .examples-category__container`)
+
+  //individual examples
+  const exampleContainer = document.createElement('div')
+  exampleContainer.classList.add("example")
+  categoryContainer.appendChild(exampleContainer)
+
+  //create example title
+  const exampleName = document.createElement('div')
+  exampleName.classList.add("example__name")
+  const exampleNameIcon = document.createElement('i')
+  exampleNameIcon.classList.add("fa-solid", "fa-file-code")
+  exampleName.appendChild(exampleNameIcon)
+  const exampleNameTitle = document.createElement('p')
+  exampleNameTitle.innerText = data['$title']
+  exampleName.appendChild(exampleNameTitle)
+  exampleContainer.appendChild(exampleName)
+
+  exampleName.addEventListener('click', () => {
+    exampleName.parentElement.classList.toggle("open")
+  })
+
+  //create example content
+  const exampleContent = document.createElement('div')
+  exampleContent.classList.add("example__content")
+  exampleContainer.appendChild(exampleContent)
+
+  const exampleDescription = document.createElement('p')
+  exampleDescription.innerText = data['$description']
+  exampleDescription.classList.add('example__description')
+  exampleContent.appendChild(exampleDescription)
+
+  const exampleBtns = document.createElement('div')
+  exampleBtns.classList.add("example__btn")
+  exampleContent.appendChild(exampleBtns)
+
+  const exampleBtnClose = document.createElement('button')
+  exampleBtnClose.classList.add("example__btn--close")
+  exampleBtns.appendChild(exampleBtnClose)
+
+  const exampleBtnShow = document.createElement('button')
+  exampleBtnShow.classList.add("example__btn--show")
+  exampleBtns.appendChild(exampleBtnShow)
+
+  const exampleIconShow = document.createElement('i')
+  exampleIconShow.classList.add("fa-solid", "fa-eye")
+  exampleBtnShow.appendChild(exampleIconShow)
+
+  const exampleTxtShow = document.createElement('p')
+  exampleTxtShow.innerText = "Show Snipet"
+  exampleBtnShow.appendChild(exampleTxtShow)
+
+  const exampleIconClose = document.createElement('i')
+  exampleIconClose.classList.add("fa-solid", "fa-xmark")
+  exampleBtnClose.appendChild(exampleIconClose)
+
+  const exampleTxtClose = document.createElement('p')
+  exampleTxtClose.innerText = "Close"
+  exampleBtnClose.appendChild(exampleTxtClose)
+
+  exampleBtnClose.addEventListener('click', () => {
+    exampleBtnClose.parentElement.parentElement.parentElement.classList.remove("open")
+  })
+}
 
 /**** Loader ****/
 const loader = document.querySelector(".loader-container")

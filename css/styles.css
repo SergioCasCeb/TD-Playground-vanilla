@@ -796,7 +796,7 @@ main .console {
   position: absolute;
   inset: 0;
   padding: 2rem;
-  background-color: var(--clr-shades-trans);
+  background-color: var(--clr-neutral-100);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -805,14 +805,19 @@ main .console {
   transition: all 500ms var(--trans-bouncy);
 }
 .examples-menu .examples-menu-container {
+  overflow: hidden;
   background-color: var(--clr-neutral-50);
   width: 100%;
   height: 100%;
   padding: 2rem;
   border-radius: 10px;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .examples-menu .examples-menu-container__close {
+  width: 100%;
   text-align: right;
 }
 .examples-menu .examples-menu-container__close i {
@@ -820,6 +825,7 @@ main .console {
   cursor: pointer;
 }
 .examples-menu .examples-menu-container__filter {
+  width: 100%;
   padding: 4rem;
   display: flex;
   flex-direction: row;
@@ -877,6 +883,10 @@ main .console {
 }
 .examples-menu .examples-menu-container__filter .form-field select {
   border-radius: 5px;
+  text-transform: capitalize;
+}
+.examples-menu .examples-menu-container__filter .form-field .thing-category {
+  min-width: 30rem;
 }
 .examples-menu .examples-menu-container__filter .form-field .search-bar {
   overflow: hidden;
@@ -912,12 +922,27 @@ main .console {
 .examples-menu .examples-menu-container__filter .form-field .search-btn:hover {
   background-color: var(--clr-primary-700);
 }
-.examples-menu .examples-menu-container__td .examples-category__title {
+.examples-menu .examples-menu-container .examples-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  overflow-y: hidden;
+}
+.examples-menu .examples-menu-container .examples-container__td, .examples-menu .examples-menu-container .examples-container__tm {
+  width: 100%;
+  min-height: -moz-fit-content;
+  min-height: fit-content;
+  opacity: 1;
+  overflow-y: auto;
+  transition: opacity 250ms ease-in-out 250ms, width 250ms ease-in-out 0ms, height 250ms ease-in-out 0ms;
+}
+.examples-menu .examples-menu-container .examples-container__td .examples-category__title, .examples-menu .examples-menu-container .examples-container__tm .examples-category__title {
   padding: 0 4rem;
   position: relative;
   z-index: 0;
 }
-.examples-menu .examples-menu-container__td .examples-category__title::before {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__title::before, .examples-menu .examples-menu-container .examples-container__tm .examples-category__title::before {
   position: absolute;
   content: "";
   top: 50%;
@@ -927,14 +952,15 @@ main .console {
   background-color: var(--clr-primary-500);
   z-index: -1;
 }
-.examples-menu .examples-menu-container__td .examples-category__title h3 {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__title h3, .examples-menu .examples-menu-container .examples-container__tm .examples-category__title h3 {
   width: -moz-fit-content;
   width: fit-content;
   background-color: var(--clr-neutral-50);
   padding: 0 1rem;
   margin-left: 8rem;
+  text-transform: capitalize;
 }
-.examples-menu .examples-menu-container__td .examples-category__container {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__container, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container {
   padding: 4rem;
   display: flex;
   flex-direction: row;
@@ -943,7 +969,7 @@ main .console {
   flex-wrap: wrap;
   gap: 2rem;
 }
-.examples-menu .examples-menu-container__td .examples-category__container .example {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__container .example, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container .example {
   background-color: var(--clr-neutral-50);
   border-radius: 5px;
   width: -moz-fit-content;
@@ -951,22 +977,22 @@ main .console {
   padding: 2rem;
   box-shadow: 0px 0px 5px 0px var(--clr-shadow);
 }
-.examples-menu .examples-menu-container__td .examples-category__container .example__name {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__container .example__name, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container .example__name {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 2rem;
   cursor: pointer;
-  transition: all 500ms var(--trans-bouncy) 200ms;
+  transition: all 250ms ease-in-out 250ms;
 }
-.examples-menu .examples-menu-container__td .examples-category__container .example__name i {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__container .example__name i, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container .example__name i {
   color: var(--clr-primary-500);
 }
-.examples-menu .examples-menu-container__td .examples-category__container .example__name p {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__container .example__name p, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container .example__name p {
   font-weight: var(--fw-bold);
 }
-.examples-menu .examples-menu-container__td .examples-category__container .example__content {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__container .example__content, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container .example__content {
   pointer-events: none;
   display: flex;
   flex-direction: column;
@@ -975,57 +1001,72 @@ main .console {
   flex-wrap: wrap;
   max-width: 100%;
 }
-.examples-menu .examples-menu-container__td .examples-category__container .example__description {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__container .example__description, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container .example__description {
   height: 0;
   opacity: 0;
   font-size: var(--fs-footer);
   max-width: 50ch;
   overflow: auto;
   padding-right: 1rem;
-  transition: height 500ms var(--trans-bouncy) 200ms, margin 500ms var(--trans-bouncy) 200ms, opacity 200ms ease-in-out 0ms;
+  transition: height 250ms ease-in-out 250ms, margin 250ms ease-in-out 250ms, opacity 250ms ease-in-out 0ms;
 }
-.examples-menu .examples-menu-container__td .examples-category__container .example__btn {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__container .example__btn, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container .example__btn {
   display: flex;
   gap: 2rem;
   height: 0;
   opacity: 0;
-  transition: opacity 200ms ease-in-out 0ms, height 500ms var(--trans-bouncy) 200ms;
+  transition: opacity 250ms ease-in-out 0ms, height 250ms ease-in-out 250ms;
 }
-.examples-menu .examples-menu-container__td .examples-category__container .example__btn button {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__container .example__btn button, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container .example__btn button {
   padding: 0.5rem 1.5rem;
   border-radius: 5px;
   border: 1px solid var(--clr-neutral-300);
   background-color: var(--clr-neutral-50);
   font-family: var(--ff-primary);
   color: var(--clr-neutral-900);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: background-color 250ms ease-in-out;
 }
-.examples-menu .examples-menu-container__td .examples-category__container .example__btn button:hover {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__container .example__btn button:hover, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container .example__btn button:hover {
   background-color: var(--clr-neutral-300);
 }
-.examples-menu .examples-menu-container__td .examples-category__container .example__btn i {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__container .example__btn button p, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container .example__btn button p {
+  font-size: inherit;
+  color: inherit;
+  font-family: inherit;
+}
+.examples-menu .examples-menu-container .examples-container__td .examples-category__container .example__btn button i, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container .example__btn button i {
   font-size: inherit;
   margin-right: 1rem;
 }
-.examples-menu .examples-menu-container__td .examples-category__container .example.open .example__name {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__container .example.open .example__name, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container .example.open .example__name {
   border-bottom: 2px solid var(--clr-primary-500);
   padding-bottom: 2rem;
-  transition: all 500ms var(--trans-bouncy) 0s;
+  transition: all 250ms ease-in-out 0s;
 }
-.examples-menu .examples-menu-container__td .examples-category__container .example.open .example__content {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__container .example.open .example__content, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container .example.open .example__content {
   pointer-events: all;
 }
-.examples-menu .examples-menu-container__td .examples-category__container .example.open .example__description {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__container .example.open .example__description, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container .example.open .example__description {
   height: 8rem;
   margin: 2rem 0;
   opacity: 1;
-  transition: height 500ms var(--trans-bouncy) 0s, margin 500ms var(--trans-bouncy) 0s, opacity 200ms ease-in-out 500ms;
+  transition: height 250ms ease-in-out 0s, margin 250ms ease-in-out 0s, opacity 200ms ease-in-out 250ms;
 }
-.examples-menu .examples-menu-container__td .examples-category__container .example.open .example__btn {
+.examples-menu .examples-menu-container .examples-container__td .examples-category__container .example.open .example__btn, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container .example.open .example__btn {
   height: 3rem;
   opacity: 1;
-  transition: height 500ms var(--trans-bouncy) 0s, opacity 200ms ease-in-out 500ms;
+  transition: height 250ms ease-in-out 0s, opacity 200ms ease-in-out 250ms;
+}
+.examples-menu .examples-menu-container .examples-container__td.hidden, .examples-menu .examples-menu-container .examples-container__tm.hidden {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  transition: opacity 100ms ease-in-out 0s, width 0s ease-in-out 250ms, height 0s ease-in-out 250ms;
 }
 .examples-menu.closed {
   transform: scale(0);
