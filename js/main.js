@@ -3,7 +3,10 @@ const closeSettings = document.querySelector(".settings__close i");
 const settingsMenu = document.querySelector(".settings-menu");
 const settingsBtn = document.querySelector("#settings-btn");
 
-/** New monaco theme **/
+/***********************************************************/
+/*                     Monaco editor                       */
+/***********************************************************/
+//New monaco theme
 const themeData = {
   "base": "vs-dark",
   "inherit": true,
@@ -71,7 +74,7 @@ const themeData = {
   }
 
 }
-// /** Monaco editor **/
+//Monaco editor initialization
 require.config({ paths: { vs: '../monaco-editor/min/vs' } });
 require(['vs/editor/editor.main'], function () {
 
@@ -79,11 +82,13 @@ require(['vs/editor/editor.main'], function () {
   document.onload = setTheme()
 });
 
-/***** Resizing functionality *****/
+/***********************************************************/
+/*                Resizing functionality                   */
+/***********************************************************/
 const resizerY = document.querySelector(".horizontal-divider");
 const resizerX = document.querySelector(".vertical-divider");
 
-/*** Vertical sizing ***/
+//Vertical sizing
 resizerX.addEventListener("mousedown", (e) => {
   e.preventDefault();
   document.addEventListener("mousemove", onmousemove);
@@ -140,7 +145,7 @@ function onmouseup(e) {
 }
 
 
-/*** Vertical sizing ***/
+//Vertical sizing
 resizerY.addEventListener("mousedown", (e) => {
   e.preventDefault();
   document.addEventListener("mousemove", onmousemoveY);
@@ -194,7 +199,10 @@ function onmouseupY(e) {
   delete e._clientY;
 }
 
-/* Editor and tabs */
+/***********************************************************/
+/*                    Editor and tabs                      */
+/***********************************************************/
+
 //adding new editor tabs
 const addTab = document.querySelector(".ide__tabs__add")
 const tabsLeftContainer = document.querySelector(".ide__tabs__left")
@@ -202,6 +210,7 @@ let closeTabs = document.querySelectorAll(".close-tab")
 let tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
 let ideList = document.querySelectorAll(".editor")
 const ideContainer = document.querySelector(".ide__container")
+let editorList = []
 
 let i = 1
 let j = 1
@@ -210,13 +219,20 @@ createTab(i)
 createIde(i)
 
 //Function to create new tabs
-function createTab(tabNumber) {
+function createTab(tabNumber, exampleName) {
+
   const newTab = document.createElement("li")
   newTab.setAttribute("data-tab-id", tabNumber)
   newTab.setAttribute('id', 'tab');
 
   const tabContent = document.createElement("p")
-  tabContent.innerText = `Thing Description ${tabNumber}`
+  if(exampleName === undefined){
+    tabContent.innerText = `Thing Description ${tabNumber}`
+  }
+  else{
+    tabContent.innerText = exampleName
+    console.log(exampleName, ": ", tabNumber);
+  }
   tabContent.classList.add("content-tab")
   // tabContent.setAttribute("contenteditable", "false")
   const closeBtn = document.createElement("div")
@@ -238,38 +254,42 @@ function createTab(tabNumber) {
   newTab.classList.add("active")
 }
 
-function createIde(ideNumber){
+function createIde(ideNumber, exampleValue){
+  console.log(exampleValue);
+  let defaultValue
+  if(exampleValue === undefined){
+    defaultValue = {
+      "@context": "https://www.w3.org/2022/wot/td/v1.1",
+      "id": "urn:uuid:0804d572-cce8-422a-bb7c-4412fcd56f06",
+      "@type": "Thing",
+      "title": `My thing ${ideNumber}`,
+      "$title": "Basic TD Example",
+      "description": "Thing Description for a Lamp thing",
+      "$description": "This is an example of the most basic form of a td", 
+      "securityDefinitions": {
+          "basic_sc": {"scheme": "basic", "in": "header"}
+      },
+      "security": "basic_sc",
+      "properties": {},
+      "actions": {},
+      "events": {}
+    }
+  }
+  else{
+    defaultValue = exampleValue
+    console.log(exampleValue, ": ", ideNumber);
+  }
   const newIde = document.createElement("div")
   newIde.classList.add("editor")
   newIde.setAttribute('id', `editor${ideNumber}`);
   newIde.setAttribute("data-ide-id", ideNumber)
   ideContainer.appendChild(newIde)
 
-  require.config({ paths: { vs: '../monaco-editor/min/vs' } });
-  require(['vs/editor/editor.main'], function () {
 
+  require.config({ paths: { vs: '../monaco-editor/min/vs' } });
+  require(['vs/editor/editor.main'], function initializeEditor() {
     var editor = monaco.editor.create(document.getElementById(`editor${ideNumber}`), {
-      value: ['{',
-        '  "id": "urn:simple",',
-        '  "@context": "https://www.w3.org/2022/wot/td/v1.1",',
-        `  "title": "My Thing ${ideNumber}",`,
-        '  "description": "Empty thing description",',
-        '  "securityDefinitions": {',
-        '    "basic_sc": {',
-        '      "scheme": "basic",',
-        '      "in": "header"',
-        '    }',
-        '  },',
-        '  "security": [',
-        '    "basic_sc"',
-        '  ],',
-        '  "properties": {',
-        '  },',
-        '  "actions": {',
-        '  },',
-        '  "events": {',
-        '  }',
-        '}'].join('\n'),
+      value: JSON.stringify(defaultValue, null, 2),
       language: 'json',
       automaticLayout: true
     })
@@ -282,6 +302,8 @@ function createIde(ideNumber){
     editorForm.addEventListener("reset", (e) => {
       setFontSize(editor)
     })
+    editorList.push(editor)
+    findActiveIde()
   })
 
   ideList = document.querySelectorAll(".editor")
@@ -369,6 +391,8 @@ tabsLeftContainer.addEventListener("click", (e) => {
       }
     }
   }
+
+  findActiveIde()
 })
 
 tabsLeftContainer.addEventListener("dblclick", (e) => {
@@ -389,7 +413,10 @@ tabsLeftContainer.addEventListener("dblclick", (e) => {
 
 })
 
-/***  Setting menu ***/
+/***********************************************************/
+/*                      Setting menu                       */
+/***********************************************************/
+
 const editorForm = document.querySelector(".settings__editor")
 const themePicker = document.querySelector("#theme-picker")
 const fontSizeTxt = document.querySelector(".editor-font-size")
@@ -423,7 +450,9 @@ settingsBtn.addEventListener("click", () => {
   settingsMenu.classList.toggle("closed")
 })
 
-/* Themes picker and font picker functionality */
+/***********************************************************/
+/*      Themes picker and font picker functionality        */
+/***********************************************************/
 
 //Store the selected theme
 const storeTheme = function (theme) {
@@ -477,7 +506,9 @@ fontSizeSlider.addEventListener("input", () => {
   storeFontSize(fontSizeSlider.value)
 })
 
-/*** Examples menu functionality ***/
+/***********************************************************/
+/*               Examples menu functionality               */
+/***********************************************************/
 const closeExamples = document.querySelector(".examples-menu-container__close i")
 const examplesMenu = document.querySelector(".examples-menu")
 const examplesBtn = document.querySelector("#examples-btn")
@@ -725,9 +756,9 @@ async function createExample(folderName, rawPath){
   exampleBtns.classList.add("example__btn")
   exampleContent.appendChild(exampleBtns)
 
-  const exampleBtnClose = document.createElement('button')
-  exampleBtnClose.classList.add("example__btn--close")
-  exampleBtns.appendChild(exampleBtnClose)
+  const exampleBtnUse = document.createElement('button')
+  exampleBtnUse.classList.add("example__btn--use")
+  exampleBtns.appendChild(exampleBtnUse)
 
   const exampleBtnShow = document.createElement('button')
   exampleBtnShow.classList.add("example__btn--show")
@@ -741,20 +772,32 @@ async function createExample(folderName, rawPath){
   exampleTxtShow.innerText = "Show Snipet"
   exampleBtnShow.appendChild(exampleTxtShow)
 
-  const exampleIconClose = document.createElement('i')
-  exampleIconClose.classList.add("fa-solid", "fa-xmark")
-  exampleBtnClose.appendChild(exampleIconClose)
+  const exampleIconUse = document.createElement('i')
+  exampleIconUse.classList.add("fa-solid", "fa-file-pen")
+  exampleBtnUse.appendChild(exampleIconUse)
 
-  const exampleTxtClose = document.createElement('p')
-  exampleTxtClose.innerText = "Close"
-  exampleBtnClose.appendChild(exampleTxtClose)
+  const exampleTxtUse = document.createElement('p')
+  exampleTxtUse.innerText = "Use as Template"
+  exampleBtnUse.appendChild(exampleTxtUse)
 
-  exampleBtnClose.addEventListener('click', () => {
-    exampleBtnClose.parentElement.parentElement.parentElement.classList.remove("open")
+  exampleBtnUse.addEventListener('click', () => {
+    createTab(++i, data['$title'])
+    createIde(i, data)
+    examplesMenu.classList.add("closed")
+    // Clear all info inside the examples menu
+    while(tdExamplesContainer.children.length > 0){
+      tdExamplesContainer.firstElementChild.remove()
+    }
+    while(tmExamplesContainer.children.length > 0){
+      tmExamplesContainer.firstElementChild.remove()
+    }
+    findActiveIde()
   })
 }
 
-/**** Loader ****/
+/***********************************************************/
+/*                          Loader                         */
+/***********************************************************/
 const loader = document.querySelector(".loader-container")
 let stateCheck = setInterval(() => {
   if (document.readyState === 'complete') {
@@ -762,3 +805,77 @@ let stateCheck = setInterval(() => {
     loader.classList.add("hidden")
   }
 }, 100);
+
+/***********************************************************/
+/*           Validate and Console functionality            */
+/***********************************************************/
+const validateBtn = document.querySelector("#validate-btn")
+const visualizationOptions = document.querySelectorAll(".visualization input")
+const errorMessage = document.querySelector(".console__content #console-error")
+const eraseConsole = document.querySelector(".console__tabs .trash")
+const consoleContent = document.querySelector(".console__content")
+
+visualizationOptions.forEach(option => {
+  option.checked = false
+})
+
+validateBtn.addEventListener("click", () => {
+  visualizationOptions.forEach(option => {
+    option.disabled = false
+    if(option.id === "validation-view"){
+      option.checked = true
+    }
+  })
+  findActiveIde()
+})
+
+eraseConsole.addEventListener("click", () => {
+
+})
+
+function findActiveIde(){
+  errorMessage.classList.add("hidden")
+  for(let i = 0; i < errorMessage.children.length; i++){
+    errorMessage.children[i].remove()
+  }
+  editorList.forEach(editor => {
+    if(editor.db.classList.contains("active")){
+      try{
+        const editorContent = JSON.parse(editor.getValue())
+        if(editorContent["@type"] === "Thing"){
+          visualizationOptions.forEach(option => {
+            option.disabled = false
+          })
+        }else if(editorContent["@type"] === "tm:ThingModel"){
+          visualizationOptions.forEach(option => {
+            option.disabled = false
+            if(option.id === "defaults-view"){
+              option.disabled = true
+            }
+          })
+        }else{
+          visualizationOptions.forEach(option => {
+            option.disabled = true
+          })
+          errorMessage.classList.remove("hidden")
+          let errorTxt = document.createElement("p")
+          errorTxt.innerText = "Make sure to specified your file type with '@type' : 'Thing' or 'tm:ThingModel'"
+          errorMessage.append(errorTxt)
+        }
+      } catch (e) {
+        errorMessage.classList.remove("hidden")
+          let errorTxt = document.createElement("p")
+          errorTxt.innerText = "There was a problem while validating!\nMake sure there are no syntax errors in your file"
+          errorMessage.append(errorTxt)
+      }
+    }
+  })
+
+  // const hideMessage = setTimeout(() => {
+  //   errorMessage.classList.add("hidden")
+  //   for(let i = 0; i < errorMessage.children.length; i++){
+  //     errorMessage.children[i].remove()
+  //   }
+  //   clearTimeout(hideMessage)
+  // }, 10000)
+}

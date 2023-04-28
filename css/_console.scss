@@ -1,5 +1,8 @@
 /*** Console ***/
 .console {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     &__tabs {
         display: flex;
         flex-direction: row;
@@ -7,6 +10,7 @@
         justify-content: space-between;
         border-bottom: 2px solid var(--clr-primary-500);
         padding: 0 1rem;
+        height: fit-content;
 
         .trash {
             padding: 1rem;
@@ -83,9 +87,58 @@
             }
 
             input[type=radio]:disabled{
-                color: var(--clr-neutral-100);
+                color: var(--clr-neutral-200);
+                cursor: not-allowed;
             }
 
+        }
+    }
+    &__content{
+        position: relative;
+        height: 100%;
+        overflow: auto;
+        padding: 2rem;
+
+        .console-error{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: calc(100% - 4rem);
+            height: calc(100% - 4rem);
+            border-radius: 10px;
+            // background-color: var(--clr-neutral-200);
+            opacity: 1;
+            pointer-events: all;
+            transition: opacity 250ms var(--trans-bouncy);
+            display: grid;
+            place-items: center;
+
+            p{
+                font-weight: var(--fw-bold);
+                color: var(--clr-error-900);
+                text-align: center;
+                font-size: var(--fs-sub-header);
+            }
+
+            &.hidden{
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+
+        .console-view{
+            width: 100%;
+            height: 100%;
+            opacity: 1;
+            pointer-events: all;
+            
+            &.hidden{
+                opacity: 0;
+                pointer-events: none;
+                width: 0;
+                height: 0;
+            }
         }
     }
 }
