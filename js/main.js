@@ -335,7 +335,7 @@ tabsLeftContainer.addEventListener("click", (e) => {
       })
     }
   }
-  
+
   //Closing tabs only when the click event happens on the close icon of the tab
   if (selectedElement.className == "close-tab" && tabsLeft.length >= 1) {
     //If there is only one more tab and its closed create a completely new one
@@ -492,7 +492,7 @@ const searchInput = document.querySelector(".search-input")
 closeExamples.addEventListener("click", () => {
   examplesMenu.classList.add("closed")
 
-  //Clear all info inside the examples menu
+  // Clear all info inside the examples menu
   while(tdExamplesContainer.children.length > 0){
     tdExamplesContainer.firstElementChild.remove()
   }
@@ -522,7 +522,7 @@ function checkThingType(){
     tmExamplesContainer.classList.add("hidden")
     tdCategories.forEach(category => {
       const opt = document.createElement('option')
-      opt.value = category.fullName
+      opt.value = category.id
       opt.innerText = category.name
       categorySelect.appendChild(opt)
     })
@@ -533,7 +533,7 @@ function checkThingType(){
     tdExamplesContainer.classList.add("hidden")
     tmCategories.forEach(category => {
       const opt = document.createElement('option')
-      opt.value = category.fullName
+      opt.value = category.id
       opt.innerText = category.name
       categorySelect.appendChild(opt)
     })
@@ -553,23 +553,37 @@ categorySelect.addEventListener("change", () => {
 })
 
 //Listener when search input is used
-//TODO
 filterForm.addEventListener("submit", (e) => {
   e.preventDefault()
 
-  const categories = tdExamplesContainer.querySelectorAll(".examples-category")
-  for(let j = 0; j < categories.length; j++){
-    const examples = [...categories[j].children[1].children]
-    for(let i = 0; i < examples.length; i++){
-      if(examples[i].firstChild.childNodes[1].innerText.toLowerCase().includes(searchInput.value.toLowerCase())){
-        // examples[i].parentElement.parentElement.scrollIntoView({behavior: "smooth", block: "start"})
-        console.log(examples[i].parentElement.parentElement);
-        break
+  if(thingTypeSelect.value === "thing-description"){
+    const categories = tdExamplesContainer.querySelectorAll(".examples-category")
+    for(let j = 0; j < categories.length; j++){
+      const examples = [...categories[j].children[1].children]
+      for(let i = 0; i < examples.length; i++){
+        if((examples[i].firstChild.childNodes[1].innerText.toLowerCase()).includes(searchInput.value.toLowerCase())){
+          //direct to the first closest example
+          examples[i].parentElement.parentElement.scrollIntoView({behavior: "smooth", block: "start"})
+          //terminate loop
+          i = j = 99999
+        }
+      }
+    }
+  }else{
+    const categories = tmExamplesContainer.querySelectorAll(".examples-category")
+    for(let j = 0; j < categories.length; j++){
+      const examples = [...categories[j].children[1].children]
+      for(let i = 0; i < examples.length; i++){
+        if((examples[i].firstChild.childNodes[1].innerText.toLowerCase()).includes(searchInput.value.toLowerCase())){
+          //direct to the first closest example
+          examples[i].parentElement.parentElement.scrollIntoView({behavior: "smooth", block: "start"})
+          //terminate loop
+          i = j = 99999
+        }
       }
     }
   }
 })
-
 
 // Creating categories arrays and populating them with async call
 let tdCategories = []
@@ -579,51 +593,48 @@ getTMCategories()
 
 //function to get all the td examples categories from github repo
 async function getTDCategories(){
-  const res = await fetch('https://api.github.com/repos/thingweb/thingweb-playground/contents/examples/td?ref=master', {
-    headers: {Authorization: 'Bearer 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'}
-  })
+  const res = await fetch('../examples-paths.json')
   const data = await res.json()
-  data.forEach(category => {
-    const categoryId = category.name.split("-")[0]
-    const categoryName = (category.name.substring(category.name.indexOf("-") + 1)).replaceAll('-', ' ');
 
-    const newObject = {
+  const categories = Object.entries(data["td"])
+  categories.forEach(category => {
+    const categoryName = (category[0].substring(category[0].indexOf("-") + 1)).replaceAll('-', ' ')
+    const categoryId = category[0]
+
+    const newCategory = {
       name: categoryName,
-      id: categoryId,
-      fullName: category.name
+      id: categoryId
     }
-    tdCategories.push(newObject)
+
+    tdCategories.push(newCategory)
   })
-  tdCategories.sort((a, b) => a.id - b.id)
 }
 
 //function to get all the tm examples categories from github repo
 async function getTMCategories(){
-  const res = await fetch('https://api.github.com/repos/thingweb/thingweb-playground/contents/examples/tm?ref=master', {
-    headers: {Authorization: 'Bearer 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'}
-  })
+  const res = await fetch('../examples-paths.json')
   const data = await res.json()
-  data.forEach(category => {
-    const categoryId = category.name.split("-")[0]
-    const categoryName = (category.name.substring(category.name.indexOf("-") + 1)).replaceAll('-', ' ');
 
-    const newObject = {
+  const categories = Object.entries(data["tm"])
+  categories.forEach(category => {
+    const categoryName = (category[0].substring(category[0].indexOf("-") + 1)).replaceAll('-', ' ')
+    const categoryId = category[0]
+
+    const newCategory = {
       name: categoryName,
-      id: categoryId,
-      fullName: category.name
+      id: categoryId
     }
-    tmCategories.push(newObject)
+
+    tmCategories.push(newCategory)
   })
-  tmCategories.sort((a, b) => a.id - b.id)
 }
 
 function populateExamples(){
-
   tdCategories.forEach(category => {
     const categoryContainer = document.createElement('div')
     categoryContainer.classList.add("examples-category")
-    categoryContainer.setAttribute("data-category", category.fullName)
-    categoryContainer.setAttribute("id", category.fullName)
+    categoryContainer.setAttribute("data-category", category.id)
+    categoryContainer.setAttribute("id", category.id)
     tdExamplesContainer.appendChild(categoryContainer)
 
     const categoryTitle = document.createElement('div')
@@ -638,14 +649,14 @@ function populateExamples(){
     categoryContent.classList.add("examples-category__container")
     categoryContainer.appendChild(categoryContent)
 
-    getAllExamples(category.fullName, "td")
+    getAllExamples(category.id, "td")
   })
 
   tmCategories.forEach(category => {
     const categoryContainer = document.createElement('div')
     categoryContainer.classList.add("examples-category")
-    categoryContainer.setAttribute("data-category", category.fullName)
-    categoryContainer.setAttribute("id", category.fullName)
+    categoryContainer.setAttribute("data-category", category.id)
+    categoryContainer.setAttribute("id", category.id)
     tmExamplesContainer.appendChild(categoryContainer)
 
     const categoryTitle = document.createElement('div')
@@ -660,30 +671,21 @@ function populateExamples(){
     categoryContent.classList.add("examples-category__container")
     categoryContainer.appendChild(categoryContent)
 
-    getAllExamples(category.fullName, "tm")
+    getAllExamples(category.id, "tm")
   })
 }
 
-async function getAllExamples(name, type){
-  const res = await fetch(`https://api.github.com/repos/thingweb/thingweb-playground/contents/examples/${type}/${name}?ref=master`, {
-    headers: {Authorization: 'Bearer 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'}
-  })
+async function getAllExamples(categoryId, thingType){
+  const res = await fetch('../examples-paths.json')
   const data = await res.json()
-  //test data
-  // const data = [{name: "basic-td.td.jsonld"}, {name: "contentMedia-&-contentEncoding.td.jsonld"}, {name: "contentType.td.jsonld"}, {name: "resadme.txt"}]
-  // let examplesArray = []
-  data.forEach(file => {
-    let index = file.name.lastIndexOf('.')
-    let fileExt = file.name.substring(index + 1)
-    if(fileExt === "jsonld"){
-      // examplesArray.push(file.name)
-      createExample(name, file.name, type)
-    }
+  const examples = Object.entries(data[thingType][categoryId])
+  examples.forEach(example => {
+    createExample(categoryId, example[1]["path"])
   })
 }
 
-async function createExample(folderName, fileName, type){
-  const res = await fetch(`https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/${type}/${folderName}/${fileName}`)
+async function createExample(folderName, rawPath){
+  const res = await fetch(rawPath)
   const data = await res.json()
 
   //get category

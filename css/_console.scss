@@ -8,7 +8,7 @@
         border-bottom: 2px solid var(--clr-primary-500);
         padding: 0 1rem;
 
-        &__trash {
+        .trash {
             padding: 1rem;
 
             i {
@@ -21,31 +21,71 @@
                 }
             }
         }
-    }
 
-    ul {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-
-        li {
+        .visualization{
             height: 100%;
-            padding: 1rem;
-            display: grid;
-            place-items: center;
-            color: var(--clr-neutral-300);
-            transition: color 250ms ease;
-            font-weight: var(--fw-bold);
-
-            &.active {
-                color: var(--clr-neutral-900);
-            }
-
-            &:hover {
-                color: var(--clr-neutral-900);
+            display: flex;
+            align-items: center;
+            input[type=radio]{
+                appearance: none;
+                width: fit-content;
+                padding: .5rem 1rem;
+                background-color: var(--clr-neutral-50);
+                border-top-right-radius: 5px;
+                border-top-left-radius: 5px;
+                color: var(--clr-neutral-300);
+                font-family: var(--ff-primary);
+                font-size: var(--fs-p);
+                font-weight: var(--fw-bold);
                 cursor: pointer;
+                overflow: hidden;
+                transition: all 250ms ease-in-out;
+
+                &::before{
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                &:nth-child(1)::before{
+                    content: 'Validation';
+                }
+
+                &:nth-child(2)::before{
+                    content: 'OpenAPI';
+                }
+
+                &:nth-child(3)::before{
+                    content: 'AsyncAPI';
+                }
+
+                &:nth-child(4)::before{
+                    content: 'Defaults';
+                }
+
+                &:nth-child(5)::before{
+                    content: 'Linting';
+                }
+
+                &:nth-child(6)::before{
+                    content: 'Canonicalize';
+                }
+
+                &:nth-child(7)::before{
+                    content: 'Visualize';
+                }
             }
+
+            input[type=radio]:checked{
+                color: var(--clr-neutral-900);
+            }
+
+            input[type=radio]:disabled{
+                color: var(--clr-neutral-100);
+            }
+
         }
     }
 }

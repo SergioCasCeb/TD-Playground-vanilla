@@ -1,5 +1,15 @@
 {
   "dependencies": {
     "monaco-editor": "^0.36.1"
-  }
+  },
+  "name": "playground-vanilla",
+  "description": "Reacreation of the TD Playground using only vanilla code",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "examples": "node js/examples.js"
+  },
+  "author": "",
+  "license": "ISC"
 }

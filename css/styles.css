@@ -549,38 +549,73 @@ main .console {
   border-bottom: 2px solid var(--clr-primary-500);
   padding: 0 1rem;
 }
-.console__tabs__trash {
+.console__tabs .trash {
   padding: 1rem;
 }
-.console__tabs__trash i {
+.console__tabs .trash i {
   color: var(--clr-primary-500);
   transition: color 250ms ease;
 }
-.console__tabs__trash i:hover {
+.console__tabs .trash i:hover {
   color: var(--clr-primary-900);
   cursor: pointer;
 }
-.console ul {
+.console__tabs .visualization {
+  height: 100%;
   display: flex;
-  flex-direction: row;
+  align-items: center;
+}
+.console__tabs .visualization input[type=radio] {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  width: -moz-fit-content;
+  width: fit-content;
+  padding: 0.5rem 1rem;
+  background-color: var(--clr-neutral-50);
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  color: var(--clr-neutral-300);
+  font-family: var(--ff-primary);
+  font-size: var(--fs-p);
+  font-weight: var(--fw-bold);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 250ms ease-in-out;
+}
+.console__tabs .visualization input[type=radio]::before {
+  width: 100%;
+  height: 100%;
+  display: flex;
   align-items: center;
   justify-content: center;
 }
-.console ul li {
-  height: 100%;
-  padding: 1rem;
-  display: grid;
-  place-items: center;
-  color: var(--clr-neutral-300);
-  transition: color 250ms ease;
-  font-weight: var(--fw-bold);
+.console__tabs .visualization input[type=radio]:nth-child(1)::before {
+  content: "Validation";
 }
-.console ul li.active {
+.console__tabs .visualization input[type=radio]:nth-child(2)::before {
+  content: "OpenAPI";
+}
+.console__tabs .visualization input[type=radio]:nth-child(3)::before {
+  content: "AsyncAPI";
+}
+.console__tabs .visualization input[type=radio]:nth-child(4)::before {
+  content: "Defaults";
+}
+.console__tabs .visualization input[type=radio]:nth-child(5)::before {
+  content: "Linting";
+}
+.console__tabs .visualization input[type=radio]:nth-child(6)::before {
+  content: "Canonicalize";
+}
+.console__tabs .visualization input[type=radio]:nth-child(7)::before {
+  content: "Visualize";
+}
+.console__tabs .visualization input[type=radio]:checked {
   color: var(--clr-neutral-900);
 }
-.console ul li:hover {
-  color: var(--clr-neutral-900);
-  cursor: pointer;
+.console__tabs .visualization input[type=radio]:disabled {
+  color: var(--clr-neutral-100);
 }
 
 /** Additional menus **/
@@ -1004,7 +1039,7 @@ main .console {
 .examples-menu .examples-menu-container .examples-container__td .examples-category__container .example__description, .examples-menu .examples-menu-container .examples-container__tm .examples-category__container .example__description {
   height: 0;
   opacity: 0;
-  font-size: var(--fs-footer);
+  font-size: var(--fs-p);
   max-width: 50ch;
   overflow: auto;
   padding-right: 1rem;
