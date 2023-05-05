@@ -1,4 +1,4 @@
-var fs = require('fs');
+const fs = require('fs');
 const path = require('path');
 const initialPath = "C:\\Users\\sergh\\Documents\\GitHub\\Playground-vanilla\\examples";
 const rawFilePath = "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples"
@@ -38,7 +38,7 @@ files.forEach(file => {
     })
 })
 
-// console.log(examplesPaths.td)
+// console.log(examplesPaths)
 
 fs.writeFile("C:\\Users\\sergh\\Documents\\GitHub\\Playground-vanilla\\examples-paths.json", JSON.stringify(examplesPaths, null, 2), 'utf-8', (err) => {
     if(err){

@@ -1,4 +1,4 @@
-// import * as util from "./utils.js"
+import * as util from "./util.js"
 
 const textIcon = document.querySelectorAll(".text-icon");
 const closeSettings = document.querySelector(".settings__close i");
@@ -347,6 +347,8 @@ function findFileType(tabNumber){
 addTab.addEventListener("click", () => {
   createTab(++i)
   createIde(i)
+  jsonBtn.checked = true
+  convertJsonYaml()
 })
 
 //Getting the taget when clicking on the tabs container
@@ -389,6 +391,10 @@ tabsLeftContainer.addEventListener("click", (e) => {
         }
       })
     }
+
+    // jsonBtn.checked = true
+    // convertJsonYaml()
+    checkFileType()
   }
 
   //Closing tabs only when the click event happens on the close icon of the tab
@@ -892,6 +898,7 @@ async function createExample(folderName, rawPath){
   exampleBtnUse.addEventListener('click', () => {
     createTab(++i, data['$title'])
     createIde(i, data)
+    checkFileType()
     examplesMenu.classList.add("closed")
     // Clear all info inside the examples menu
     while(tdExamplesContainer.children.length > 1){
@@ -941,35 +948,40 @@ eraseConsole.addEventListener("click", () => {
 })
 
 
-// function findActiveIde(){
-//   errorMessage = document.querySelector(".console__content #console-error")
-//   errorMessage.classList.add("hidden")
-//   for(let i = 0; i < errorMessage.children.length; i++){
-//     errorMessage.children[i].remove()
-//   }
-//   editorList.forEach(editor => {
-//     if(editor.db.classList.contains("active")){
-      // try{
-      //   const editorContent = JSON.parse(editor.getValue())
-      //   if(editorContent["@type"] === "tm:ThingModel"){
-      //     visualizationOptions.forEach(option => {
-      //       option.disabled = false
-      //       if(option.id === "defaults-view"){
-      //         option.disabled = true
-      //       }
-      //     })
-      //   }
-      //   else{
-      //     visualizationOptions.forEach(option => {
-      //       option.disabled = false
-      //     })
-      //   }
-      // } catch (e) {
-      //   errorMessage.classList.remove("hidden")
-      //   let errorTxt = document.createElement("p")
-      //   errorTxt.innerText = "There was a problem while validating!\nMake sure there are no syntax errors in your file"
-      //   errorMessage.append(errorTxt)
-      // }
-//     }
-//   })
-// }
+const yamlBtn = document.querySelector("#file-type-yaml")
+const jsonBtn = document.querySelector("#file-type-json")
+jsonBtn.checked  = true
+
+yamlBtn.addEventListener("click", ()=> {
+  convertJsonYaml()
+})
+
+jsonBtn.addEventListener("click", ()=> {
+  convertJsonYaml()
+})
+
+function convertJsonYaml(){
+  editorList.forEach(editor => {
+
+    if(editor.db.classList.contains("active")){
+      util.generateTD(jsonBtn.checked === true ? "json" : "yaml", editor)
+    }
+  })
+}
+
+function checkFileType(){
+  editorList.forEach(editor => {
+    if(editor.db.classList.contains("active")){
+      console.log(editor.db.dataset.modeId);
+
+      if(editor.db.dataset.modeId === "json"){
+        jsonBtn.checked = true
+      }
+      else{
+        yamlBtn.checked = true
+      }
+    }
+  })
+}
+
+
