@@ -77,7 +77,7 @@ const themeData = {
 
 }
 //Monaco editor initialization
-require.config({ paths: { vs: '../node_modules/monaco-editor/min/vs' } });
+require.config({ paths: { vs: '../monaco-editor/min/vs' } });
 require(['vs/editor/editor.main'], function () {
 
   monaco.editor.defineTheme('monochrome', themeData);
@@ -289,7 +289,7 @@ function createIde(ideNumber, exampleValue){
   ideContainer.appendChild(newIde)
 
 
-  require.config({ paths: { vs: './monaco-editor/min/vs' } });
+  require.config({ paths: { vs: '../monaco-editor/min/vs' } });
   require(['vs/editor/editor.main'], function initializeEditor() {
     var editor = monaco.editor.create(document.getElementById(`editor${ideNumber}`), {
       value: JSON.stringify(defaultValue, null, 2),
