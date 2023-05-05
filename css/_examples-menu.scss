@@ -185,6 +185,13 @@
                             text-transform: capitalize;
                         }
                     }
+
+                    &__description{
+                        padding: 2rem 4rem;
+                        p{
+                            font-size: var(--fs-p);
+                        }
+                    }
     
                     &__container{
                         padding: 4rem;
@@ -307,6 +314,12 @@
                             }
     
                         }
+                    }
+
+                    &.hidden{
+                        height: 0;
+                        opacity: 0;
+                        transition: opacity 100ms ease-in-out 0s, height 0s ease-in-out 250ms;
                     }
                 }
     

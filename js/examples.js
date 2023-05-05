@@ -15,13 +15,22 @@ files.forEach(file => {
     categories.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
     // console.log(categories);
     categories.forEach(category => {
-        // console.log(category)
-        examplesPaths[file][category] = {}
+
         let examples = fs.readdirSync(initialPath+"/"+file+"/"+category)
+        
+        examplesPaths[file][category] = {
+            "description": "",
+            "examples": {}
+        }
         // console.log(examples)
         examples.forEach(example => {
+            if(path.extname(example) == ".txt"){
+                examplesPaths[file][category]["description"] = `${rawFilePath}/${file}/${category}/${example}`
+            }
+
             if(path.extname(example) == ".jsonld"){
-                examplesPaths[file][category][example] = {
+                // console.log(examplesPaths[file][category][example]);
+                examplesPaths[file][category]["examples"][example] = {
                     "path": `${rawFilePath}/${file}/${category}/${example}`
                 }
             }
@@ -29,7 +38,7 @@ files.forEach(file => {
     })
 })
 
-// console.log(examplesPaths)
+// console.log(examplesPaths.td)
 
 fs.writeFile("C:\\Users\\sergh\\Documents\\GitHub\\Playground-vanilla\\examples-paths.json", JSON.stringify(examplesPaths, null, 2), 'utf-8', (err) => {
     if(err){

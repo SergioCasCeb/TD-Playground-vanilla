@@ -1,3 +1,5 @@
+// import * as util from "./utils.js"
+
 const textIcon = document.querySelectorAll(".text-icon");
 const closeSettings = document.querySelector(".settings__close i");
 const settingsMenu = document.querySelector(".settings-menu");
@@ -75,7 +77,7 @@ const themeData = {
 
 }
 //Monaco editor initialization
-require.config({ paths: { vs: '../monaco-editor/min/vs' } });
+require.config({ paths: { vs: '../node_modules/monaco-editor/min/vs' } });
 require(['vs/editor/editor.main'], function () {
 
   monaco.editor.defineTheme('monochrome', themeData);
@@ -225,13 +227,15 @@ function createTab(tabNumber, exampleName) {
   newTab.setAttribute("data-tab-id", tabNumber)
   newTab.setAttribute('id', 'tab');
 
+  const tabIcon = document.createElement("p")
+  tabIcon.classList.add("tab-icon")
+
   const tabContent = document.createElement("p")
   if(exampleName === undefined){
     tabContent.innerText = `Thing Description ${tabNumber}`
   }
   else{
     tabContent.innerText = exampleName
-    console.log(exampleName, ": ", tabNumber);
   }
   tabContent.classList.add("content-tab")
   // tabContent.setAttribute("contenteditable", "false")
@@ -242,6 +246,7 @@ function createTab(tabNumber, exampleName) {
   closeIcon.classList.add("fa-solid", "fa-xmark")
 
   closeBtn.appendChild(closeIcon)
+  newTab.appendChild(tabIcon)
   newTab.appendChild(tabContent)
   newTab.appendChild(closeBtn)
 
@@ -255,7 +260,6 @@ function createTab(tabNumber, exampleName) {
 }
 
 function createIde(ideNumber, exampleValue){
-  console.log(exampleValue);
   let defaultValue
   if(exampleValue === undefined){
     defaultValue = {
@@ -277,7 +281,6 @@ function createIde(ideNumber, exampleValue){
   }
   else{
     defaultValue = exampleValue
-    console.log(exampleValue, ": ", ideNumber);
   }
   const newIde = document.createElement("div")
   newIde.classList.add("editor")
@@ -299,11 +302,11 @@ function createIde(ideNumber, exampleValue){
       setFontSize(editor)
     })
 
-    editorForm.addEventListener("reset", (e) => {
+    editorForm.addEventListener("reset", () => {
       setFontSize(editor)
     })
     editorList.push(editor)
-    findActiveIde()
+    findFileType(ideNumber)
   })
 
   ideList = document.querySelectorAll(".editor")
@@ -311,6 +314,33 @@ function createIde(ideNumber, exampleValue){
     ide.classList.remove("active")
   })
   newIde.classList.add("active")
+}
+
+function findFileType(tabNumber){
+  if(tabNumber === undefined){
+    editorList.forEach(editor => {
+      if(editor.db.classList.contains("active")){
+        const tabIcon = document.querySelector(`[data-tab-id="${editor.db.dataset.ideId}"] .tab-icon`)
+        const editorContent = JSON.parse(editor.getValue())
+        if(editorContent["@type"] === "tm:ThingModel"){
+          tabIcon.innerText = "TM"
+        }
+        else{
+          tabIcon.innerText = "TD"
+        }
+      }
+    })
+  }
+  else{
+    const tabIcon = document.querySelector(`[data-tab-id="${tabNumber}"] .tab-icon`)
+    const editorContent = JSON.parse(editorList[tabNumber - 1].getValue())
+    if(editorContent["@type"] === "tm:ThingModel"){
+      tabIcon.innerText = "TM"
+    }
+    else{
+      tabIcon.innerText = "TD"
+    }
+  }
 }
 
 //Create a new tab when clicking on the plus tab
@@ -322,6 +352,9 @@ addTab.addEventListener("click", () => {
 //Getting the taget when clicking on the tabs container
 tabsLeftContainer.addEventListener("click", (e) => {
   const selectedElement = e.target
+  visualizationOptions.forEach(option => {
+    option.checked = false
+  })
 
   //Add the active styling when tab clicked
   if (selectedElement.id == "tab" || selectedElement.parentElement.id == "tab") {
@@ -376,6 +409,7 @@ tabsLeftContainer.addEventListener("click", (e) => {
       createIde(i)
       tabsLeft[0].classList.add("active")
       ideList[0].classList.add("active")
+      findFileType(i)
     }
     else {
       if (selectedElement.parentElement.className == "active") {
@@ -391,8 +425,6 @@ tabsLeftContainer.addEventListener("click", (e) => {
       }
     }
   }
-
-  findActiveIde()
 })
 
 tabsLeftContainer.addEventListener("dblclick", (e) => {
@@ -518,25 +550,26 @@ const filterForm = document.querySelector('.examples-menu-container__filter')
 const tdExamplesContainer = document.querySelector(".examples-container__td")
 const tmExamplesContainer = document.querySelector(".examples-container__tm")
 const searchInput = document.querySelector(".search-input")
+const tdSearchResults = tdExamplesContainer.querySelector("#filtered-results")
+const tmSearchResults = tmExamplesContainer.querySelector("#filtered-results")
 
 //Close examples menu when clicking on x icon
 closeExamples.addEventListener("click", () => {
   examplesMenu.classList.add("closed")
 
   // Clear all info inside the examples menu
-  while(tdExamplesContainer.children.length > 0){
-    tdExamplesContainer.firstElementChild.remove()
+  while(tdExamplesContainer.children.length > 1){
+    tdExamplesContainer.lastElementChild.remove()
   }
 
-  while(tmExamplesContainer.children.length > 0){
-    tmExamplesContainer.firstElementChild.remove()
+  while(tmExamplesContainer.children.length > 1){
+    tmExamplesContainer.lastElementChild.remove()
   }
 })
 
 //Open examples menu when clicking on examples btn as well as giving a preset value to the dropdown
 examplesBtn.addEventListener("click", () => {
   examplesMenu.classList.remove("closed")
-  thingTypeSelect.value = "thing-description"
   checkThingType()
   populateExamples()
 })
@@ -587,32 +620,75 @@ categorySelect.addEventListener("change", () => {
 filterForm.addEventListener("submit", (e) => {
   e.preventDefault()
 
+  console.log(searchInput.value);
+
   if(thingTypeSelect.value === "thing-description"){
-    const categories = tdExamplesContainer.querySelectorAll(".examples-category")
-    for(let j = 0; j < categories.length; j++){
-      const examples = [...categories[j].children[1].children]
-      for(let i = 0; i < examples.length; i++){
-        if((examples[i].firstChild.childNodes[1].innerText.toLowerCase()).includes(searchInput.value.toLowerCase())){
-          //direct to the first closest example
-          examples[i].parentElement.parentElement.scrollIntoView({behavior: "smooth", block: "start"})
-          //terminate loop
-          i = j = 99999
-        }
-      }
+    console.log("hi");
+    const examplesContainer = tdSearchResults.querySelector(".examples-category__container")
+    while(examplesContainer.children.length > 0){
+      examplesContainer.firstElementChild.remove()
     }
-  }else{
-    const categories = tmExamplesContainer.querySelectorAll(".examples-category")
-    for(let j = 0; j < categories.length; j++){
-      const examples = [...categories[j].children[1].children]
-      for(let i = 0; i < examples.length; i++){
-        if((examples[i].firstChild.childNodes[1].innerText.toLowerCase()).includes(searchInput.value.toLowerCase())){
-          //direct to the first closest example
-          examples[i].parentElement.parentElement.scrollIntoView({behavior: "smooth", block: "start"})
-          //terminate loop
-          i = j = 99999
+    tdSearchResults.classList.remove("hidden")
+    tmSearchResults.classList.add("hidden")
+    const categories = tdExamplesContainer.querySelectorAll(".examples-category:not(:first-child)")
+    categories.forEach(category => {
+      const examples = [...category.children[2].children]
+      examples.forEach(example => {
+        console.log(example);
+        if((example.firstChild.childNodes[1].innerText.toLowerCase()).includes(searchInput.value.toLowerCase()) || (example.children[1].children[0].innerText.toLowerCase()).includes(searchInput.value.toLowerCase())){
+          let clonedElement = example.cloneNode(true)
+          clonedElement.children[0].addEventListener('click', () => {
+            clonedElement.classList.toggle("open")
+          })
+
+          clonedElement.querySelector(".example__btn--use").addEventListener('click', () => {
+            example.querySelector(".example__btn--use").click()
+            clonedElement.classList.toggle("open")
+          })
+          examplesContainer.appendChild(clonedElement)
         }
-      }
+        if(searchInput.value === ""){
+          while(examplesContainer.children.length > 0){
+            examplesContainer.firstElementChild.remove()
+          }
+          tdSearchResults.classList.add("hidden")
+        }
+      })
+    })
+  }
+
+  if(thingTypeSelect.value === "thing-model"){
+    const examplesContainer = tmSearchResults.querySelector(".examples-category__container")
+    while(examplesContainer.children.length > 0){
+      examplesContainer.firstElementChild.remove()
     }
+    tmSearchResults.classList.remove("hidden")
+    tdSearchResults.classList.add("hidden")
+    const categories = tmExamplesContainer.querySelectorAll(".examples-category:not(:first-child)")
+    categories.forEach(category => {
+      const examples = [...category.children[2].children]
+      examples.forEach(example => {
+        if((example.firstChild.childNodes[1].innerText.toLowerCase()).includes(searchInput.value.toLowerCase()) || (example.children[1].children[0].innerText.toLowerCase()).includes(searchInput.value.toLowerCase())){
+          let clonedElement = example.cloneNode(true)
+          clonedElement.children[0].addEventListener('click', () => {
+            clonedElement.classList.toggle("open")
+          })
+
+          clonedElement.querySelector(".example__btn--use").addEventListener('click', () => {
+            example.querySelector(".example__btn--use").click()
+            clonedElement.classList.toggle("open")
+          })
+          examplesContainer.appendChild(clonedElement)
+        }
+
+        if(searchInput.value === ""){
+          while(examplesContainer.children.length > 0){
+            examplesContainer.firstElementChild.remove()
+          }
+          tmSearchResults.classList.add("hidden")
+        }
+      })
+    })
   }
 })
 
@@ -626,16 +702,25 @@ getTMCategories()
 async function getTDCategories(){
   const res = await fetch('../examples-paths.json')
   const data = await res.json()
-
   const categories = Object.entries(data["td"])
+
   categories.forEach(category => {
-    const categoryName = (category[0].substring(category[0].indexOf("-") + 1)).replaceAll('-', ' ')
-    const categoryId = category[0]
 
     const newCategory = {
-      name: categoryName,
-      id: categoryId
+      name: "",
+      description: "",
+      id: ""
     }
+    const categoryName = (category[0].substring(category[0].indexOf("-") + 1)).replaceAll('-', ' ')
+    const categoryId = category[0]
+    fetch(category[1].description)
+      .then(response => response.text())
+      .then(textString => {
+        newCategory["description"] = textString
+      })
+
+    newCategory["name"] = categoryName
+    newCategory["id"] = categoryId
 
     tdCategories.push(newCategory)
   })
@@ -648,13 +733,21 @@ async function getTMCategories(){
 
   const categories = Object.entries(data["tm"])
   categories.forEach(category => {
+    const newCategory = {
+      name: "",
+      description: "",
+      id: ""
+    }
     const categoryName = (category[0].substring(category[0].indexOf("-") + 1)).replaceAll('-', ' ')
     const categoryId = category[0]
+    fetch(category[1].description)
+      .then(response => response.text())
+      .then(textString => {
+        newCategory["description"] = textString
+      })
 
-    const newCategory = {
-      name: categoryName,
-      id: categoryId
-    }
+    newCategory["name"] = categoryName
+    newCategory["id"] = categoryId
 
     tmCategories.push(newCategory)
   })
@@ -675,6 +768,14 @@ function populateExamples(){
     const title = document.createElement('h3')
     title.innerText = category.name
     categoryTitle.appendChild(title)
+
+    const categoryDescription = document.createElement('div')
+    categoryDescription.classList.add("examples-category__description")
+    categoryContainer.appendChild(categoryDescription)
+
+    const description = document.createElement('p')
+    description.innerText = category.description
+    categoryDescription.appendChild(description)
 
     const categoryContent = document.createElement('div')
     categoryContent.classList.add("examples-category__container")
@@ -698,6 +799,14 @@ function populateExamples(){
     title.innerText = category.name
     categoryTitle.appendChild(title)
 
+    const categoryDescription = document.createElement('div')
+    categoryDescription.classList.add("examples-category__description")
+    categoryContainer.appendChild(categoryDescription)
+
+    const description = document.createElement('p')
+    description.innerText = category.description
+    categoryDescription.appendChild(description)
+
     const categoryContent = document.createElement('div')
     categoryContent.classList.add("examples-category__container")
     categoryContainer.appendChild(categoryContent)
@@ -709,7 +818,7 @@ function populateExamples(){
 async function getAllExamples(categoryId, thingType){
   const res = await fetch('../examples-paths.json')
   const data = await res.json()
-  const examples = Object.entries(data[thingType][categoryId])
+  const examples = Object.entries(data[thingType][categoryId]["examples"])
   examples.forEach(example => {
     createExample(categoryId, example[1]["path"])
   })
@@ -785,13 +894,12 @@ async function createExample(folderName, rawPath){
     createIde(i, data)
     examplesMenu.classList.add("closed")
     // Clear all info inside the examples menu
-    while(tdExamplesContainer.children.length > 0){
-      tdExamplesContainer.firstElementChild.remove()
+    while(tdExamplesContainer.children.length > 1){
+      tdExamplesContainer.lastElementChild.remove()
     }
-    while(tmExamplesContainer.children.length > 0){
-      tmExamplesContainer.firstElementChild.remove()
+    while(tmExamplesContainer.children.length > 1){
+      tmExamplesContainer.lastElementChild.remove()
     }
-    findActiveIde()
   })
 }
 
@@ -811,7 +919,7 @@ let stateCheck = setInterval(() => {
 /***********************************************************/
 const validateBtn = document.querySelector("#validate-btn")
 const visualizationOptions = document.querySelectorAll(".visualization input")
-const errorMessage = document.querySelector(".console__content #console-error")
+let errorMessage = document.querySelector(".console__content #console-error")
 const eraseConsole = document.querySelector(".console__tabs .trash")
 const consoleContent = document.querySelector(".console__content")
 
@@ -820,62 +928,48 @@ visualizationOptions.forEach(option => {
 })
 
 validateBtn.addEventListener("click", () => {
+  findFileType()
   visualizationOptions.forEach(option => {
-    option.disabled = false
     if(option.id === "validation-view"){
       option.checked = true
     }
   })
-  findActiveIde()
 })
 
 eraseConsole.addEventListener("click", () => {
 
 })
 
-function findActiveIde(){
-  errorMessage.classList.add("hidden")
-  for(let i = 0; i < errorMessage.children.length; i++){
-    errorMessage.children[i].remove()
-  }
-  editorList.forEach(editor => {
-    if(editor.db.classList.contains("active")){
-      try{
-        const editorContent = JSON.parse(editor.getValue())
-        if(editorContent["@type"] === "Thing"){
-          visualizationOptions.forEach(option => {
-            option.disabled = false
-          })
-        }else if(editorContent["@type"] === "tm:ThingModel"){
-          visualizationOptions.forEach(option => {
-            option.disabled = false
-            if(option.id === "defaults-view"){
-              option.disabled = true
-            }
-          })
-        }else{
-          visualizationOptions.forEach(option => {
-            option.disabled = true
-          })
-          errorMessage.classList.remove("hidden")
-          let errorTxt = document.createElement("p")
-          errorTxt.innerText = "Make sure to specified your file type with '@type' : 'Thing' or 'tm:ThingModel'"
-          errorMessage.append(errorTxt)
-        }
-      } catch (e) {
-        errorMessage.classList.remove("hidden")
-          let errorTxt = document.createElement("p")
-          errorTxt.innerText = "There was a problem while validating!\nMake sure there are no syntax errors in your file"
-          errorMessage.append(errorTxt)
-      }
-    }
-  })
 
-  // const hideMessage = setTimeout(() => {
-  //   errorMessage.classList.add("hidden")
-  //   for(let i = 0; i < errorMessage.children.length; i++){
-  //     errorMessage.children[i].remove()
-  //   }
-  //   clearTimeout(hideMessage)
-  // }, 10000)
-}
+// function findActiveIde(){
+//   errorMessage = document.querySelector(".console__content #console-error")
+//   errorMessage.classList.add("hidden")
+//   for(let i = 0; i < errorMessage.children.length; i++){
+//     errorMessage.children[i].remove()
+//   }
+//   editorList.forEach(editor => {
+//     if(editor.db.classList.contains("active")){
+      // try{
+      //   const editorContent = JSON.parse(editor.getValue())
+      //   if(editorContent["@type"] === "tm:ThingModel"){
+      //     visualizationOptions.forEach(option => {
+      //       option.disabled = false
+      //       if(option.id === "defaults-view"){
+      //         option.disabled = true
+      //       }
+      //     })
+      //   }
+      //   else{
+      //     visualizationOptions.forEach(option => {
+      //       option.disabled = false
+      //     })
+      //   }
+      // } catch (e) {
+      //   errorMessage.classList.remove("hidden")
+      //   let errorTxt = document.createElement("p")
+      //   errorTxt.innerText = "There was a problem while validating!\nMake sure there are no syntax errors in your file"
+      //   errorMessage.append(errorTxt)
+      // }
+//     }
+//   })
+// }

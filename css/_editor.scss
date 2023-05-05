@@ -31,12 +31,6 @@
                 white-space: nowrap;
                 cursor: pointer;
 
-                //TODO remove or add code
-                // .file-type-icon{
-                //     width: 1.2rem;
-                //     margin-right: 1rem;
-                // }
-
                 span{
                     font-size: 1rem;
                     font-weight: bold;
@@ -76,6 +70,18 @@
             li:not(:last-child) {
                 position: relative;
                 padding-right: 3rem;
+
+                .tab-icon{
+                    font-size: 1rem;
+                    margin-right: 1rem;
+                    color: var(--clr-td-300);
+                }
+
+                &.active{
+                    .tab-icon{
+                        color: var(--clr-td-500);
+                    }
+                }
 
                 .close-tab {
                     position: absolute;
