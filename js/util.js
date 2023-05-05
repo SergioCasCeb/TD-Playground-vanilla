@@ -173,6 +173,7 @@ export function offerFileDownload(fileName, content, type) {
     })
 }
 
+//original version
 // export function generateTD(fileType){
 //     return new Promise( (res, rej) => {
 //         const tdToValidate = editor.getValue()

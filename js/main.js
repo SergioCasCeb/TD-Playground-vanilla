@@ -289,7 +289,7 @@ function createIde(ideNumber, exampleValue){
   ideContainer.appendChild(newIde)
 
 
-  require.config({ paths: { vs: '../monaco-editor/min/vs' } });
+  require.config({ paths: { vs: './monaco-editor/min/vs' } });
   require(['vs/editor/editor.main'], function initializeEditor() {
     var editor = monaco.editor.create(document.getElementById(`editor${ideNumber}`), {
       value: JSON.stringify(defaultValue, null, 2),
@@ -921,33 +921,13 @@ let stateCheck = setInterval(() => {
   }
 }, 100);
 
+
+
 /***********************************************************/
-/*           Validate and Console functionality            */
+/*                   Yaml functionality                    */
 /***********************************************************/
-const validateBtn = document.querySelector("#validate-btn")
-const visualizationOptions = document.querySelectorAll(".visualization input")
-let errorMessage = document.querySelector(".console__content #console-error")
-const eraseConsole = document.querySelector(".console__tabs .trash")
-const consoleContent = document.querySelector(".console__content")
 
-visualizationOptions.forEach(option => {
-  option.checked = false
-})
-
-validateBtn.addEventListener("click", () => {
-  findFileType()
-  visualizationOptions.forEach(option => {
-    if(option.id === "validation-view"){
-      option.checked = true
-    }
-  })
-})
-
-eraseConsole.addEventListener("click", () => {
-
-})
-
-
+/* Yaml functionality */
 const yamlBtn = document.querySelector("#file-type-yaml")
 const jsonBtn = document.querySelector("#file-type-json")
 jsonBtn.checked  = true
@@ -983,5 +963,54 @@ function checkFileType(){
     }
   })
 }
+
+/***********************************************************/
+/*     Validate, Console, visualization functionality      */
+/***********************************************************/
+const validateBtn = document.querySelector("#validate-btn")
+let errorMessage = document.querySelector(".console__content #console-error")
+const eraseConsole = document.querySelector(".console__tabs .trash")
+const consoleContent = document.querySelector(".console__content")
+const visualizationOptions = document.querySelectorAll(".visualization__option")
+const visualizationContainers = document.querySelectorAll(".console-view")
+
+visualizationOptions.forEach(option => {
+  option.checked = false
+})
+
+validateBtn.addEventListener("click", () => {
+  findFileType()
+  visualizationOptions.forEach(option => {
+    if(option.id === "validation-view"){
+      option.checked = true
+    }
+    visualizationContainers.forEach(container => {
+      container.classList.add("hidden")
+      if(container.id === "validation-view"){
+        container.classList.remove("hidden")
+      }
+    })
+  })
+})
+
+eraseConsole.addEventListener("click", () => {
+
+})
+
+
+/*** Visualization ***/
+
+
+visualizationOptions.forEach(option => {
+  option.addEventListener("click", () => {
+    visualizationContainers.forEach(container => {
+      container.classList.add("hidden")
+      if(option.id == container.id){
+        container.classList.remove("hidden")
+      }
+    })
+  })
+})
+/* OpenAPI Functionality */
 
 
