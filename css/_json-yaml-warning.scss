@@ -7,6 +7,10 @@
     background-color: var(--clr-shades-trans);
     display: grid;
     place-items: center;
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: all;
+    transition: all 500ms var(--trans-bouncy);
 
     &__container{
         background-color: var(--clr-neutral-50);
@@ -62,8 +66,7 @@
     }
 
     &.closed{
-        width: 0;
-        height: 0;
+        transform: scale(0);
         opacity: 0;
         pointer-events: none;
     }

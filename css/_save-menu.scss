@@ -7,6 +7,10 @@
     display: grid;
     place-items: center;
     background-color: var(--clr-shades-trans);
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: all;
+    transition: all 500ms var(--trans-bouncy);
 
     &__container{
         width: 50rem;
@@ -27,8 +31,10 @@
         }
 
         .save-menu-title{
-            h3{
+            p{
                 color: var(--clr-neutral-900);
+                font-weight: var(--fw-bold);
+                font-size: var(--fs-sub-header);
             }
             margin-bottom: 3rem;
         }
@@ -40,12 +46,16 @@
             & > *{
                 width: 100%;
                 height: 4rem;
-                border-radius: 5px;   
+                border-radius: 5px;  
+                font-family: var(--ff-primary);
+                font-size: var(--fs-p); 
             }
 
             &__url{
                 background-color: var(--clr-neutral-200);
                 margin-bottom: 1rem;
+                border: none;
+                padding: 1rem;
             }
 
             &__btn{
@@ -53,8 +63,6 @@
                 background-color: var(--clr-primary-500);
                 color: var(--clr-neutral-50);
                 cursor: pointer;
-                font-family: var(--ff-primary);
-                font-size: var(--fs-p);
                 font-weight: var(--fw-bold);
                 transition: background-color 250ms ease-in-out;
 
@@ -89,6 +97,15 @@
                 font-weight: var(--fw-bold);
                 transition: background-color 250ms ease-in-out;
 
+                &:disabled{
+                    background-color: var(--clr-primary-100);
+                    cursor: not-allowed;
+
+                    &:hover{
+                        background-color: var(--clr-primary-100);
+                    }
+                }
+
                 i{
                     margin-right: 1rem;
                 }
@@ -98,5 +115,11 @@
                 }
             }
         }
+    }
+
+    &.closed{
+        transform: scale(0);
+        opacity: 0;
+        pointer-events: none;
     }
 }

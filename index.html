@@ -280,26 +280,24 @@
             </div>
         </div>
 
-        <div class="save-menu">
+        <div class="save-menu closed">
             <div class="save-menu__container">
                 <div class="save-menu-close">
                     <i class="fa-solid fa-xmark"></i>
                 </div>
 
                 <div class="save-menu-title">
-                    <h3>Save or Share this TD/TM</h3>
+                    <p>Share this TD by creating a link or donwload it to your device!</p>
                 </div>
 
                 <div class="share-td">
-                    <div class="share-td__url">
-                        <p></p>
-                    </div>
-                    <button class="share-td__btn"><i class="fa-solid fa-link"></i>Share</button>
+                    <input type="text" id="share-url-input" class="share-td__url" placeholder="Click on share to get your link">
+                    <button class="share-td__btn" id="share-url-btn"><i class="fa-solid fa-link"></i>Share</button>
                 </div>
 
                 <div class="save-td">
-                    <button class="save-td__download"><i class="fa-solid fa-file-arrow-down"></i>Download</button>
-                    <button class="save-td__save-as"><i class="fa-solid fa-folder-open"></i>Save as</button>
+                    <button class="save-td__download" id="download-btn"><i class="fa-solid fa-file-arrow-down"></i>Download</button>
+                    <button class="save-td__save-as" id="save-as-btn" disabled><i class="fa-solid fa-folder-open"></i>Save as</button>
                 </div>
 
             </div>

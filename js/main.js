@@ -1,4 +1,6 @@
 import * as util from "./util.js"
+import * as jVis from "./jsonld-vis.js"
+import * as vVis from "./vega-vis.js"
 
 const textIcon = document.querySelectorAll(".text-icon");
 const closeSettings = document.querySelector(".settings__close i");
@@ -78,10 +80,30 @@ const themeData = {
 }
 //Monaco editor initialization
 require.config({ paths: { vs: '../node_modules/monaco-editor/min/vs' } });
-require(['vs/editor/editor.main'], function () {
+require(['vs/editor/editor.main'],async function () {
 
   monaco.editor.defineTheme('monochrome', themeData);
   document.onload = setTheme()
+
+  // const tdSchema = await (await fetch('./node_modules/@thing-description-playground/core/td-schema.json')).json();
+	// const tmSchema = await (await fetch('./node_modules/@thing-description-playground/core/tm-schema.json')).json();
+
+	// // Configure JSON language support with schemas and schema associations
+	// monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+	// 	validate: true,
+	// 	schemas: [
+	// 		{
+	// 			fileMatch: [models[0].uri.toString()],
+	// 			schema: tdSchema,
+	// 			uri: 'file:///td-schema.json'
+	// 		},
+	// 		{
+	// 			fileMatch: [models[1].uri.toString()],
+	// 			schema: tmSchema,
+	// 			uri: 'file:///tm-schema.json'
+	// 		}
+	// 	]
+	// });
 });
 
 /***********************************************************/
@@ -260,28 +282,39 @@ function createTab(tabNumber, exampleName) {
 }
 
 function createIde(ideNumber, exampleValue){
+  const url = util.getEditorValue(window.location.hash.substring(1));
+  // console.log(urlValue);
   let defaultValue = {}
-  if(exampleValue === undefined){
-    defaultValue = {
-      "@context": "https://www.w3.org/2022/wot/td/v1.1",
-      "id": "urn:uuid:0804d572-cce8-422a-bb7c-4412fcd56f06",
-      "@type": "Thing",
-      "title": `My thing ${ideNumber}`,
-      "$title": "Basic TD Example",
-      "description": "Thing Description for a Lamp thing",
-      "$description": "This is an example of the most basic form of a td", 
-      "securityDefinitions": {
-          "basic_sc": {"scheme": "basic", "in": "header"}
-      },
-      "security": "basic_sc",
-      "properties": {},
-      "actions": {},
-      "events": {}
+
+  if(url === ""){
+    if(exampleValue === undefined){
+      defaultValue = {
+        "@context": "https://www.w3.org/2022/wot/td/v1.1",
+        "id": "urn:uuid:0804d572-cce8-422a-bb7c-4412fcd56f06",
+        "@type": "Thing",
+        "title": `My thing ${ideNumber}`,
+        "$title": "Basic TD Example",
+        "description": "Thing Description for a Lamp thing",
+        "$description": "This is an example of the most basic form of a td", 
+        "securityDefinitions": {
+            "basic_sc": {"scheme": "basic", "in": "header"}
+        },
+        "security": "basic_sc",
+        "properties": {},
+        "actions": {},
+        "events": {}
+      }
+    }
+    else{
+      defaultValue = exampleValue
     }
   }
   else{
-    defaultValue = exampleValue
+    const urlValue = JSON.parse(url.substring(6))
+    defaultValue = urlValue
   }
+  
+  
   const newIde = document.createElement("div")
   newIde.classList.add("editor")
   newIde.setAttribute('id', `editor${ideNumber}`)
@@ -311,10 +344,10 @@ function createIde(ideNumber, exampleValue){
     ide.db.classList.remove("active")
   })
   newIde.classList.add("active")
-  findFileType()
+  findThingType()
 }
 
-function findFileType(){
+function findThingType(){
   editorList.forEach(editor => {
     if(editor.db.classList.contains("active")){
       const tabIcon = document.querySelector(`[data-tab-id="${editor.db.dataset.ideId}"] .tab-icon`)
@@ -337,7 +370,6 @@ function findFileType(){
           tabIcon.innerText = "TD"
         }
       }
-      
     }
   })
   
@@ -391,7 +423,7 @@ tabsLeftContainer.addEventListener("click", (e) => {
         }
       })
     }
-    checkFileType()
+    findFileType()
   }
 
   //Closing tabs only when the click event happens on the close icon of the tab
@@ -412,7 +444,7 @@ tabsLeftContainer.addEventListener("click", (e) => {
       createIde(i)
       tabsLeft[0].classList.add("active")
       editorList[0].db.classList.add("active")
-      findFileType()
+      findThingType()
     }
     else {
       if (selectedElement.parentElement.className == "active") {
@@ -575,12 +607,12 @@ closeExamples.addEventListener("click", () => {
 //Open examples menu when clicking on examples btn as well as giving a preset value to the dropdown
 examplesBtn.addEventListener("click", () => {
   examplesMenu.classList.remove("closed")
-  checkThingType()
+  filterThingType()
   populateExamples()
 })
 
 //Function that checks if TD or TM and updated the category list
-function checkThingType(){
+function filterThingType(){
   const selectOptions = [...categorySelect.options]
   selectOptions.forEach(option => {
     option.remove()
@@ -611,7 +643,7 @@ function checkThingType(){
 
 //Fucntion to update the categories dropdown when thing type dropdown changes
 thingTypeSelect.addEventListener("change", () => {
-  checkThingType()
+  filterThingType()
   const element = document.getElementById(categorySelect.value);
   element.scrollIntoView({behavior: "smooth", block: "start"})
 })
@@ -628,7 +660,6 @@ filterForm.addEventListener("submit", (e) => {
   console.log(searchInput.value);
 
   if(thingTypeSelect.value === "thing-description"){
-    console.log("hi");
     const examplesContainer = tdSearchResults.querySelector(".examples-category__container")
     while(examplesContainer.children.length > 0){
       examplesContainer.firstElementChild.remove()
@@ -897,7 +928,7 @@ async function createExample(folderName, rawPath){
   exampleBtnUse.addEventListener('click', () => {
     createTab(++i, data['$title'])
     createIde(i, data)
-    checkFileType()
+    findFileType()
     examplesMenu.classList.add("closed")
     // Clear all info inside the examples menu
     while(tdExamplesContainer.children.length > 1){
@@ -973,7 +1004,7 @@ function convertJsonYaml(){
 }
 
 
-function checkFileType(){
+function findFileType(){
   editorList.forEach(editor => {
     if(editor.db.classList.contains("active")){
 
@@ -986,6 +1017,99 @@ function checkFileType(){
     }
   })
 }
+
+/***********************************************************/
+/*                 Save Menu functionality                 */
+/***********************************************************/
+const saveMenu = document.querySelector(".save-menu")
+const saveMenuBtn = document.querySelector("#save-btn")
+const closeSaveMenu = document.querySelector(".save-menu-close i")
+const shareUrlContainer =  document.querySelector("#share-url-input")
+const shareUrlBtn = document.querySelector("#share-url-btn")
+const downloadBtn = document.querySelector("#download-btn")
+const saveAsBtn = document.querySelector("#save-as-btn")
+
+shareUrlContainer.value = ""
+
+saveMenuBtn.addEventListener("click", () => {
+  saveMenu.classList.remove("closed")
+})
+
+closeSaveMenu.addEventListener("click", () => {
+  saveMenu.classList.add("closed")
+  shareUrlContainer.value = ""
+})
+
+shareUrlBtn.addEventListener("click", () => {
+  editorList.forEach(editor => {
+    if(editor.db.classList.contains("active")){
+      const formatType = editor.db.dataset.modeId
+      let editorContent = {}
+      let docType = ""
+      if(formatType === "json"){
+         editorContent = JSON.parse(editor.getValue())
+      }
+      else{
+        editorContent = JSON.parse(Validators.convertTDYamlToJson(editor.getValue()))
+      }
+      
+      if(editorContent["@type"] === "tm:ThingModel"){
+        docType = "tm"
+      }
+      else{
+        docType = "td"
+      }
+
+      console.log(docType);
+      console.log(formatType);
+      async function dosomehting(docType, formatType, editor){
+        const result = await util.save(docType, formatType, editor)
+        shareUrlContainer.value = result
+      }
+      dosomehting(docType, formatType, editor)
+    }
+  })
+})
+
+downloadBtn.addEventListener("click", () => {
+  editorList.forEach(editor => {
+    if(editor.db.classList.contains("active")){
+      let tabName = ''
+      tabsLeft.forEach(tab => {
+        if(tab.classList.contains("active")){
+          tabName = tab.children[1].innerText.replaceAll(' ', '-');
+        }
+      })
+      const contentType = `application/${editor.db.dataset.modeId};charset=utf-8;`
+
+      util.offerFileDownload(
+        `${tabName}.${editor.db.dataset.modeId}`,
+        editor.getValue(),
+        contentType
+      )
+    }
+  })
+  saveMenu.classList.add("closed")
+})
+
+// document.getElementById("editor-print-btn").addEventListener("click", () => {
+// 	const contentType = `application/${window.editorFormat};charset=utf-8;`
+
+// 	// Until TD/TM supports YAML
+// 	if (window.editor === window.tdEditor || window.editor === window.tmEditor) {
+// 		util.offerFileDownload(
+// 			`${window.activeEditorTab}.json`,
+// 			window.editor.getModel().getValue(),
+// 			contentType
+// 		)
+// 	} else {
+// 		util.offerFileDownload(
+// 			`${window.activeEditorTab}.${window.editorFormat}`,
+// 			window.editor.getModel().getValue(),
+// 			contentType
+// 		)
+// 	}
+// })
 
 /***********************************************************/
 /*     Validate, Console, visualization functionality      */
@@ -1002,7 +1126,7 @@ visualizationOptions.forEach(option => {
 })
 
 validateBtn.addEventListener("click", () => {
-  findFileType()
+  findThingType()
   visualizationOptions.forEach(option => {
     if(option.id === "validation-view"){
       option.checked = true

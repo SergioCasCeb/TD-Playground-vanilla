@@ -891,13 +891,16 @@ main .console {
 /**** Examples Menu ****/
 .examples-menu {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   padding: 2rem;
   background-color: var(--clr-neutral-100);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   opacity: 1;
+  transform: scale(1);
   pointer-events: all;
   transition: all 500ms var(--trans-bouncy);
 }
@@ -1192,6 +1195,10 @@ main .console {
   display: grid;
   place-items: center;
   background-color: var(--clr-shades-trans);
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: all;
+  transition: all 500ms var(--trans-bouncy);
 }
 .save-menu__container {
   width: 50rem;
@@ -1212,8 +1219,10 @@ main .console {
 .save-menu__container .save-menu-title {
   margin-bottom: 3rem;
 }
-.save-menu__container .save-menu-title h3 {
+.save-menu__container .save-menu-title p {
   color: var(--clr-neutral-900);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-sub-header);
 }
 .save-menu__container .share-td {
   width: 100%;
@@ -1223,18 +1232,20 @@ main .console {
   width: 100%;
   height: 4rem;
   border-radius: 5px;
+  font-family: var(--ff-primary);
+  font-size: var(--fs-p);
 }
 .save-menu__container .share-td__url {
   background-color: var(--clr-neutral-200);
   margin-bottom: 1rem;
+  border: none;
+  padding: 1rem;
 }
 .save-menu__container .share-td__btn {
   border: none;
   background-color: var(--clr-primary-500);
   color: var(--clr-neutral-50);
   cursor: pointer;
-  font-family: var(--ff-primary);
-  font-size: var(--fs-p);
   font-weight: var(--fw-bold);
   transition: background-color 250ms ease-in-out;
 }
@@ -1265,11 +1276,23 @@ main .console {
   font-weight: var(--fw-bold);
   transition: background-color 250ms ease-in-out;
 }
+.save-menu__container .save-td > *:disabled {
+  background-color: var(--clr-primary-100);
+  cursor: not-allowed;
+}
+.save-menu__container .save-td > *:disabled:hover {
+  background-color: var(--clr-primary-100);
+}
 .save-menu__container .save-td > * i {
   margin-right: 1rem;
 }
 .save-menu__container .save-td > *:hover {
   background-color: var(--clr-primary-700);
+}
+.save-menu.closed {
+  transform: scale(0);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .json-yaml-warning {
@@ -1281,6 +1304,10 @@ main .console {
   background-color: var(--clr-shades-trans);
   display: grid;
   place-items: center;
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: all;
+  transition: all 500ms var(--trans-bouncy);
 }
 .json-yaml-warning__container {
   background-color: var(--clr-neutral-50);
@@ -1328,8 +1355,7 @@ main .console {
   background-color: var(--clr-error-900);
 }
 .json-yaml-warning.closed {
-  width: 0;
-  height: 0;
+  transform: scale(0);
   opacity: 0;
   pointer-events: none;
 }/*# sourceMappingURL=styles.css.map */

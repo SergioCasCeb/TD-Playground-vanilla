@@ -584,8 +584,8 @@ export function clearLog() {
  * @param {string} docType "td" or "tm"
  * @param {string} format "json" or "yaml"
  */
-export async function save(docType, format) {
-    const value = window.editor.getValue();
+export async function save(docType, format, editor) {
+    const value = editor.getValue();
 
     if (!value) {
         alert(`No ${docType.toUpperCase()} provided`);
@@ -597,6 +597,7 @@ export async function save(docType, format) {
     window.location.hash = compressed;
     await navigator.clipboard.writeText(window.location.href);
     alert('The sharable URL is copied to your clipboard, if not - simply copy the address bar.');
+    return window.location.href
 }
 
 /**
