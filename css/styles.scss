@@ -40,14 +40,14 @@
     --fs-i: clamp(1.4rem, 1.279rem + 0.375vw, 2rem);
 
     /*line heights*/
-    --lh-h1: 4.5rem;
-    --lh-h2: 4rem;
-    --lh-h3: 3.5rem;
-    --lh-h4: 3rem;
-    --lh-sub-header: 2rem;
-    --lh-p: 1.5rem;
-    --lh-footer: 1.2rem;
-    --lh-i: 1.8rem;
+    --lh-h1: 5rem;
+    --lh-h2: 4.5rem;
+    --lh-h3: 4rem;
+    --lh-h4: 3.5rem;
+    --lh-sub-header: 3rem;
+    --lh-p: 2rem;
+    --lh-footer: 1.5rem;
+    --lh-i: 2.2rem;
 
     /*colors*/
     //neutrals
@@ -176,7 +176,7 @@ h5 {
 p,
 li {
     font-size: var(--fs-p);
-    line-height: var(--lh-p);
+    line-height: var(--lh-sub-header);
     font-weight: var(--fw-regular);
 }
 
@@ -216,6 +216,8 @@ header {
     color: var(--clr-neutral-50);
 
     .navbar {
+        min-height: 8vh;
+        min-height: 8svh;
         max-height: 8vh;
         max-height: 8svh;
         padding: 1rem 0;
@@ -393,3 +395,5 @@ main {
 /** Additional menus **/
 @import "settings-menu";
 @import "examples-menu";
+@import "save-menu";
+@import "json-yaml-warning";

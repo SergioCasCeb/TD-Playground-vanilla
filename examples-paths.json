@@ -103,41 +103,41 @@
         }
       }
     },
-    "6-security-schemes": {
-      "description": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemes/README.txt",
+    "6-security-schemas": {
+      "description": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemas/README.txt",
       "examples": {
         "apikey-in-body-simplified.td.jsonld": {
-          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemes/apikey-in-body-simplified.td.jsonld"
+          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemas/apikey-in-body-simplified.td.jsonld"
         },
         "apikey-in-body.td.jsonld": {
-          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemes/apikey-in-body.td.jsonld"
+          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemas/apikey-in-body.td.jsonld"
         },
         "apikey-security.td.jsonld": {
-          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemes/apikey-security.td.jsonld"
+          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemas/apikey-security.td.jsonld"
         },
         "basic-security.td.jsonld": {
-          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemes/basic-security.td.jsonld"
+          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemas/basic-security.td.jsonld"
         },
         "combo-apikey-security.td.jsonld": {
-          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemes/combo-apikey-security.td.jsonld"
+          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemas/combo-apikey-security.td.jsonld"
         },
         "combo-security-def-allOf.td.jsonld": {
-          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemes/combo-security-def-allOf.td.jsonld"
+          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemas/combo-security-def-allOf.td.jsonld"
         },
         "combo-security-def-oneOf.td.jsonld": {
-          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemes/combo-security-def-oneOf.td.jsonld"
+          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemas/combo-security-def-oneOf.td.jsonld"
         },
         "multiple-security-def.td.jsonld": {
-          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemes/multiple-security-def.td.jsonld"
+          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemas/multiple-security-def.td.jsonld"
         },
         "multiple-security-forms.td.jsonld": {
-          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemes/multiple-security-forms.td.jsonld"
+          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemas/multiple-security-forms.td.jsonld"
         },
         "noSec-security.td.jsonld": {
-          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemes/noSec-security.td.jsonld"
+          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemas/noSec-security.td.jsonld"
         },
         "OAuth2-scopes.td.jsonld": {
-          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemes/OAuth2-scopes.td.jsonld"
+          "path": "https://raw.githubusercontent.com/thingweb/thingweb-playground/master/examples/td/6-security-schemas/OAuth2-scopes.td.jsonld"
         }
       }
     },

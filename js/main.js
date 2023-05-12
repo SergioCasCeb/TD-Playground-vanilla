@@ -229,6 +229,7 @@ function createTab(tabNumber, exampleName) {
 
   const tabIcon = document.createElement("p")
   tabIcon.classList.add("tab-icon")
+  tabIcon.innerText = "TD"
 
   const tabContent = document.createElement("p")
   if(exampleName === undefined){
@@ -238,7 +239,6 @@ function createTab(tabNumber, exampleName) {
     tabContent.innerText = exampleName
   }
   tabContent.classList.add("content-tab")
-  // tabContent.setAttribute("contenteditable", "false")
   const closeBtn = document.createElement("div")
   closeBtn.classList.add("close-tab")
 
@@ -260,7 +260,7 @@ function createTab(tabNumber, exampleName) {
 }
 
 function createIde(ideNumber, exampleValue){
-  let defaultValue
+  let defaultValue = {}
   if(exampleValue === undefined){
     defaultValue = {
       "@context": "https://www.w3.org/2022/wot/td/v1.1",
@@ -284,12 +284,10 @@ function createIde(ideNumber, exampleValue){
   }
   const newIde = document.createElement("div")
   newIde.classList.add("editor")
-  newIde.setAttribute('id', `editor${ideNumber}`);
+  newIde.setAttribute('id', `editor${ideNumber}`)
   newIde.setAttribute("data-ide-id", ideNumber)
   ideContainer.appendChild(newIde)
 
-
-  require.config({ paths: { vs: '../node_modules/monaco-editor/min/vs' } });
   require(['vs/editor/editor.main'], function initializeEditor() {
     var editor = monaco.editor.create(document.getElementById(`editor${ideNumber}`), {
       value: JSON.stringify(defaultValue, null, 2),
@@ -306,21 +304,22 @@ function createIde(ideNumber, exampleValue){
       setFontSize(editor)
     })
     editorList.push(editor)
-    findFileType(ideNumber)
   })
+  
 
-  ideList = document.querySelectorAll(".editor")
-  ideList.forEach(ide => {
-    ide.classList.remove("active")
+  editorList.forEach(ide => {
+    ide.db.classList.remove("active")
   })
   newIde.classList.add("active")
+  findFileType()
 }
 
-function findFileType(tabNumber){
-  if(tabNumber === undefined){
-    editorList.forEach(editor => {
-      if(editor.db.classList.contains("active")){
-        const tabIcon = document.querySelector(`[data-tab-id="${editor.db.dataset.ideId}"] .tab-icon`)
+function findFileType(){
+  editorList.forEach(editor => {
+    if(editor.db.classList.contains("active")){
+      const tabIcon = document.querySelector(`[data-tab-id="${editor.db.dataset.ideId}"] .tab-icon`)
+      if(jsonBtn.checked === true)
+      {
         const editorContent = JSON.parse(editor.getValue())
         if(editorContent["@type"] === "tm:ThingModel"){
           tabIcon.innerText = "TM"
@@ -329,18 +328,19 @@ function findFileType(tabNumber){
           tabIcon.innerText = "TD"
         }
       }
-    })
-  }
-  else{
-    const tabIcon = document.querySelector(`[data-tab-id="${tabNumber}"] .tab-icon`)
-    const editorContent = JSON.parse(editorList[tabNumber - 1].getValue())
-    if(editorContent["@type"] === "tm:ThingModel"){
-      tabIcon.innerText = "TM"
+      else{
+        const editorContent = JSON.parse(Validators.convertTDYamlToJson(editor.getValue()))
+        if(editorContent["@type"] === "tm:ThingModel"){
+          tabIcon.innerText = "TM"
+        }
+        else{
+          tabIcon.innerText = "TD"
+        }
+      }
+      
     }
-    else{
-      tabIcon.innerText = "TD"
-    }
-  }
+  })
+  
 }
 
 //Create a new tab when clicking on the plus tab
@@ -365,10 +365,10 @@ tabsLeftContainer.addEventListener("click", (e) => {
       tab.classList.remove("active")
       tab.children[0].removeAttribute("contenteditable")
     })
-
-    ideList.forEach(ide => {
-      ide.classList.remove("active")
+    editorList.forEach(ide => {
+      ide.db.classList.remove("active")
     })
+    
 
     if (selectedElement.id == "tab") {
       selectedElement.classList.add("active")
@@ -378,22 +378,19 @@ tabsLeftContainer.addEventListener("click", (e) => {
     }
 
     if(selectedElement.dataset.tabId){
-      ideList.forEach(ide => {
-        if(selectedElement.dataset.tabId === ide.dataset.ideId){
-          ide.classList.add("active")
+      editorList.forEach(ide => {
+        if(selectedElement.dataset.tabId === ide.db.dataset.ideId){
+          ide.db.classList.add("active")
         }
       })
     }
     else{
-      ideList.forEach(ide => {
-        if(selectedElement.parentElement.dataset.tabId === ide.dataset.ideId){
-          ide.classList.add("active")
+      editorList.forEach(ide => {
+        if(selectedElement.parentElement.dataset.tabId === ide.db.dataset.ideId){
+          ide.db.classList.add("active")
         }
       })
     }
-
-    // jsonBtn.checked = true
-    // convertJsonYaml()
     checkFileType()
   }
 
@@ -401,33 +398,35 @@ tabsLeftContainer.addEventListener("click", (e) => {
   if (selectedElement.className == "close-tab" && tabsLeft.length >= 1) {
     //If there is only one more tab and its closed create a completely new one
     //If not the last one adjust the styling accordingly and update the amount of tabs
-    if(selectedElement.parentElement.dataset.tabId){
-      ideList.forEach(ide => {
-        if(selectedElement.parentElement.dataset.tabId === ide.dataset.ideId){
-          ide.remove()
-        }
-      })
-    }
     if (tabsLeft.length == 1) {
       i = 0
+      editorList.forEach(ide => {
+        if(selectedElement.parentElement.dataset.tabId === ide.db.dataset.ideId){
+          const index = editorList.indexOf(ide)
+          editorList.splice(index, 1)
+          ide.db.remove()
+        }
+      })
       selectedElement.parentElement.remove()
       createTab(++i)
       createIde(i)
       tabsLeft[0].classList.add("active")
-      ideList[0].classList.add("active")
-      findFileType(i)
+      editorList[0].db.classList.add("active")
+      findFileType()
     }
     else {
       if (selectedElement.parentElement.className == "active") {
+        editorList.forEach(ide => {
+          if(selectedElement.parentElement.dataset.tabId === ide.db.dataset.ideId){
+            const index = editorList.indexOf(ide)
+            editorList.splice(index, 1)
+            ide.db.remove() 
+          }
+        })
         selectedElement.parentElement.remove()
         tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
-        ideList = document.querySelectorAll(".editor")
         tabsLeft[0].classList.add("active")
-        ideList[0].classList.add("active")
-      }
-      else {
-        selectedElement.parentElement.remove()
-        tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
+        editorList[0].db.classList.add("active")
       }
     }
   }
@@ -930,9 +929,34 @@ let stateCheck = setInterval(() => {
 /* Yaml functionality */
 const yamlBtn = document.querySelector("#file-type-yaml")
 const jsonBtn = document.querySelector("#file-type-json")
-jsonBtn.checked  = true
+const yamlWarning = document.querySelector('.json-yaml-warning')
+const yamlConfirmBtn = document.querySelector("#yaml-confirm-btn")
+const yamlCancelBtn = document.querySelector("#yaml-cancel-btn")
+jsonBtn.checked = true
 
 yamlBtn.addEventListener("click", ()=> {
+  editorList.forEach(editor => {
+    if(editor.db.classList.contains("active")){
+      try{
+        JSON.parse(editor.getValue())
+      }
+      catch(err){
+        alert('TD is not a valid JSON');
+        jsonBtn.checked  = true
+        return
+      }
+      yamlWarning.classList.remove('closed')
+    }
+  })
+})
+
+yamlCancelBtn.addEventListener("click", () => {
+  yamlWarning.classList.add('closed')
+  jsonBtn.checked  = true
+})
+
+yamlConfirmBtn.addEventListener("click", () => {
+  yamlWarning.classList.add('closed')
   convertJsonYaml()
 })
 
@@ -942,17 +966,16 @@ jsonBtn.addEventListener("click", ()=> {
 
 function convertJsonYaml(){
   editorList.forEach(editor => {
-
     if(editor.db.classList.contains("active")){
       util.generateTD(jsonBtn.checked === true ? "json" : "yaml", editor)
     }
   })
 }
 
+
 function checkFileType(){
   editorList.forEach(editor => {
     if(editor.db.classList.contains("active")){
-      console.log(editor.db.dataset.modeId);
 
       if(editor.db.dataset.modeId === "json"){
         jsonBtn.checked = true
