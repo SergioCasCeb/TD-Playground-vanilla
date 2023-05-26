@@ -82,7 +82,7 @@
             align-items: center;
             justify-content: space-between;
             gap: 1rem;
-            margin-bottom: 3rem;
+            margin-bottom: .5rem;
 
             & > *{
                 flex: 1;
@@ -112,6 +112,25 @@
 
                 &:hover{
                     background-color: var(--clr-primary-700);
+                }
+            }
+        }
+
+        .save-warning{
+            margin-bottom: 3rem;
+            p{
+                color: var(--clr-neutral-300);
+                font-size: var(--fs-footer);
+                transition: color 150ms ease-in-out;
+
+                span{
+                    font-weight: var(--fw-bold);
+                }
+            }
+
+            &.active{
+                p{
+                    color: var(--clr-error-500);
                 }
             }
         }

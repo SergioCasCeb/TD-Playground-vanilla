@@ -1,125 +1,53 @@
+/**
+ * @file The `main.js` takes care of setting eventHandlers
+ * and connecting the functionality of `util.js` with
+ * the html document. Furthermore it contains the code
+ * to integrate the monaco editor
+ */
+
 import * as util from "./util.js"
 import * as jVis from "./jsonld-vis.js"
 import * as vVis from "./vega-vis.js"
-
-const textIcon = document.querySelectorAll(".text-icon");
-const closeSettings = document.querySelector(".settings__close i");
-const settingsMenu = document.querySelector(".settings-menu");
-const settingsBtn = document.querySelector("#settings-btn");
+import themeData from "./monochrome-theme.js"
 
 /***********************************************************/
-/*                     Monaco editor                       */
+/*                          Loader                         */
 /***********************************************************/
-//New monaco theme
-const themeData = {
-  "base": "vs-dark",
-  "inherit": true,
-  "rules": [
-    { 'token': '', 'foreground': 'ffffff', 'background': '549087' },
-    { 'token': 'invalid', 'foreground': 'f44747' },
-    { 'token': 'emphasis', 'fontStyle': 'italic' },
-    { 'token': 'strong', 'fontStyle': 'bold' },
-
-    { 'token': 'variable', 'foreground': 'ffbb00' },
-    { 'token': 'variable.predefined', 'foreground': 'ffbb00' },
-    { 'token': 'variable.parameter', 'foreground': 'ffbb00' },
-    { 'token': 'constant', 'foreground': 'ffbb00' },
-    { 'token': 'comment', 'foreground': '7b2d8a' },
-    { 'token': 'number', 'foreground': 'fffffe' },
-    { 'token': 'number.hex', 'foreground': 'fffffe' },
-    { 'token': 'regexp', 'foreground': 'be3989' },
-    { 'token': 'annotation', 'foreground': 'cc6666' },
-    { 'token': 'type', 'foreground': '00fcce' },
-
-    { token: 'delimiter', foreground: 'ffffff' },
-    { token: 'delimiter.html', foreground: '808080' },
-    { token: 'delimiter.xml', foreground: '808080' },
-
-    { token: 'tag', foreground: '7b2d8a' },
-    { token: 'tag.id.pug', foreground: '7b2d8a' },
-    { token: 'tag.class.pug', foreground: '7b2d8a' },
-    { token: 'meta.scss', foreground: 'A79873' },
-    { token: 'meta.tag', foreground: 'd1744f' },
-    { token: 'metatag', foreground: 'DD6A6F' },
-    { token: 'metatag.content.html', foreground: 'ffbb00' },
-    { token: 'metatag.html', foreground: 'ffbb00' },
-    { token: 'metatag.xml', foreground: 'ffbb00' },
-    { token: 'metatag.php', fontStyle: 'bold' },
-
-    { token: 'key', foreground: 'ffbb00' },
-    { token: 'string.key.json', foreground: 'ffbb00' },
-    { token: 'string.value.json', foreground: 'd06c44' },
-
-    { token: 'attribute.name', foreground: 'ffbb00' },
-    { token: 'attribute.value', foreground: 'd06c44' },
-    { token: 'attribute.value.number.css', foreground: '6ca74c' },
-    { token: 'attribute.value.unit.css', foreground: '6ca74c' },
-    { token: 'attribute.value.hex.css', foreground: 'D4D4D4' },
-
-    { token: 'string', foreground: 'd06c44' },
-    { token: 'string.sql', foreground: 'FF0000' },
-
-    { token: 'keyword', foreground: 'ffbb00' },
-    { token: 'keyword.flow', foreground: 'b33ea9' },
-    { token: 'keyword.json', foreground: 'd06c44' },
-    { token: 'keyword.flow.scss', foreground: 'ffbb00' },
-
-    { token: 'operator.scss', foreground: '909090' },
-    { token: 'operator.sql', foreground: 'ffbb00' },
-    { token: 'operator.swift', foreground: '909090' },
-    { token: 'predefined.sql', foreground: 'FF00FF' },
-  ],
-  "colors": {
-    "editor.foreground": "#FFFFFF",
-    "editor.background": "#549087",
-    "editor.selectionBackground": "#73597EE0",
-    "editor.lineHighlightBackground": "#067362",
-    "editorCursor.foreground": "#FFFFFF"
+//Show loader until the document is fully loaded
+const loader = document.querySelector(".loader-container")
+let stateCheck = setInterval(() => {
+  if (document.readyState === 'complete') {
+    clearInterval(stateCheck);
+    loader.classList.add("hidden")
   }
-
-}
-//Monaco editor initialization
-require.config({ paths: { vs: '../node_modules/monaco-editor/min/vs' } });
-require(['vs/editor/editor.main'],async function () {
-
-  monaco.editor.defineTheme('monochrome', themeData);
-  document.onload = setTheme()
-
-  // const tdSchema = await (await fetch('./node_modules/@thing-description-playground/core/td-schema.json')).json();
-	// const tmSchema = await (await fetch('./node_modules/@thing-description-playground/core/tm-schema.json')).json();
-
-	// // Configure JSON language support with schemas and schema associations
-	// monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-	// 	validate: true,
-	// 	schemas: [
-	// 		{
-	// 			fileMatch: [models[0].uri.toString()],
-	// 			schema: tdSchema,
-	// 			uri: 'file:///td-schema.json'
-	// 		},
-	// 		{
-	// 			fileMatch: [models[1].uri.toString()],
-	// 			schema: tmSchema,
-	// 			uri: 'file:///tm-schema.json'
-	// 		}
-	// 	]
-	// });
-});
+}, 100);
 
 /***********************************************************/
 /*                Resizing functionality                   */
 /***********************************************************/
+const textIcon = document.querySelectorAll(".text-icon");
 const resizerY = document.querySelector(".horizontal-divider");
 const resizerX = document.querySelector(".vertical-divider");
 
-//Vertical sizing
+/*** Horizontal sizing section ***/
+
+/**
+ * Mouse down event listener for the resizerX element which
+ * then runs the onmousemoveX and the onmouseupX functions
+ * @param {event} e - the mousedown event
+ */
 resizerX.addEventListener("mousedown", (e) => {
   e.preventDefault();
-  document.addEventListener("mousemove", onmousemove);
-  document.addEventListener("mouseup", onmouseup);
+  document.addEventListener("mousemove", onmousemoveX);
+  document.addEventListener("mouseup", onmouseupX);
 })
 
-function onmousemove(e) {
+/**
+ * Function to calculate the x position of the element to be
+ * dragged and resize the right and left elements
+ * @param {event} e - the mousemove event
+ */
+function onmousemoveX(e) {
   e.preventDefault();
   let clientX = e.clientX;
   const deltaX = clientX - (resizerX.clientX || clientX);
@@ -161,21 +89,37 @@ function onmousemove(e) {
   }
 }
 
-function onmouseup(e) {
+/**
+ * Function to remove the mousemove and mouseup events
+ * and stop the onmousemoveX and onmouseupX functions
+ * @param {event} e - the mouseup event
+ */
+function onmouseupX(e) {
   e.preventDefault();
-  document.removeEventListener("mousemove", onmousemove);
-  document.removeEventListener("mouseup", onmouseup);
+  document.removeEventListener("mousemove", onmousemoveX);
+  document.removeEventListener("mouseup", onmouseupX);
   delete e.clientX;
 }
 
 
-//Vertical sizing
+/*** Vertical sizing section ***/
+
+/**
+ * Mouse down event listener for the resizerY element which
+ * then runs the onmousemoveY and the onmouseupY functions
+ * @param {event} e - the mousedown event
+ */
 resizerY.addEventListener("mousedown", (e) => {
   e.preventDefault();
   document.addEventListener("mousemove", onmousemoveY);
   document.addEventListener("mouseup", onmouseupY);
 })
 
+/**
+ * Function to calculate the y position of the element to be
+ * dragged and resize the top and bottom elements
+ * @param {event} e - the mousemove event
+ */
 function onmousemoveY(e) {
   e.preventDefault();
   const clientY = e.clientY;
@@ -205,7 +149,7 @@ function onmousemoveY(e) {
     // UP
     if (deltaY < 0) {
       const h = Math.round(parseInt(getComputedStyle(t).height) + deltaY);
-      t.style.flex = `0 ${h < 155 ? 145 : h}px`;
+      t.style.flex = `0 ${h < 205 ? 195 : h}px`;
       b.style.flex = "1 0";
       if (h < 290) {
         textIcon.forEach(text => {
@@ -213,9 +157,14 @@ function onmousemoveY(e) {
         })
       }
     }
-
   }
 }
+
+/**
+ * Function to remove the mousemove and mouseup events
+ * and stop the onmousemoveY and onmouseupY functions
+ * @param {event} e - the mouseup event
+ */
 function onmouseupY(e) {
   e.preventDefault();
   document.removeEventListener("mousemove", onmousemoveY);
@@ -224,46 +173,71 @@ function onmouseupY(e) {
 }
 
 /***********************************************************/
+/*              Set New Theme Monaco editor                */
+/***********************************************************/
+
+/*** Monaco editor initialization ***/
+require.config({ paths: { vs: '../node_modules/monaco-editor/min/vs' } });
+require(['vs/editor/editor.main'],async function () {
+  //Get new monochrome theme from monochrome.js file
+  monaco.editor.defineTheme('monochrome', themeData);
+  document.onload = setTheme()
+});
+
+/***********************************************************/
 /*                    Editor and tabs                      */
 /***********************************************************/
 
-//adding new editor tabs
+//Decalre all necessary item from the DOM
 const addTab = document.querySelector(".ide__tabs__add")
 const tabsLeftContainer = document.querySelector(".ide__tabs__left")
-let closeTabs = document.querySelectorAll(".close-tab")
-let tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
-let ideList = document.querySelectorAll(".editor")
 const ideContainer = document.querySelector(".ide__container")
+let tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
+//Editor list array where all the generated editor will be added and referenced from
 let editorList = []
-
 let i = 1
-let j = 1
+// let j = 1
 
-createTab(i)
+//Initiate by generating the first editor and the respective tab
 createIde(i)
 
-//Function to create new tabs
-function createTab(tabNumber, exampleName) {
+/**
+ * Funtion which creates a tab for the respective editor
+ * and adds all other tab component such as the close button
+ * @param {Number} tabNumber - the "id" number for the tab
+ * @param {String} exampleName - the initial/default name shown in the tab
+ * @param {String} thingType - the type of the object TD or TM
+ */
+function createTab(tabNumber, exampleName, thingType) {
 
   const newTab = document.createElement("li")
+  //assign the tabNumber to the data-tab-id property
   newTab.setAttribute("data-tab-id", tabNumber)
   newTab.setAttribute('id', 'tab');
 
+  //Add thing type icon to the tab
   const tabIcon = document.createElement("p")
   tabIcon.classList.add("tab-icon")
-  tabIcon.innerText = "TD"
+  if(thingType === "TM"){
+    tabIcon.innerText = "TM"
+  }else{
+    tabIcon.innerText = "TD"
+  }
 
   const tabContent = document.createElement("p")
-  if(exampleName === undefined){
+  //If there is not specified example name give the default Thing Description + tabNumber
+  //Else, if the the user uses TD/TM example use the example name as the tab name
+  if(exampleName === undefined || exampleName === ""){
     tabContent.innerText = `Thing Description ${tabNumber}`
   }
   else{
     tabContent.innerText = exampleName
   }
   tabContent.classList.add("content-tab")
+  //Add the close btn element
   const closeBtn = document.createElement("div")
   closeBtn.classList.add("close-tab")
-
+  //Assign icon to the close btn
   const closeIcon = document.createElement("i")
   closeIcon.classList.add("fa-solid", "fa-xmark")
 
@@ -272,8 +246,12 @@ function createTab(tabNumber, exampleName) {
   newTab.appendChild(tabContent)
   newTab.appendChild(closeBtn)
 
+  //Insert the newly created list at the end of the tab container but before the add new tab button
   tabsLeftContainer.insertBefore(newTab, tabsLeftContainer.children[(tabsLeftContainer.children.length) - 1])
   tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
+
+  //Once the new tab is created remove "active class from all other tab" as well as the
+  //contenteditable attribute and give the class "active to the new tab"
   tabsLeft.forEach(tab => {
     tab.classList.remove("active")
     tab.children[0].removeAttribute("contenteditable")
@@ -281,21 +259,29 @@ function createTab(tabNumber, exampleName) {
   newTab.classList.add("active")
 }
 
+/**
+ * Function which takes care of creating the new editor from monaco
+ * and appends them to the DOM
+ * @param {Number} ideNumber - the id which is assign to the editor in order to connect to the respective tab
+ * @param {Object} exampleValue - the td or tm as a json object
+ */
 function createIde(ideNumber, exampleValue){
   const url = util.getEditorValue(window.location.hash.substring(1));
-  // console.log(urlValue);
   let defaultValue = {}
+  let language = "json"
 
+  //check if the user inputed a url wiht a td/tm
+  // else check if there is an exampleValue
   if(url === ""){
+    //If example value is empty utilize a preset of the most basic form of a td
+    //else utilize the td/tm from the exampleValue
     if(exampleValue === undefined){
       defaultValue = {
         "@context": "https://www.w3.org/2022/wot/td/v1.1",
         "id": "urn:uuid:0804d572-cce8-422a-bb7c-4412fcd56f06",
         "@type": "Thing",
         "title": `My thing ${ideNumber}`,
-        "$title": "Basic TD Example",
         "description": "Thing Description for a Lamp thing",
-        "$description": "This is an example of the most basic form of a td", 
         "securityDefinitions": {
             "basic_sc": {"scheme": "basic", "in": "header"}
         },
@@ -304,104 +290,196 @@ function createIde(ideNumber, exampleValue){
         "actions": {},
         "events": {}
       }
+      defaultValue = JSON.stringify(defaultValue, null, 2)
     }
     else{
-      defaultValue = exampleValue
+      defaultValue = JSON.stringify(exampleValue, null, 2)
     }
   }
   else{
-    const urlValue = JSON.parse(url.substring(6))
-    defaultValue = urlValue
+    if(url.substring(2,6) === "json"){
+      const urlValue = JSON.parse(url.substring(6))
+      defaultValue = JSON.stringify(urlValue, null, 2)
+    }
+    else{
+      defaultValue = url.substring(6)
+    }
+    language = url.substring(2,6)
+    //remove the hash from the url to allow new editor to be created
+    window.history.replaceState("", "", window.location.origin);
   }
-  
-  
+
+  //Create the container for the new editor and add all necessary attributes for styling and identifiers
   const newIde = document.createElement("div")
   newIde.classList.add("editor")
   newIde.setAttribute('id', `editor${ideNumber}`)
   newIde.setAttribute("data-ide-id", ideNumber)
   ideContainer.appendChild(newIde)
 
-  require(['vs/editor/editor.main'], function initializeEditor() {
+  /**
+   * Function to call the monaco script from the node modules and generate a new monaco editor
+   */
+  require(['vs/editor/editor.main'], async function() {
+    //assing the new monaco edito to the previously created container and assign the new value, language and other necessary properties
     var editor = monaco.editor.create(document.getElementById(`editor${ideNumber}`), {
-      value: JSON.stringify(defaultValue, null, 2),
-      language: 'json',
-      automaticLayout: true
+      // value: JSON.stringify(defaultValue, null, 2),
+      value: defaultValue, 
+      language: language,
+      automaticLayout: true,
+      formatOnPaste: true
     })
 
+    //Get the td/tm schemas
+    const tdSchema = await (await fetch('./node_modules/@thing-description-playground/core/td-schema.json')).json();
+	  const tmSchema = await (await fetch('./node_modules/@thing-description-playground/core/tm-schema.json')).json();
+
+    //Bind the font size slider from the settings to the editor and assign the specified font size
     document.onload = setFontSize(editor)
     fontSizeSlider.addEventListener("input", () => {
       setFontSize(editor)
     })
 
+    //Bind the reset button form the settings to the editor and assign the specied font size
     editorForm.addEventListener("reset", () => {
       setFontSize(editor)
     })
-    editorList.push(editor)
-  })
-  
 
-  editorList.forEach(ide => {
-    ide.db.classList.remove("active")
-  })
-  newIde.classList.add("active")
-  findThingType()
-}
-
-function findThingType(){
-  editorList.forEach(editor => {
-    if(editor.db.classList.contains("active")){
-      const tabIcon = document.querySelector(`[data-tab-id="${editor.db.dataset.ideId}"] .tab-icon`)
-      if(jsonBtn.checked === true)
-      {
-        const editorContent = JSON.parse(editor.getValue())
+    editor.getModel().onDidChangeContent(_ => {
+      //Only use the spell checker if file is json
+      if(jsonBtn.checked === true){
+        //TODO find out what this does and implement if necessary
+        // enableAPIConversionWithProtocol(editor.getModel().getValue())
+        let editorContent = JSON.parse(editor.getValue())
+        //Get if thing type and set the respective schema
         if(editorContent["@type"] === "tm:ThingModel"){
-          tabIcon.innerText = "TM"
+          //todo change the icon
+          // Configure JSON language support with schemas and schema associations
+          monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+            validate: true,
+            schemas: [
+              {
+                fileMatch: [editor.getModel().uri.toString()],
+                schema: tmSchema,
+                uri: 'file:///tm-schema.json'
+              }
+            ]
+          });
         }
         else{
-          tabIcon.innerText = "TD"
+          monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+            validate: true,
+            schemas: [
+              {
+                fileMatch: [editor.getModel().uri.toString()],
+                schema: tdSchema,
+                uri: 'file:///td-schema.json'
+              }
+            ]
+          });
         }
+        markTypos(editor.getModel());
+        //TODO add auto validate functionality
+        // util.validate('auto', autoValidate, docType);
+      }
+    });
+
+    //Add the new editor to the editor list array
+    editorList.push(editor)
+
+    if(url === ""){
+      jsonBtn.checked = true
+    }
+    else{
+      if(url.substring(2, 6) === "json"){
+        jsonBtn.checked = true
       }
       else{
-        const editorContent = JSON.parse(Validators.convertTDYamlToJson(editor.getValue()))
-        if(editorContent["@type"] === "tm:ThingModel"){
-          tabIcon.innerText = "TM"
-        }
-        else{
-          tabIcon.innerText = "TD"
-        }
+        yamlBtn.checked = true
       }
     }
   })
-  
-}
 
-//Create a new tab when clicking on the plus tab
-addTab.addEventListener("click", () => {
-  createTab(++i)
-  createIde(i)
-  jsonBtn.checked = true
-  convertJsonYaml()
-})
-
-//Getting the taget when clicking on the tabs container
-tabsLeftContainer.addEventListener("click", (e) => {
-  const selectedElement = e.target
-  visualizationOptions.forEach(option => {
-    option.checked = false
+  //remove the active class from previous editor
+  editorList.forEach(editor => {
+    editor.db.classList.remove("active")
   })
 
-  //Add the active styling when tab clicked
+  //Add active class to new editor
+  newIde.classList.add("active")
+
+  //Create the new tab depending if its a TM or TD
+  if(defaultValue["@type"] === "tm:ThingModel"){
+    createTab(ideNumber,defaultValue["$title"],"TM")
+  }
+  else{
+    createTab(ideNumber,defaultValue["$title"],"TD")
+  }
+}
+
+/**
+ * Marks the possible typos on the editor
+ * @param {object} model - The model that represents the loaded Monaco editor
+ */
+function markTypos(model) {
+	const markers = []
+
+	JsonSpellChecker.configure()
+	const typos = JsonSpellChecker.checkTypos(model.getValue())
+
+	typos.forEach(typo => {
+		markers.push({
+			message: typo.message,
+			severity: monaco.MarkerSeverity.Warning,
+			startLineNumber: typo.startLineNumber,
+			startColumn: typo.startColumn,
+			endLineNumber: typo.endLineNumber,
+			endColumn: typo.endColumn
+		})
+	})
+
+	monaco.editor.setModelMarkers(model, 'typo', markers)
+}
+
+/**
+ * Create a new editor and respective tab when clicking on the plus tab
+ */
+addTab.addEventListener("click", () => {
+  createIde(++i)
+  //Always initialized the new added thing as a TD
+  //Set the json btn to true
+  jsonBtn.checked = true
+})
+
+/**
+ * Getting and managing all event inside the tabs, such as closing and selecting each tab
+ * @param {event} e - click event
+ */
+tabsLeftContainer.addEventListener("click", (e) => {
+  //getting the initial target
+  const selectedElement = e.target
+
+  //closing all visualization tabs when changing tabs
+  visualizationOptions.forEach(option => {
+    option.checked = false
+    //todo properly close and delete everything in the visualizationt tabs
+  })
+
+  //Add the active styling when tab is clicked
   if (selectedElement.id == "tab" || selectedElement.parentElement.id == "tab") {
 
+    //Removing the active style from all tabs and contenteditable attribute
     tabsLeft.forEach(tab => {
       tab.classList.remove("active")
       tab.children[0].removeAttribute("contenteditable")
     })
+    //removing the active style from all editors
     editorList.forEach(ide => {
       ide.db.classList.remove("active")
     })
-    
 
+    //if the target element is the tab itself add the active class
+    //else if the target element is a child of the element add the active
+    //calss to the parent element
     if (selectedElement.id == "tab") {
       selectedElement.classList.add("active")
     }
@@ -409,6 +487,7 @@ tabsLeftContainer.addEventListener("click", (e) => {
       selectedElement.parentElement.classList.add("active")
     }
 
+    //Get the id of the element and setting the active style to the respective editor
     if(selectedElement.dataset.tabId){
       editorList.forEach(ide => {
         if(selectedElement.dataset.tabId === ide.db.dataset.ideId){
@@ -423,15 +502,31 @@ tabsLeftContainer.addEventListener("click", (e) => {
         }
       })
     }
+
     findFileType()
   }
 
   //Closing tabs only when the click event happens on the close icon of the tab
   if (selectedElement.className == "close-tab" && tabsLeft.length >= 1) {
-    //If there is only one more tab and its closed create a completely new one
+    //If there is only one tab and its closed create a completely editor and tab and restart the counter
     //If not the last one adjust the styling accordingly and update the amount of tabs
     if (tabsLeft.length == 1) {
       i = 0
+      editorList.forEach(ide => {
+        if(selectedElement.parentElement.dataset.tabId === ide.db.dataset.ideId){
+          //remove the editor from the editor list array and from the DOM
+          const index = editorList.indexOf(ide)
+          editorList.splice(index, 1)
+          ide.db.remove()
+        }
+      })
+      //remove tab
+      selectedElement.parentElement.remove()
+      //create new tab
+      createIde(++i)
+      // jsonBtn.checked = true
+    }
+    else {
       editorList.forEach(ide => {
         if(selectedElement.parentElement.dataset.tabId === ide.db.dataset.ideId){
           const index = editorList.indexOf(ide)
@@ -440,61 +535,70 @@ tabsLeftContainer.addEventListener("click", (e) => {
         }
       })
       selectedElement.parentElement.remove()
-      createTab(++i)
-      createIde(i)
+      tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
       tabsLeft[0].classList.add("active")
       editorList[0].db.classList.add("active")
-      findThingType()
-    }
-    else {
-      if (selectedElement.parentElement.className == "active") {
-        editorList.forEach(ide => {
-          if(selectedElement.parentElement.dataset.tabId === ide.db.dataset.ideId){
-            const index = editorList.indexOf(ide)
-            editorList.splice(index, 1)
-            ide.db.remove() 
-          }
-        })
-        selectedElement.parentElement.remove()
-        tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
-        tabsLeft[0].classList.add("active")
-        editorList[0].db.classList.add("active")
-      }
     }
   }
+  findFileType()
 })
 
+/**
+ * Event listener to allow the user to change the name of the name by double clicking
+ * @param {event} e - dblclick event
+ */
 tabsLeftContainer.addEventListener("dblclick", (e) => {
   const selectedElement = e.target
 
+  //If target has the calss of content-tab set the attribute contenteditable to true and focus the element
   if (selectedElement.className == "content-tab") {
     selectedElement.setAttribute("contenteditable", "true")
     selectedElement.focus()
 
+    //Once user presses enter disable the contenteditable attribute and stop focus
     selectedElement.addEventListener("keypress", (e) => {
+      e.preventDefault()
+      //If element is left empty add a default text
+      //else remove the content editable attribute and stop focus
       if(e.key === "Enter"){
-        e.preventDefault()
-        selectedElement.setAttribute("contenteditable", "false")
-        selectedElement.blur()
+        console.log(selectedElement);
+        if(selectedElement.innerText === "\n"){
+          selectedElement.innerText = "My Thing"
+        }
+        else{
+          selectedElement.setAttribute("contenteditable", "false")
+          selectedElement.blur()
+        }
       }
     })
   }
-
 })
 
 /***********************************************************/
-/*                      Setting menu                       */
+/*                     Settings menu                       */
 /***********************************************************/
-
+const closeSettings = document.querySelector(".settings__close i");
+const settingsMenu = document.querySelector(".settings-menu");
+const settingsBtn = document.querySelector("#settings-btn");
 const editorForm = document.querySelector(".settings__editor")
 const themePicker = document.querySelector("#theme-picker")
 const fontSizeTxt = document.querySelector(".editor-font-size")
 const fontSizeSlider = document.querySelector("#font-size")
+const autoValidateBtn = document.querySelector('#auto-validate')
+const resetLoggingBtn = document.querySelector('#reset-logging')
+const validateJSONLDBtn = document.querySelector('#validate-jsonld')
+const tmConformanceBtn = document.querySelector('#tm-conformance')
 
+//Bind the font size text to the slider element
 fontSizeTxt.innerText = fontSizeSlider.value
 
+/**
+ * Event listener for reseting all the settings and preferences values
+ * @param {event} e - reset event
+ */
 editorForm.addEventListener("reset", (e) => {
   e.preventDefault()
+  //reset preference values
   fontSizeSlider.value = 14
   fontSizeTxt.innerText = fontSizeSlider.value
   themePicker.value = "light-mode"
@@ -508,32 +612,45 @@ editorForm.addEventListener("reset", (e) => {
   }else{
     monaco.editor.setTheme('monochrome')
   }
+
+  //reset setting values
+  autoValidateBtn.checked = false
+  resetLoggingBtn.checked = true
+  validateJSONLDBtn.checked = true
+  tmConformanceBtn.checked = true
 })
 
-//settings menu
+/**
+ * Event listeners to open and close the settings menu
+ */
 closeSettings.addEventListener("click", () => {
   settingsMenu.classList.add("closed");
 })
-
 settingsBtn.addEventListener("click", () => {
   settingsMenu.classList.toggle("closed")
 })
 
-/***********************************************************/
-/*      Themes picker and font picker functionality        */
-/***********************************************************/
+/****** Themes picker and font picker functionality *******/
 
-//Store the selected theme
+/**
+ * Store the selected themek in the localStorage
+ * @param {String} theme - the name of the theme
+ */
 const storeTheme = function (theme) {
   localStorage.setItem("theme", theme)
 }
 
-//store the selected font size
+/**
+ * Store the selected font size in the localStorage
+ * @param {Number} fontSize - The number of the font size
+ */
 const storeFontSize = function (fontSize) {
   localStorage.setItem("fontSize", fontSize)
 }
 
-//Function which gets the value from the localStorage and sets the new theme
+/**
+ * Gets the theme value from the localStorage and sets the new theme
+ */
 const setTheme = function () {
   const activeTheme = localStorage.getItem("theme")
   themePicker.value = activeTheme
@@ -547,7 +664,11 @@ const setTheme = function () {
     monaco.editor.setTheme('monochrome')
   }
 }
-//Function which gets the value from the localStorage and sets the new font size
+
+/**
+ * Function which gets the value from the localStorage and sets the new font size
+ * @param {object} editor - the editor object which references the created monaco editor
+ */
 const setFontSize = function (editor) {
   const activeFontSize = localStorage.getItem("fontSize")
   editor.updateOptions({
@@ -555,7 +676,9 @@ const setFontSize = function (editor) {
   })
 }
 
-//Event listener to change the theme when the select is changed
+/**
+ * Event listener to change the theme when the theme select input is changed
+ */
 themePicker.addEventListener("change", () => {
   storeTheme(themePicker.value)
   document.documentElement.className = themePicker.value
@@ -569,14 +692,16 @@ themePicker.addEventListener("change", () => {
   }
 })
 
-//Event listener to change the font size when the font size input is changed
+/**
+ * Event listener to change the font size when the font size input is changed
+ */
 fontSizeSlider.addEventListener("input", () => {
   fontSizeTxt.innerText = fontSizeSlider.value
   storeFontSize(fontSizeSlider.value)
 })
 
 /***********************************************************/
-/*               Examples menu functionality               */
+/*                      Examples menu                      */
 /***********************************************************/
 const closeExamples = document.querySelector(".examples-menu-container__close i")
 const examplesMenu = document.querySelector(".examples-menu")
@@ -590,11 +715,13 @@ const searchInput = document.querySelector(".search-input")
 const tdSearchResults = tdExamplesContainer.querySelector("#filtered-results")
 const tmSearchResults = tmExamplesContainer.querySelector("#filtered-results")
 
-//Close examples menu when clicking on x icon
+/**
+ * Close examples menu when clicking on x icon and
+ * clearing all info inside the examples menu
+ */
 closeExamples.addEventListener("click", () => {
   examplesMenu.classList.add("closed")
 
-  // Clear all info inside the examples menu
   while(tdExamplesContainer.children.length > 1){
     tdExamplesContainer.lastElementChild.remove()
   }
@@ -604,15 +731,22 @@ closeExamples.addEventListener("click", () => {
   }
 })
 
-//Open examples menu when clicking on examples btn as well as giving a preset value to the dropdown
+/**
+ * Open examples menu when clicking on examples btn
+ * as well as populating the examples and filter selects
+ */
 examplesBtn.addEventListener("click", () => {
   examplesMenu.classList.remove("closed")
   filterThingType()
-  populateExamples()
+  populateCategories()
 })
 
-//Function that checks if TD or TM and updated the category list
+/**
+ * Checks the TD/TM select and updates the
+ * categories select respectively
+ */
 function filterThingType(){
+  //Clear all elments inside the categories select
   const selectOptions = [...categorySelect.options]
   selectOptions.forEach(option => {
     option.remove()
@@ -641,36 +775,48 @@ function filterThingType(){
   }
 }
 
-//Fucntion to update the categories dropdown when thing type dropdown changes
+/**
+ * Event listeners to check for changes and scroll to the respective category
+ */
 thingTypeSelect.addEventListener("change", () => {
   filterThingType()
   const element = document.getElementById(categorySelect.value);
   element.scrollIntoView({behavior: "smooth", block: "start"})
 })
-
 categorySelect.addEventListener("change", () => {
   const element = document.getElementById(categorySelect.value);
   element.scrollIntoView({behavior: "smooth", block: "start"})
 })
 
-//Listener when search input is used
+/**
+ * Listener when search input is used in the examples menu
+ * Gets all the examples that match the inputed text to the title and
+ * description of the examples, clones them and adds them to the
+ * search result category
+ * @param {event} e - submit event
+ */
 filterForm.addEventListener("submit", (e) => {
   e.preventDefault()
 
-  console.log(searchInput.value);
-
+  //Check if the thingType select is TD or TM
   if(thingTypeSelect.value === "thing-description"){
+    //Only ge the container for the searched results
     const examplesContainer = tdSearchResults.querySelector(".examples-category__container")
+    //Clean all the children component
     while(examplesContainer.children.length > 0){
       examplesContainer.firstElementChild.remove()
     }
+    //Show the td examples container and hide the tm examples container
     tdSearchResults.classList.remove("hidden")
     tmSearchResults.classList.add("hidden")
+
+    //Get all the categories and their title and description values
     const categories = tdExamplesContainer.querySelectorAll(".examples-category:not(:first-child)")
     categories.forEach(category => {
       const examples = [...category.children[2].children]
       examples.forEach(example => {
-        console.log(example);
+        //If value of the search input mataches the title or description
+        //clone it, append it and add the respective event listeners
         if((example.firstChild.childNodes[1].innerText.toLowerCase()).includes(searchInput.value.toLowerCase()) || (example.children[1].children[0].innerText.toLowerCase()).includes(searchInput.value.toLowerCase())){
           let clonedElement = example.cloneNode(true)
           clonedElement.children[0].addEventListener('click', () => {
@@ -683,6 +829,7 @@ filterForm.addEventListener("submit", (e) => {
           })
           examplesContainer.appendChild(clonedElement)
         }
+        //If input value is empty clear all the search results and hide the category
         if(searchInput.value === ""){
           while(examplesContainer.children.length > 0){
             examplesContainer.firstElementChild.remove()
@@ -692,8 +839,7 @@ filterForm.addEventListener("submit", (e) => {
       })
     })
   }
-
-  if(thingTypeSelect.value === "thing-model"){
+  else{
     const examplesContainer = tmSearchResults.querySelector(".examples-category__container")
     while(examplesContainer.children.length > 0){
       examplesContainer.firstElementChild.remove()
@@ -731,24 +877,27 @@ filterForm.addEventListener("submit", (e) => {
 // Creating categories arrays and populating them with async call
 let tdCategories = []
 let tmCategories = []
-getTDCategories()
-getTMCategories()
+getCategories()
 
-//function to get all the td examples categories from github repo
-async function getTDCategories(){
+/**
+ * Get all the td and tm names, description and id from the paths file
+ */
+async function getCategories(){
   const res = await fetch('../examples-paths.json')
   const data = await res.json()
-  const categories = Object.entries(data["td"])
 
-  categories.forEach(category => {
-
+  const categoriesTD = Object.entries(data["td"])
+  categoriesTD.forEach(category => {
     const newCategory = {
       name: "",
       description: "",
       id: ""
     }
+    //Removing all "-" from the category to use as the name
     const categoryName = (category[0].substring(category[0].indexOf("-") + 1)).replaceAll('-', ' ')
+    //Use the category as the id
     const categoryId = category[0]
+    //Utilze the path to the raw file to fetch the description
     fetch(category[1].description)
       .then(response => response.text())
       .then(textString => {
@@ -757,25 +906,22 @@ async function getTDCategories(){
 
     newCategory["name"] = categoryName
     newCategory["id"] = categoryId
-
+    //Push to the td categories array
     tdCategories.push(newCategory)
   })
-}
 
-//function to get all the tm examples categories from github repo
-async function getTMCategories(){
-  const res = await fetch('../examples-paths.json')
-  const data = await res.json()
-
-  const categories = Object.entries(data["tm"])
-  categories.forEach(category => {
+  const categoriesTM = Object.entries(data["tm"])
+  categoriesTM.forEach(category => {
     const newCategory = {
       name: "",
       description: "",
       id: ""
     }
+    //Removing all "-" from the category to use as the name
     const categoryName = (category[0].substring(category[0].indexOf("-") + 1)).replaceAll('-', ' ')
+    //use the category as the id
     const categoryId = category[0]
+    //Utilze the path to the raw file to fetch the description
     fetch(category[1].description)
       .then(response => response.text())
       .then(textString => {
@@ -784,12 +930,16 @@ async function getTMCategories(){
 
     newCategory["name"] = categoryName
     newCategory["id"] = categoryId
-
+    //Push to the td categories array
     tmCategories.push(newCategory)
   })
 }
 
-function populateExamples(){
+/**
+ * Creates all the html container elements for the TD and TM categories
+ * and initializes the getAllExamples function
+ */
+function populateCategories(){
   tdCategories.forEach(category => {
     const categoryContainer = document.createElement('div')
     categoryContainer.classList.add("examples-category")
@@ -851,6 +1001,12 @@ function populateExamples(){
   })
 }
 
+/**
+ * Utilizes the paths file to get all examples from github
+ * and calls the create example function with the id and raw path
+ * @param {string} categoryId - the name of the category
+ * @param {string} thingType - td or tm
+ */
 async function getAllExamples(categoryId, thingType){
   const res = await fetch('../examples-paths.json')
   const data = await res.json()
@@ -860,6 +1016,13 @@ async function getAllExamples(categoryId, thingType){
   })
 }
 
+/**
+ * Create all the html container element for the examples
+ * and utilizes the raw paths to fetch all the respective
+ * information
+ * @param { String } folderName - id of the category
+ * @param { String } rawPath - the raw path to the github example
+ */
 async function createExample(folderName, rawPath){
   const res = await fetch(rawPath)
   const data = await res.json()
@@ -883,6 +1046,7 @@ async function createExample(folderName, rawPath){
   exampleName.appendChild(exampleNameTitle)
   exampleContainer.appendChild(exampleName)
 
+  //add event listener to show example information and interaction btns
   exampleName.addEventListener('click', () => {
     exampleName.parentElement.classList.toggle("open")
   })
@@ -925,12 +1089,11 @@ async function createExample(folderName, rawPath){
   exampleTxtUse.innerText = "Use as Template"
   exampleBtnUse.appendChild(exampleTxtUse)
 
+  //Listenr to generate an editor with the examples information
   exampleBtnUse.addEventListener('click', () => {
-    createTab(++i, data['$title'])
-    createIde(i, data)
-    findFileType()
+    createIde(++i, data)
     examplesMenu.classList.add("closed")
-    // Clear all info inside the examples menu
+    // Clear all the categories content
     while(tdExamplesContainer.children.length > 1){
       tdExamplesContainer.lastElementChild.remove()
     }
@@ -941,23 +1104,9 @@ async function createExample(folderName, rawPath){
 }
 
 /***********************************************************/
-/*                          Loader                         */
-/***********************************************************/
-const loader = document.querySelector(".loader-container")
-let stateCheck = setInterval(() => {
-  if (document.readyState === 'complete') {
-    clearInterval(stateCheck);
-    loader.classList.add("hidden")
-  }
-}, 100);
-
-
-
-/***********************************************************/
 /*                   Yaml functionality                    */
 /***********************************************************/
 
-/* Yaml functionality */
 const yamlBtn = document.querySelector("#file-type-yaml")
 const jsonBtn = document.querySelector("#file-type-json")
 const yamlWarning = document.querySelector('.json-yaml-warning')
@@ -965,6 +1114,7 @@ const yamlConfirmBtn = document.querySelector("#yaml-confirm-btn")
 const yamlCancelBtn = document.querySelector("#yaml-cancel-btn")
 jsonBtn.checked = true
 
+//Click event to show the warning text before converting the td/tm
 yamlBtn.addEventListener("click", ()=> {
   editorList.forEach(editor => {
     if(editor.db.classList.contains("active")){
@@ -981,11 +1131,13 @@ yamlBtn.addEventListener("click", ()=> {
   })
 })
 
+//Close the warning without converting
 yamlCancelBtn.addEventListener("click", () => {
   yamlWarning.classList.add('closed')
   jsonBtn.checked  = true
 })
 
+//Confirm the json to yaml convertion
 yamlConfirmBtn.addEventListener("click", () => {
   yamlWarning.classList.add('closed')
   convertJsonYaml()
@@ -995,6 +1147,9 @@ jsonBtn.addEventListener("click", ()=> {
   convertJsonYaml()
 })
 
+/**
+ * Get the currently active editor and its value and convert to json or yaml
+ */
 function convertJsonYaml(){
   editorList.forEach(editor => {
     if(editor.db.classList.contains("active")){
@@ -1003,11 +1158,13 @@ function convertJsonYaml(){
   })
 }
 
-
+/**
+ * Find if active editor is json or yaml and change the json/yaml btns repectively
+ */
 function findFileType(){
   editorList.forEach(editor => {
     if(editor.db.classList.contains("active")){
-
+      console.log(editor.db);
       if(editor.db.dataset.modeId === "json"){
         jsonBtn.checked = true
       }
@@ -1028,18 +1185,26 @@ const shareUrlContainer =  document.querySelector("#share-url-input")
 const shareUrlBtn = document.querySelector("#share-url-btn")
 const downloadBtn = document.querySelector("#download-btn")
 const saveAsBtn = document.querySelector("#save-as-btn")
+const saveAsWarning = document.querySelector(".save-warning")
+let fileHandle;
 
 shareUrlContainer.value = ""
 
+//Open the save menu
 saveMenuBtn.addEventListener("click", () => {
   saveMenu.classList.remove("closed")
 })
 
+//Hide save menu
 closeSaveMenu.addEventListener("click", () => {
   saveMenu.classList.add("closed")
   shareUrlContainer.value = ""
 })
 
+/**
+ * Get the active editor, the format type, doc type and editor
+ * and call the saveAsURL function
+ */
 shareUrlBtn.addEventListener("click", () => {
   editorList.forEach(editor => {
     if(editor.db.classList.contains("active")){
@@ -1047,12 +1212,12 @@ shareUrlBtn.addEventListener("click", () => {
       let editorContent = {}
       let docType = ""
       if(formatType === "json"){
-         editorContent = JSON.parse(editor.getValue())
+        editorContent = JSON.parse(editor.getValue())
       }
       else{
         editorContent = JSON.parse(Validators.convertTDYamlToJson(editor.getValue()))
       }
-      
+
       if(editorContent["@type"] === "tm:ThingModel"){
         docType = "tm"
       }
@@ -1060,17 +1225,29 @@ shareUrlBtn.addEventListener("click", () => {
         docType = "td"
       }
 
-      console.log(docType);
-      console.log(formatType);
-      async function dosomehting(docType, formatType, editor){
-        const result = await util.save(docType, formatType, editor)
-        shareUrlContainer.value = result
-      }
-      dosomehting(docType, formatType, editor)
+      saveAsURL(docType, formatType, editor)
     }
   })
 })
 
+/**
+ * Get the doc type, format type and editor and calls the utils save function
+ * It then copies the link to the clipboard and the url container
+ * finally removes the hash from the url
+ * @param { String } docType - tm or td
+ * @param { String } format - json or yaml
+ * @param { Object } editor - the editor reference object
+ */
+async function saveAsURL(docType, format, editor){
+  const result = await util.save(docType, format, editor)
+  shareUrlContainer.value = result
+  window.history.replaceState("", "", window.location.origin);
+}
+
+/**
+ * Gets the active editor, editor content type and tab name,
+ * then it calls the utils offerFileDownload
+ */
 downloadBtn.addEventListener("click", () => {
   editorList.forEach(editor => {
     if(editor.db.classList.contains("active")){
@@ -1092,24 +1269,72 @@ downloadBtn.addEventListener("click", () => {
   saveMenu.classList.add("closed")
 })
 
-// document.getElementById("editor-print-btn").addEventListener("click", () => {
-// 	const contentType = `application/${window.editorFormat};charset=utf-8;`
+/* Save as btn functionality */
+saveAsBtn.addEventListener("click", () => {
+  saveAsFile()
+})
 
-// 	// Until TD/TM supports YAML
-// 	if (window.editor === window.tdEditor || window.editor === window.tmEditor) {
-// 		util.offerFileDownload(
-// 			`${window.activeEditorTab}.json`,
-// 			window.editor.getModel().getValue(),
-// 			contentType
-// 		)
-// 	} else {
-// 		util.offerFileDownload(
-// 			`${window.activeEditorTab}.${window.editorFormat}`,
-// 			window.editor.getModel().getValue(),
-// 			contentType
-// 		)
-// 	}
-// })
+/**
+ * Saves the td as a file in the file system
+ * @param {*} content 
+ */
+async function saveFile(content){
+  let stream = await fileHandle.createWritable()
+  await stream.write(content)
+  await stream.close()
+}
+
+/**
+ * Opens the file system allows the user to input a file 
+ * name and save it as json , jsonld or yaml
+ * This function only works for chrome, edge and oper as of now (26.05.2023)
+ */
+async function saveAsFile(){
+  try{
+    const opts = {
+      types: [
+        {
+          description: "json, jsonld or ymal files only",
+          accept: { "text/plain": [".jsonld", ".json"] },
+        },
+      ],
+      excludeAcceptAllOption: true,
+    };
+    fileHandle = await window.showSaveFilePicker(opts);
+    editorList.forEach(editor => {
+      if(editor.db.classList.contains("active")){
+        let editorContent = editor.getValue()
+        console.log(editorContent);
+        saveFile(editorContent)
+      }
+    })
+  }catch(err){
+    const errTxt = `${err}`
+    if(errTxt === "AbortError: The user aborted a request.")
+    {
+      console.log(err);
+    }
+    else{
+      saveAsWarning.classList.add("active")
+      setTimeout(() => {
+        saveAsWarning.classList.remove("active")
+      },1500)
+    }
+  }
+}
+
+//TODO IMPORT FROM FILES
+/** Experimental file manager fucntion*/
+// const visualizeView = document.querySelector("#visualize-view p")
+// async function getFile() {
+//   // Open file picker and destructure the result the first handle
+//   [fileHandle] = await window.showOpenFilePicker()
+//   let fileData = await fileHandle.getFile()
+//   let text = await fileData.text()
+//   visualizeView.innerText = text
+//   console.log(JSON.parse(text));
+// }
+
 
 /***********************************************************/
 /*     Validate, Console, visualization functionality      */
@@ -1126,7 +1351,6 @@ visualizationOptions.forEach(option => {
 })
 
 validateBtn.addEventListener("click", () => {
-  findThingType()
   visualizationOptions.forEach(option => {
     if(option.id === "validation-view"){
       option.checked = true
@@ -1146,8 +1370,6 @@ eraseConsole.addEventListener("click", () => {
 
 
 /*** Visualization ***/
-
-
 visualizationOptions.forEach(option => {
   option.addEventListener("click", () => {
     visualizationContainers.forEach(container => {
@@ -1156,8 +1378,89 @@ visualizationOptions.forEach(option => {
         container.classList.remove("hidden")
       }
     })
+
+    if(option.id !== "open-api-view"){
+      window.openApiEditor.getModel().setValue('')
+    }
+
+    if(option.id !== "async-api-view"){
+      window.asyncApiEditor.getModel().setValue('')
+    }
   })
 })
+
+
 /* OpenAPI Functionality */
 
+const openAPIContainer = document.querySelector('.open-api-container')
 
+visualizationOptions.forEach(option => {
+  option.addEventListener("click", () => {
+    if(option.id === "open-api-view"){
+      editorList.forEach(editor => {
+        if(editor.db.classList.contains("active")){
+          util.generateOAP(editor.db.dataset.modeId, editor)
+        }
+      })
+    } 
+  })
+})
+
+require(['vs/editor/editor.main'], async function() {
+  //assing the new monaco edito to the previously created container and assign the new value, language and other necessary properties
+  window.openApiEditor = monaco.editor.create(document.getElementById('open-api-container'), {
+    value: "", 
+    language: "json",
+    automaticLayout: true,
+		readOnly: true,
+		formatOnPaste: true
+  })
+
+  document.onload = setFontSize(window.openApiEditor)
+  fontSizeSlider.addEventListener("input", () => {
+    setFontSize(window.openApiEditor)
+  })
+
+  //Bind the reset button form the settings to the editor and assign the specied font size
+  editorForm.addEventListener("reset", () => {
+    setFontSize(window.openApiEditor)
+  })
+
+})
+
+
+/* asyncAPI Functionality */
+const asyncAPIContainer = document.querySelector('.async-api-container')
+
+visualizationOptions.forEach(option => {
+  option.addEventListener("click", () => {
+    if(option.id === "async-api-view"){
+      editorList.forEach(editor => {
+        if(editor.db.classList.contains("active")){
+          util.generateAAP(editor.db.dataset.modeId, editor)
+        }
+      })
+    } 
+  })
+})
+
+require(['vs/editor/editor.main'], async function() {
+  //assing the new monaco edito to the previously created container and assign the new value, language and other necessary properties
+  window.asyncApiEditor = monaco.editor.create(document.getElementById('async-api-container'), {
+    value: "", 
+    language: "json",
+    automaticLayout: true,
+		readOnly: true,
+		formatOnPaste: true
+  })
+
+  document.onload = setFontSize(window.asyncApiEditor)
+  fontSizeSlider.addEventListener("input", () => {
+    setFontSize(window.asyncApiEditor)
+  })
+
+  //Bind the reset button form the settings to the editor and assign the specied font size
+  editorForm.addEventListener("reset", () => {
+    setFontSize(window.asyncApiEditor)
+  })
+})

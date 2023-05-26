@@ -97,7 +97,7 @@
         position: relative;
         height: 100%;
         overflow: auto;
-        padding: 2rem;
+        padding: 1rem 0;
 
         .console-error{
             position: absolute;
@@ -132,12 +132,18 @@
             height: 100%;
             opacity: 1;
             pointer-events: all;
+            overflow: hidden;
             
             &.hidden{
                 opacity: 0;
                 pointer-events: none;
                 width: 0;
                 height: 0;
+            }
+
+            .open-api-container, .async-api-container{
+                min-height: 100%;
+                width: 100%;  
             }
         }
     }

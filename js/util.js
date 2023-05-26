@@ -188,6 +188,7 @@ export function offerFileDownload(fileName, content, type) {
     })
 }
 
+//TODO Remove if allowed
 //original version
 // export function generateTD(fileType){
 //     return new Promise( (res, rej) => {
@@ -219,12 +220,12 @@ export function offerFileDownload(fileName, content, type) {
  * the TD in the Editor
  * @param {"json"|"yaml"} fileType
  */
-export function generateOAP(fileType, tdToValidate, editor){
+export function generateOAP(fileType, editor){
     return new Promise( (res, rej) => {
-        // const tdToValidate = window.editorFormat === "json"
-        //      ? window.tdEditor.getValue()
-        //      : Validators.convertTDYamlToJson(window.tdEditor.getValue())
-
+        const tdToValidate = fileType === "json"
+             ? editor.getValue()
+             : Validators.convertTDYamlToJson(editor.getValue())
+             
         if (tdToValidate === "") {
             rej("No TD given to generate OpenAPI instance")
         }
@@ -232,11 +233,10 @@ export function generateOAP(fileType, tdToValidate, editor){
             rej("Wrong content type required: " + fileType)
         }
         else {
-            tdToOpenAPI(tdToValidate).then( openAPI => {
+            tdToOpenAPI(JSON.parse(tdToValidate)).then( openAPI => {
                 const content = fileType === "json" ? JSON.stringify(openAPI[fileType], undefined, 4) : openAPI[fileType]
-                // monaco.editor.setModelLanguage(window.openApiEditor.getModel(), fileType)
-                // editor.setValue(tdToValidate)
-                console.log(editor.setValue(content));
+                monaco.editor.setModelLanguage(window.openApiEditor.getModel(), fileType)
+                window.openApiEditor.getModel().setValue(content)
             }, err => {rej("OpenAPI generation problem: " + err)})
         }
     })
@@ -269,11 +269,11 @@ export function generateOAP(fileType, tdToValidate, editor){
  * the TD in the Editor
  * @param {"json"|"yaml"} fileType
  */
-export function generateAAP(fileType){
+export function generateAAP(fileType, editor){
     return new Promise( (res, rej) => {
-        const tdToValidate = window.editorFormat === "json"
-             ? window.tdEditor.getValue()
-             : Validators.convertTDYamlToJson(window.tdEditor.getValue())
+        const tdToValidate = fileType === "json"
+             ? editor.getValue()
+             : Validators.convertTDYamlToJson(editor.getValue())
 
         if (tdToValidate === "") {
             rej("No TD given to generate AsyncAPI instance")
@@ -290,6 +290,33 @@ export function generateAAP(fileType){
         }
     })
 }
+
+
+
+
+
+
+// export function generateAAP(fileType){
+//     return new Promise( (res, rej) => {
+//         const tdToValidate = window.editorFormat === "json"
+//              ? window.tdEditor.getValue()
+//              : Validators.convertTDYamlToJson(window.tdEditor.getValue())
+
+//         if (tdToValidate === "") {
+//             rej("No TD given to generate AsyncAPI instance")
+//         }
+//         else if (fileType !== "json" && fileType !== "yaml") {
+//             rej("Wrong content type required: " + fileType)
+//         }
+//         else {
+//             tdToAsyncAPI(JSON.parse(tdToValidate)).then( asyncAPI => {
+//                 const content = fileType === "json" ? JSON.stringify(asyncAPI[fileType], undefined, 4) : asyncAPI[fileType]
+//                 monaco.editor.setModelLanguage(window.asyncApiEditor.getModel(), fileType)
+//                 window.asyncApiEditor.getModel().setValue(content)
+//             }, err => {rej("AsyncAPI generation problem: " + err)})
+//         }
+//     })
+// }
 
 /**
  * applies adding unset default values
@@ -585,7 +612,7 @@ export function clearLog() {
  * @param {string} format "json" or "yaml"
  */
 export async function save(docType, format, editor) {
-    const value = editor.getValue();
+    const value = editor.getValue()
 
     if (!value) {
         alert(`No ${docType.toUpperCase()} provided`);

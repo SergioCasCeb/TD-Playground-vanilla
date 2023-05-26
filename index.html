@@ -121,7 +121,6 @@
                         </div>
                     </div>
                     <div class="ide__container">
-                        <!-- <div class="editor active" id="editor" data-ide-id="1"></div> -->
                     </div>
                 </div>
             </div>
@@ -149,12 +148,18 @@
                 </div>
                 <div class="console__content">
                     <div class="console-view hidden" id="validation-view"></div>
-                    <div class="console-view hidden" id="open-api-view"></div>
-                    <div class="console-view hidden" id="async-api-view"></div>
+                    <div class="console-view hidden" id="open-api-view">
+                        <div class="open-api-container" id="open-api-container"></div>
+                    </div>
+                    <div class="console-view hidden" id="async-api-view">
+                        <div class="async-api-container" id="async-api-container"></div>
+                    </div>
                     <div class="console-view hidden" id="defaults-view"></div>
                     <div class="console-view hidden" id="linting-view"></div>
                     <div class="console-view hidden" id="canonicalize-view"></div>
-                    <div class="console-view hidden" id="visualize-view"></div>
+                    <div class="console-view hidden" id="visualize-view">
+                        <p></p>
+                    </div>
                     <div class="console-view console-error hidden" id="console-error"></div>
                 </div>
             </div>
@@ -181,8 +186,8 @@
                             checked>
                     </div>
                     <div class="form-field">
-                        <label for="tm-confromance">Check TM Conf.: </label>
-                        <input type="checkbox" name="tm-confromance" id="tm-confromance" class="tm-confromance" checked>
+                        <label for="tm-conformance">Check TM Conf.: </label>
+                        <input type="checkbox" name="tm-conformance" id="tm-conformance" class="tm-conformance" checked>
                     </div>
                 </form>
                 <h3 class="settings__preferences">Preferences</h3>
@@ -297,7 +302,11 @@
 
                 <div class="save-td">
                     <button class="save-td__download" id="download-btn"><i class="fa-solid fa-file-arrow-down"></i>Download</button>
-                    <button class="save-td__save-as" id="save-as-btn" disabled><i class="fa-solid fa-folder-open"></i>Save as</button>
+                    <button class="save-td__save-as" id="save-as-btn"><i class="fa-solid fa-folder-open"></i>Save as</button>
+                </div>
+
+                <div class="save-warning">
+                    <p>*The <span>Save as</span> function is currently only available for <span>Chrome, Edge and Opera</span>*</p>
                 </div>
 
             </div>

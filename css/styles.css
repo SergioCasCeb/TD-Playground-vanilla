@@ -641,7 +641,7 @@ main .console {
   position: relative;
   height: 100%;
   overflow: auto;
-  padding: 2rem;
+  padding: 1rem 0;
 }
 .console__content .console-error {
   position: absolute;
@@ -672,12 +672,17 @@ main .console {
   height: 100%;
   opacity: 1;
   pointer-events: all;
+  overflow: hidden;
 }
 .console__content .console-view.hidden {
   opacity: 0;
   pointer-events: none;
   width: 0;
   height: 0;
+}
+.console__content .console-view .open-api-container, .console__content .console-view .async-api-container {
+  min-height: 100%;
+  width: 100%;
 }
 
 /** Additional menus **/
@@ -1261,7 +1266,7 @@ main .console {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 3rem;
+  margin-bottom: 0.5rem;
 }
 .save-menu__container .save-td > * {
   flex: 1;
@@ -1288,6 +1293,20 @@ main .console {
 }
 .save-menu__container .save-td > *:hover {
   background-color: var(--clr-primary-700);
+}
+.save-menu__container .save-warning {
+  margin-bottom: 3rem;
+}
+.save-menu__container .save-warning p {
+  color: var(--clr-neutral-300);
+  font-size: var(--fs-footer);
+  transition: color 150ms ease-in-out;
+}
+.save-menu__container .save-warning p span {
+  font-weight: var(--fw-bold);
+}
+.save-menu__container .save-warning.active p {
+  color: var(--clr-error-500);
 }
 .save-menu.closed {
   transform: scale(0);
