@@ -129,38 +129,49 @@
                 <div class="console__tabs">
                     <div class="visualization">
                         <input type="radio" name="visualization-option" id="validation-view"
-                            class="visualization__option">
+                            class="visualization__option validate-view-btn">
                         <input type="radio" name="visualization-option" id="open-api-view"
-                            class="visualization__option">
+                            class="visualization__option api-view-btn">
                         <input type="radio" name="visualization-option" id="async-api-view"
-                            class="visualization__option">
+                            class="visualization__option async-view-btn">
                         <input type="radio" name="visualization-option" id="defaults-view"
-                            class="visualization__option">
-                        <input type="radio" name="visualization-option" id="linting-view" class="visualization__option">
+                            class="visualization__option defaults-view-btn">
+                        <input type="radio" name="visualization-option" id="linting-view" 
+                            class="visualization__option linting-view-btn">
                         <input type="radio" name="visualization-option" id="canonicalize-view"
-                            class="visualization__option">
+                            class="visualization__option canonicalize-view-btn">
                         <input type="radio" name="visualization-option" id="visualize-view"
-                            class="visualization__option">
+                            class="visualization__option visualize-view-btn">
                     </div>
                     <div class="trash">
                         <i class="fa-solid fa-trash-can"></i>
                     </div>
                 </div>
                 <div class="console__content">
-                    <div class="console-view hidden" id="validation-view"></div>
+                    <div class="console-view hidden" id="validation-view">
+
+                    </div>
                     <div class="console-view hidden" id="open-api-view">
                         <div class="open-api-container" id="open-api-container"></div>
                     </div>
                     <div class="console-view hidden" id="async-api-view">
                         <div class="async-api-container" id="async-api-container"></div>
                     </div>
-                    <div class="console-view hidden" id="defaults-view"></div>
-                    <div class="console-view hidden" id="linting-view"></div>
-                    <div class="console-view hidden" id="canonicalize-view"></div>
-                    <div class="console-view hidden" id="visualize-view">
-                        <p></p>
+                    <div class="console-view hidden" id="defaults-view">
+
                     </div>
-                    <div class="console-view console-error hidden" id="console-error"></div>
+                    <div class="console-view hidden" id="linting-view">
+
+                    </div>
+                    <div class="console-view hidden" id="canonicalize-view">
+
+                    </div>
+                    <div class="console-view hidden" id="visualize-view">
+
+                    </div>
+                    <div class="console-view console-error hidden" id="console-error">
+                        <p class="console-error__txt"></p>
+                    </div>
                 </div>
             </div>
         </div>

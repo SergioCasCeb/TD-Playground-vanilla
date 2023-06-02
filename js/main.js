@@ -177,7 +177,8 @@ function onmouseupY(e) {
 /***********************************************************/
 
 /*** Monaco editor initialization ***/
-require.config({ paths: { vs: '../node_modules/monaco-editor/min/vs' } });
+// require.config({ paths: { vs: '../node_modules/monaco-editor/min/vs' } });
+require.config({ paths: { vs: '../monaco-editor/min/vs' } });
 require(['vs/editor/editor.main'],async function () {
   //Get new monochrome theme from monochrome.js file
   monaco.editor.defineTheme('monochrome', themeData);
@@ -293,6 +294,8 @@ function createIde(ideNumber, exampleValue){
       defaultValue = JSON.stringify(defaultValue, null, 2)
     }
     else{
+      delete exampleValue["$title"]
+      delete exampleValue["$description"]
       defaultValue = JSON.stringify(exampleValue, null, 2)
     }
   }
@@ -345,41 +348,48 @@ function createIde(ideNumber, exampleValue){
     })
 
     editor.getModel().onDidChangeContent(_ => {
-      //Only use the spell checker if file is json
-      if(jsonBtn.checked === true){
-        //TODO find out what this does and implement if necessary
-        // enableAPIConversionWithProtocol(editor.getModel().getValue())
-        let editorContent = JSON.parse(editor.getValue())
-        //Get if thing type and set the respective schema
-        if(editorContent["@type"] === "tm:ThingModel"){
-          //todo change the icon
-          // Configure JSON language support with schemas and schema associations
-          monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-            validate: true,
-            schemas: [
-              {
-                fileMatch: [editor.getModel().uri.toString()],
-                schema: tmSchema,
-                uri: 'file:///tm-schema.json'
-              }
-            ]
-          });
+      try{
+        //Only use the spell checker if file is json
+        if(jsonBtn.checked === true){
+          let editorContent = JSON.parse(editor.getValue())
+          let thingType = ""
+          //Get if thing type and set the respective schema
+          if(editorContent["@type"] === "tm:ThingModel"){
+            //Change thing icon
+            thingType = "TM"
+            // Configure JSON language support with schemas and schema associations
+            monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+              validate: true,
+              schemas: [
+                {
+                  fileMatch: [editor.getModel().uri.toString()],
+                  schema: tmSchema,
+                  uri: 'file:///tm-schema.json'
+                }
+              ]
+            });
+          }
+          else{
+            thingType = "TD"
+            monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+              validate: true,
+              schemas: [
+                {
+                  fileMatch: [editor.getModel().uri.toString()],
+                  schema: tdSchema,
+                  uri: 'file:///td-schema.json'
+                }
+              ]
+            });
+          }
+          markTypos(editor.getModel());
+          //TODO add auto validate functionality
+          // util.validate('auto', autoValidate, docType);
+
+          changeThingIcon(thingType)
         }
-        else{
-          monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-            validate: true,
-            schemas: [
-              {
-                fileMatch: [editor.getModel().uri.toString()],
-                schema: tdSchema,
-                uri: 'file:///td-schema.json'
-              }
-            ]
-          });
-        }
-        markTypos(editor.getModel());
-        //TODO add auto validate functionality
-        // util.validate('auto', autoValidate, docType);
+      }catch(err){
+        console.log("Not a proper JSON object");
       }
     });
 
@@ -406,13 +416,12 @@ function createIde(ideNumber, exampleValue){
 
   //Add active class to new editor
   newIde.classList.add("active")
-
   //Create the new tab depending if its a TM or TD
-  if(defaultValue["@type"] === "tm:ThingModel"){
-    createTab(ideNumber,defaultValue["$title"],"TM")
+  if(JSON.parse(defaultValue)["@type"] === "tm:ThingModel"){
+    createTab(ideNumber,JSON.parse(defaultValue)["$title"],"TM")
   }
   else{
-    createTab(ideNumber,defaultValue["$title"],"TD")
+    createTab(ideNumber,JSON.parse(defaultValue)["$title"],"TD")
   }
 }
 
@@ -441,6 +450,19 @@ function markTypos(model) {
 }
 
 /**
+ * Findst the current active tab and modifies the icon accordingly
+ * @param { string } thingType - TM or TD to modify the tab icon
+ */
+function changeThingIcon(thingType){
+  tabsLeft.forEach(tab => {
+    if(tab.classList.contains("active")){
+      tab.children[0].innerText = thingType
+    }
+  })
+}
+
+
+/**
  * Create a new editor and respective tab when clicking on the plus tab
  */
 addTab.addEventListener("click", () => {
@@ -458,11 +480,7 @@ tabsLeftContainer.addEventListener("click", (e) => {
   //getting the initial target
   const selectedElement = e.target
 
-  //closing all visualization tabs when changing tabs
-  visualizationOptions.forEach(option => {
-    option.checked = false
-    //todo properly close and delete everything in the visualizationt tabs
-  })
+  clearConsole()
 
   //Add the active styling when tab is clicked
   if (selectedElement.id == "tab" || selectedElement.parentElement.id == "tab") {
@@ -561,7 +579,6 @@ tabsLeftContainer.addEventListener("dblclick", (e) => {
       //If element is left empty add a default text
       //else remove the content editable attribute and stop focus
       if(e.key === "Enter"){
-        console.log(selectedElement);
         if(selectedElement.innerText === "\n"){
           selectedElement.innerText = "My Thing"
         }
@@ -1164,7 +1181,7 @@ function convertJsonYaml(){
 function findFileType(){
   editorList.forEach(editor => {
     if(editor.db.classList.contains("active")){
-      console.log(editor.db);
+      // console.log(editor.db);
       if(editor.db.dataset.modeId === "json"){
         jsonBtn.checked = true
       }
@@ -1206,28 +1223,38 @@ closeSaveMenu.addEventListener("click", () => {
  * and call the saveAsURL function
  */
 shareUrlBtn.addEventListener("click", () => {
-  editorList.forEach(editor => {
-    if(editor.db.classList.contains("active")){
-      const formatType = editor.db.dataset.modeId
-      let editorContent = {}
-      let docType = ""
-      if(formatType === "json"){
-        editorContent = JSON.parse(editor.getValue())
+  try{
+    editorList.forEach(editor => {
+      if(editor.db.classList.contains("active")){
+        const formatType = editor.db.dataset.modeId
+        let editorContent = {}
+        let docType = ""
+        if(formatType === "json"){
+          editorContent = JSON.parse(editor.getValue())
+        }
+        else{
+          editorContent = JSON.parse(Validators.convertTDYamlToJson(editor.getValue()))
+        }
+  
+        if(editorContent["@type"] === "tm:ThingModel"){
+          docType = "tm"
+        }
+        else{
+          docType = "td"
+        }
+  
+        saveAsURL(docType, formatType, editor)
       }
-      else{
-        editorContent = JSON.parse(Validators.convertTDYamlToJson(editor.getValue()))
-      }
-
-      if(editorContent["@type"] === "tm:ThingModel"){
-        docType = "tm"
-      }
-      else{
-        docType = "td"
-      }
-
-      saveAsURL(docType, formatType, editor)
-    }
-  })
+    })
+  }catch(err){
+    //if error show message
+    shareUrlContainer.value = "Invalid JSON Object"
+    shareUrlContainer.classList.add("error")
+    setTimeout(() => {
+      shareUrlContainer.value = ""
+      shareUrlContainer.classList.remove("error")
+    }, 1500)
+  }
 })
 
 /**
@@ -1304,7 +1331,7 @@ async function saveAsFile(){
     editorList.forEach(editor => {
       if(editor.db.classList.contains("active")){
         let editorContent = editor.getValue()
-        console.log(editorContent);
+        // console.log(editorContent);
         saveFile(editorContent)
       }
     })
@@ -1340,36 +1367,51 @@ async function saveAsFile(){
 /*     Validate, Console, visualization functionality      */
 /***********************************************************/
 const validateBtn = document.querySelector("#validate-btn")
-let errorMessage = document.querySelector(".console__content #console-error")
+const errorContainer = document.querySelector(".console__content #console-error")
+const errorTxt = document.querySelector(".console-error__txt")
 const eraseConsole = document.querySelector(".console__tabs .trash")
 const consoleContent = document.querySelector(".console__content")
 const visualizationOptions = document.querySelectorAll(".visualization__option")
 const visualizationContainers = document.querySelectorAll(".console-view")
+const openApiTab = document.querySelector(".api-view-btn")
+const asyncApiTab = document.querySelector(".async-view-btn")
 
 visualizationOptions.forEach(option => {
   option.checked = false
 })
 
 validateBtn.addEventListener("click", () => {
-  visualizationOptions.forEach(option => {
-    if(option.id === "validation-view"){
-      option.checked = true
-    }
-    visualizationContainers.forEach(container => {
-      container.classList.add("hidden")
-      if(container.id === "validation-view"){
-        container.classList.remove("hidden")
-      }
-    })
-  })
+  // visualizationOptions.forEach(option => {
+  //   if(option.id === "validation-view"){
+  //     option.checked = true
+  //   }
+  //   visualizationContainers.forEach(container => {
+  //     container.classList.add("hidden")
+  //     if(container.id === "validation-view"){
+  //       container.classList.remove("hidden")
+  //     }
+  //   })
+  // })
 })
 
 eraseConsole.addEventListener("click", () => {
-
+  clearConsole()
 })
 
+/**
+ * Unchecks all visualizatin btns and hiddes all visualization containers
+ */
+function clearConsole(){
+  visualizationContainers.forEach(container => {
+    container.classList.add("hidden")
+  })
+  visualizationOptions.forEach(option => {
+    option.checked = false
+  })
+}
 
 /*** Visualization ***/
+//TODO MAYBE CHANGE THE WAY THE CONTAINER OPEN
 visualizationOptions.forEach(option => {
   option.addEventListener("click", () => {
     visualizationContainers.forEach(container => {
@@ -1389,17 +1431,47 @@ visualizationOptions.forEach(option => {
   })
 })
 
+/**
+ * Enable Open/Async API elements according to the protocol schemes of a TD
+ * @param {object} editor - currently active monaco editor
+ */
+function enableAPIConversionWithProtocol(editor) {
+  let td = editor.getValue()
+	if (yamlBtn.checked === true) {
+		td = Validators.convertTDYamlToJson(td)
+	}
+	const protocolSchemes = Validators.detectProtocolSchemes(td)
+
+	if (protocolSchemes) {
+		
+    if(openApiTab.checked === true){
+      if (["http", "https"].some(p => protocolSchemes.includes(p))) {
+        util.generateOAP(editor.db.dataset.modeId, editor)
+      } else {
+        errorTxt.innerText = "Please insert a TD which uses HTTP"
+        errorContainer.classList.remove("hidden")
+      }
+    }
+
+    if(asyncApiTab.checked === true){
+      if (["mqtt", "mqtts"].some(p => protocolSchemes.includes(p))) {
+        util.generateAAP(editor.db.dataset.modeId, editor)
+      } else {
+        errorTxt.innerText = "Please insert a TD which uses MQTT"
+        errorContainer.classList.remove("hidden")
+      }
+    }
+	}
+}
+
 
 /* OpenAPI Functionality */
-
-const openAPIContainer = document.querySelector('.open-api-container')
-
 visualizationOptions.forEach(option => {
   option.addEventListener("click", () => {
     if(option.id === "open-api-view"){
       editorList.forEach(editor => {
         if(editor.db.classList.contains("active")){
-          util.generateOAP(editor.db.dataset.modeId, editor)
+          enableAPIConversionWithProtocol(editor)
         }
       })
     } 
@@ -1430,14 +1502,12 @@ require(['vs/editor/editor.main'], async function() {
 
 
 /* asyncAPI Functionality */
-const asyncAPIContainer = document.querySelector('.async-api-container')
-
 visualizationOptions.forEach(option => {
   option.addEventListener("click", () => {
     if(option.id === "async-api-view"){
       editorList.forEach(editor => {
         if(editor.db.classList.contains("active")){
-          util.generateAAP(editor.db.dataset.modeId, editor)
+          enableAPIConversionWithProtocol(editor)
         }
       })
     } 

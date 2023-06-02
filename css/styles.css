@@ -645,17 +645,16 @@ main .console {
 }
 .console__content .console-error {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: calc(100% - 4rem);
-  height: calc(100% - 4rem);
-  border-radius: 10px;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: var(--clr-neutral-50);
   opacity: 1;
   pointer-events: all;
   transition: opacity 250ms var(--trans-bouncy);
-  display: grid;
-  place-items: center;
 }
 .console__content .console-error p {
   font-weight: var(--fw-bold);
@@ -673,12 +672,16 @@ main .console {
   opacity: 1;
   pointer-events: all;
   overflow: hidden;
+  transform: scale(1);
+  transition: width 0s ease-in-out 0s, height 0s ease-in-out 0s, opacity 150ms ease-in-out 0s, transform 250ms ease-in-out 150ms;
 }
 .console__content .console-view.hidden {
-  opacity: 0;
-  pointer-events: none;
   width: 0;
   height: 0;
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+  transition: transform 250ms ease-in-out 0s, opacity 150ms ease-in-out 250ms, width 0s ease-in-out 400ms, height 0s ease-in-out 400ms;
 }
 .console__content .console-view .open-api-container, .console__content .console-view .async-api-container {
   min-height: 100%;
@@ -1245,6 +1248,9 @@ main .console {
   margin-bottom: 1rem;
   border: none;
   padding: 1rem;
+}
+.save-menu__container .share-td__url.error {
+  color: var(--clr-error-500);
 }
 .save-menu__container .share-td__btn {
   border: none;
