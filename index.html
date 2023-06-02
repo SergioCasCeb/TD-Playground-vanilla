@@ -148,27 +148,82 @@
                     </div>
                 </div>
                 <div class="console__content">
-                    <div class="console-view hidden" id="validation-view">
+                    <div class="console-view validation-view-cotainer hidden" id="validation-view">
+                        <div class="json-validation-section" id="spot-json">
+                            <div class="section-header">
+                                <!-- <i class="title-icon fa-solid fa-circle-check"></i> -->
+                                <i class="fa-solid fa-spinner"></i>
+                                <p class="title">JSON Validation</p>
+                                <i class="show-icon fa-solid fa-caret-down"></i>
+                            </div>
+                            <div class="section-content"></div>
+                        </div>
 
+                        <div class="json-schema-validation-section" id="spot-schema">
+                            <div class="section-header">
+                                <!-- <i class="title-icon fa-solid fa-circle-exclamation"></i> -->
+                                <i class="fa-solid fa-spinner"></i>
+                                <p>JSON Schema Validation</p>
+                                <i class="show-icon fa-solid fa-caret-down"></i>
+                            </div>
+                            <div class="section-content"></div>
+                        </div>
+
+                        <div class="json-schema-defaults-section" id="spot-defaults">
+                            <div class="section-header">
+                                <!-- <i class="title-icon fa-solid fa-circle-exclamation"></i> -->
+                                <i class="fa-solid fa-spinner"></i>
+                                <p>(With Defaults) JSON Schema Validation</p>
+                                <i class="show-icon fa-solid fa-caret-down"></i>
+                            </div>
+                            <div class="section-content"></div>
+                        </div>
+
+                        <div class="jsonls-validation-section" id="spot-jsonld">
+                            <div class="section-header">
+                                <!-- <i class="title-icon fa-solid fa-circle-check"></i> -->
+                                <i class="fa-solid fa-spinner"></i>
+                                <p>JSON-LD Validation</p>
+                                <i class="show-icon fa-solid fa-caret-down"></i>
+                            </div>
+                            <div class="section-content"></div>
+                        </div>
+
+                        <div class="additional-checks-section" id="spot-additional">
+                            <div class="section-header">
+                                <!-- <i class="title-icon fa-solid fa-triangle-exclamation"></i> -->
+                                <i class="fa-solid fa-spinner"></i>
+                                <p>Additional Checks</p>
+                                <i class="show-icon fa-solid fa-caret-down"></i>
+                            </div>
+                            <div class="section-content"></div>
+                        </div>
                     </div>
+
                     <div class="console-view hidden" id="open-api-view">
                         <div class="open-api-container" id="open-api-container"></div>
                     </div>
+
                     <div class="console-view hidden" id="async-api-view">
                         <div class="async-api-container" id="async-api-container"></div>
                     </div>
-                    <div class="console-view hidden" id="defaults-view">
 
+                    <div class="console-view hidden" id="defaults-view">
+                        <div class="defaults-container" id="defaults-container"></div>
                     </div>
+
                     <div class="console-view hidden" id="linting-view">
 
                     </div>
+
                     <div class="console-view hidden" id="canonicalize-view">
 
                     </div>
+
                     <div class="console-view hidden" id="visualize-view">
 
                     </div>
+
                     <div class="console-view console-error hidden" id="console-error">
                         <p class="console-error__txt"></p>
                     </div>

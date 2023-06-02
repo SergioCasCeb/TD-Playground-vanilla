@@ -683,11 +683,45 @@ main .console {
   pointer-events: none;
   transition: transform 250ms ease-in-out 0s, opacity 150ms ease-in-out 250ms, width 0s ease-in-out 400ms, height 0s ease-in-out 400ms;
 }
-.console__content .console-view .open-api-container, .console__content .console-view .async-api-container {
+.console__content .console-view .open-api-container, .console__content .console-view .async-api-container, .console__content .console-view .defaults-container {
   min-height: 100%;
   width: 100%;
 }
+.console__content .console-view.validation-view-cotainer {
+  padding: 1rem 2rem;
+  overflow: auto;
+}
+.console__content .console-view.validation-view-cotainer .section-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+.console__content .console-view.validation-view-cotainer .section-header .fa-circle-check {
+  color: var(--clr-success-500);
+}
+.console__content .console-view.validation-view-cotainer .section-header .fa-circle-exclamation {
+  color: var(--clr-warning-500);
+}
+.console__content .console-view.validation-view-cotainer .section-header .fa-triangle-exclamation {
+  color: var(--clr-error-500);
+}
+.console__content .console-view.validation-view-cotainer .section-header .fa-spinner {
+  color: var(--clr-neutral-300);
+  animation: rotate 2s infinite ease-in-out;
+}
+.console__content .console-view.validation-view-cotainer .section-header .show-icon {
+  cursor: pointer;
+}
 
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 /** Additional menus **/
 /***** settings menu *****/
 .settings-menu {

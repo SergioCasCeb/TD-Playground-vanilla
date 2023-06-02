@@ -143,10 +143,49 @@
                 transition: transform 250ms ease-in-out 0s, opacity 150ms ease-in-out 250ms, width 0s ease-in-out 400ms, height 0s ease-in-out 400ms;
             }
 
-            .open-api-container, .async-api-container{
+            .open-api-container, .async-api-container, .defaults-container{
                 min-height: 100%;
                 width: 100%;  
             }
+
+            &.validation-view-cotainer{
+                padding: 1rem 2rem;
+                overflow: auto;
+
+                .section-header{
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                    gap: 1rem;
+
+                    .fa-circle-check{
+                        color: var(--clr-success-500);
+                    }
+
+                    .fa-circle-exclamation{
+                        color: var(--clr-warning-500);
+                    }
+
+                    .fa-triangle-exclamation{
+                        color: var(--clr-error-500);
+                    }
+
+                    .fa-spinner{
+                        color: var(--clr-neutral-300);
+                        animation: rotate 2s infinite ease-in-out;
+                    }
+
+                    .show-icon{
+                        cursor: pointer;
+                        // font-size: var(--fs-footer);
+                    }
+                }
+            }
         }
     }
+}
+
+@keyframes rotate{
+    0%{transform: rotate(0deg);}
+    100%{transform: rotate(360deg);}
 }

@@ -382,11 +382,13 @@ function createIde(ideNumber, exampleValue){
               ]
             });
           }
+
           markTypos(editor.getModel());
           //TODO add auto validate functionality
+          util.validate('auto', autoValidateBtn.checked, thingType.toLocaleLowerCase(), editor);
           // util.validate('auto', autoValidate, docType);
-
           changeThingIcon(thingType)
+          setThingVisualizations(JSON.parse(editor.getValue()))
         }
       }catch(err){
         console.log("Not a proper JSON object");
@@ -1375,12 +1377,25 @@ const visualizationOptions = document.querySelectorAll(".visualization__option")
 const visualizationContainers = document.querySelectorAll(".console-view")
 const openApiTab = document.querySelector(".api-view-btn")
 const asyncApiTab = document.querySelector(".async-view-btn")
+const defaultTab = document.querySelector(".defaults-view-btn")
+const validationHeaderIcons = document.querySelectorAll(".validation-view-cotainer .title-icon")
 
 visualizationOptions.forEach(option => {
   option.checked = false
 })
 
 validateBtn.addEventListener("click", () => {
+  visualizationContainers.forEach(container => {
+    container.classList.add("hidden")
+    if(container.id === "validation-view"){
+      container.classList.remove("hidden")
+    }
+  })
+  editorList.forEach(editor => {
+    if(editor.db.classList.contains("active")){
+      util.validate('manual', autoValidateBtn.checked, "td", editor);
+    }
+  })
   // visualizationOptions.forEach(option => {
   //   if(option.id === "validation-view"){
   //     option.checked = true
@@ -1464,12 +1479,38 @@ function enableAPIConversionWithProtocol(editor) {
 	}
 }
 
+/**
+ * Checks if thing is TD or TM and depending on that enables the respective btns
+ * @param {object} thingValue - editor value
+ */
+function setThingVisualizations(thingValue){
+  if(thingValue["@type"] === "tm:ThingModel"){
+    openApiTab.disabled = true
+    asyncApiTab.disabled = true
+    defaultTab.disabled = true
+  }else{
+    openApiTab.disabled = false
+    asyncApiTab.disabled = false
+    defaultTab.disabled = false
+  }
+}
+
 
 /* OpenAPI Functionality */
 visualizationOptions.forEach(option => {
   option.addEventListener("click", () => {
     if(option.id === "open-api-view"){
       editorList.forEach(editor => {
+        // if(JSON.parse(editor.getValue())["@type"] === "tm:ThingModel"){
+        //   console.log(JSON.parse(editor.getValue())["@type"]);
+        //   errorTxt.innerText = "This function is only allowed for Thing Descriptions"
+        //   errorContainer.classList.remove("hidden")
+        // }else{
+        //   errorContainer.classList.add("hidden")
+        //   if(editor.db.classList.contains("active")){
+        //     enableAPIConversionWithProtocol(editor)
+        //   }
+        // }
         if(editor.db.classList.contains("active")){
           enableAPIConversionWithProtocol(editor)
         }
@@ -1532,5 +1573,40 @@ require(['vs/editor/editor.main'], async function() {
   //Bind the reset button form the settings to the editor and assign the specied font size
   editorForm.addEventListener("reset", () => {
     setFontSize(window.asyncApiEditor)
+  })
+})
+
+
+/* Defaults Functionality */
+visualizationOptions.forEach(option => {
+  option.addEventListener("click", () => {
+    if(option.id === "defaults-view"){
+      editorList.forEach(editor => {
+        if(editor.db.classList.contains("active")){
+          util.addDefaults(editor)
+        }
+      })
+    } 
+  })
+})
+
+require(['vs/editor/editor.main'], async function() {
+  //assing the new monaco edito to the previously created container and assign the new value, language and other necessary properties
+  window.defaultsEditor = monaco.editor.create(document.getElementById('defaults-container'), {
+    value: "", 
+    language: "json",
+    automaticLayout: true,
+		readOnly: true,
+		formatOnPaste: true
+  })
+
+  document.onload = setFontSize(window.defaultsEditor)
+  fontSizeSlider.addEventListener("input", () => {
+    setFontSize(window.defaultsEditor)
+  })
+
+  //Bind the reset button form the settings to the editor and assign the specied font size
+  editorForm.addEventListener("reset", () => {
+    setFontSize(window.defaultsEditor)
   })
 })

@@ -188,33 +188,6 @@ export function offerFileDownload(fileName, content, type) {
     })
 }
 
-//TODO Remove if allowed
-//original version
-// export function generateTD(fileType){
-//     return new Promise( (res, rej) => {
-//         const tdToValidate = editor.getValue()
-
-//         if (tdToValidate === "") {
-//             rej("No TD given to generate TD instance")
-//         }
-//         else if (fileType !== "json" && fileType !== "yaml") {
-//             rej("Wrong content type required: " + fileType)
-//         }
-//         else {
-//             try {
-//                 const content = fileType === "json"
-//                         ? JSON.stringify(JSON.parse(Validators.convertTDYamlToJson(tdToValidate)), undefined, 4)
-//                         : Validators.convertTDJsonToYaml(tdToValidate)
-
-//                 monaco.editor.setModelLanguage(window.tdEditor.getModel(), fileType)
-//                 window.tdEditor.getModel().setValue(content)
-//             } catch (err) {
-//                 rej("TD generation problem: " + err)
-//             }
-//         }
-//     })
-// }
-
 /**
  * Generates an OpenAPI instance from
  * the TD in the Editor
@@ -241,28 +214,6 @@ export function generateOAP(fileType, editor){
         }
     })
 }
-
-// export function generateOAP(fileType){
-//     return new Promise( (res, rej) => {
-//         const tdToValidate = window.editorFormat === "json"
-//              ? window.tdEditor.getValue()
-//              : Validators.convertTDYamlToJson(window.tdEditor.getValue())
-
-//         if (tdToValidate === "") {
-//             rej("No TD given to generate OpenAPI instance")
-//         }
-//         else if (fileType !== "json" && fileType !== "yaml") {
-//             rej("Wrong content type required: " + fileType)
-//         }
-//         else {
-//             tdToOpenAPI(JSON.parse(tdToValidate)).then( openAPI => {
-//                 const content = fileType === "json" ? JSON.stringify(openAPI[fileType], undefined, 4) : openAPI[fileType]
-//                 monaco.editor.setModelLanguage(window.openApiEditor.getModel(), fileType)
-//                 window.openApiEditor.getModel().setValue(content)
-//             }, err => {rej("OpenAPI generation problem: " + err)})
-//         }
-//     })
-// }
 
 /**
  * Generates an AsyncAPI instance from
@@ -291,41 +242,14 @@ export function generateAAP(fileType, editor){
     })
 }
 
-
-
-
-
-
-// export function generateAAP(fileType){
-//     return new Promise( (res, rej) => {
-//         const tdToValidate = window.editorFormat === "json"
-//              ? window.tdEditor.getValue()
-//              : Validators.convertTDYamlToJson(window.tdEditor.getValue())
-
-//         if (tdToValidate === "") {
-//             rej("No TD given to generate AsyncAPI instance")
-//         }
-//         else if (fileType !== "json" && fileType !== "yaml") {
-//             rej("Wrong content type required: " + fileType)
-//         }
-//         else {
-//             tdToAsyncAPI(JSON.parse(tdToValidate)).then( asyncAPI => {
-//                 const content = fileType === "json" ? JSON.stringify(asyncAPI[fileType], undefined, 4) : asyncAPI[fileType]
-//                 monaco.editor.setModelLanguage(window.asyncApiEditor.getModel(), fileType)
-//                 window.asyncApiEditor.getModel().setValue(content)
-//             }, err => {rej("AsyncAPI generation problem: " + err)})
-//         }
-//     })
-// }
-
 /**
  * applies adding unset default values
  * to the TD in the editor
  */
-export function addDefaults() {
-    const tdToExtend = JSON.parse(window.editor.getValue())
+export function addDefaults(editor) {
+    const tdToExtend = JSON.parse(editor.getValue())
     tdDefaults.addDefaults(tdToExtend)
-    window.editor.setValue(JSON.stringify(tdToExtend, undefined, 4))
+    window.defaultsEditor.getModel().setValue(JSON.stringify(tdToExtend, undefined, 4))
 }
 
 /**
@@ -475,14 +399,20 @@ export function exampleSelectHandler(e, obj) {
  * @param {string} source "auto" or "manual"
  * @param {boolean} autoValidate is autovalidation active?
  * @param {string} docType "td" or "tm"
+ * @param {object} editor monaco object
  */
-export function validate(source, autoValidate, docType="td") {
+export function validate(source, autoValidate, docType="td", editor) {
+    // console.log(autoValidate);
     if(source === "manual" || (source === "auto" && autoValidate)) {
-        const text = window.editor.getValue();
+        const text = editor.getValue();
+        console.log(source);
+        console.log(text);
 
+        //TODO FIX RESET VALIDATION STATUS
         resetValidationStatus()
 
-        realValidator(text, docType, source);
+        //todo fix real validator
+        // realValidator(text, docType, source);
     }
 }
 
@@ -493,15 +423,16 @@ export function validate(source, autoValidate, docType="td") {
  * @param {*} source "manual" or "auto"
  */
 function realValidator(body, docType, source) {
-    document.getElementById("btn_validate").setAttribute("disabled", "true")
-    if (document.getElementById("box_reset_logging").checked) {
-        document.getElementById("console").innerHTML = ""
+    // document.getElementById("btn_validate").setAttribute("disabled", "true")
+    if (document.getElementById("reset-logging").checked) {
+        // document.getElementById("console").innerHTML = ""
+        console.log("console");
     }
 
     if (source === "manual") {log("------- New Validation Started -------")}
 
-    const checkJsonLd = document.getElementById("box_jsonld_validate").checked
-    const checkTmConformance = document.getElementById("box_check_tm_conformance").checked
+    const checkJsonLd = document.getElementById("validate-jsonld").checked
+    const checkTmConformance = document.getElementById("tm-conformance").checked
 
     const validator = (docType === "td") ? Validators.tdValidator : Validators.tmValidator
 
@@ -510,42 +441,44 @@ function realValidator(body, docType, source) {
         let resultStatus = "success"
 
         Object.keys(result.report).forEach( el => {
-            const spotName = "spot-" + el
-            if (result.report[el] === "passed") {
-                document.getElementById(spotName).style.visibility = "visible"
-                document.getElementById(spotName).setAttribute("fill", "green")
-                if(source === "manual") {log(el + " validation... OK")}
-            }
-            else if (result.report[el] === "warning") {
-                document.getElementById(spotName).style.visibility = "visible"
-                document.getElementById(spotName).setAttribute("fill", "orange")
-                resultStatus = (resultStatus !== "danger") ? "warning" : "danger"
-                if(source === "manual") {log(el + " optional validation... KO")}
+            console.log(el);
+            // const spotName = "spot-" + el
+            // if (result.report[el] === "passed") {
+            //     document.getElementById(spotName).style.visibility = "visible"
+            //     document.getElementById(spotName).setAttribute("fill", "green")
+            //     if(source === "manual") {log(el + " validation... OK")}
+            // }
+            // else if (result.report[el] === "warning") {
+            //     document.getElementById(spotName).style.visibility = "visible"
+            //     document.getElementById(spotName).setAttribute("fill", "orange")
+            //     resultStatus = (resultStatus !== "danger") ? "warning" : "danger"
+            //     if(source === "manual") {log(el + " optional validation... KO")}
 
-            }
-            else if (result.report[el] === "failed") {
-                document.getElementById(spotName).style.visibility = "visible"
-                document.getElementById(spotName).setAttribute("fill", "red")
-                resultStatus = "danger"
-                if(source === "manual") {log("X " + el + " validation... KO")}
-            }
-            else if (result.report[el] === null) {
-                // do nothing
-            }
-            else {
-                console.error("unknown report feedback value")
-            }
+            // }
+            // else if (result.report[el] === "failed") {
+            //     document.getElementById(spotName).style.visibility = "visible"
+            //     document.getElementById(spotName).setAttribute("fill", "red")
+            //     resultStatus = "danger"
+            //     if(source === "manual") {log("X " + el + " validation... KO")}
+            // }
+            // else if (result.report[el] === null) {
+            //     // do nothing
+            // }
+            // else {
+            //     console.error("unknown report feedback value")
+            // }
         })
 
         if (source === "manual") {
-            log("Details of the \"additional\" checks: ")
+            // log("Details of the \"additional\" checks: ")
             Object.keys(result.details).forEach(el => {
-                log("    " + el + " " + result.details[el] + " (" + result.detailComments[el] + ")")
+                // console.log(el);
+                // log("    " + el + " " + result.details[el] + " (" + result.detailComments[el] + ")")
             })
         }
 
         updateValidationStatusHead(resultStatus);
-        document.getElementById("btn_validate").removeAttribute("disabled")
+        // document.getElementById("btn_validate").removeAttribute("disabled")
     })
 }
 
@@ -554,7 +487,7 @@ function realValidator(body, docType, source) {
  * @param {string} message
  */
 function log(message) {
-    document.getElementById("console").innerHTML += message + '&#13;&#10;'
+    // document.getElementById("console").innerHTML += message + '&#13;&#10;'
 }
 
 /**
@@ -562,7 +495,8 @@ function log(message) {
  * @param {string} id Id of the element to hide
  */
 function reset(id) {
-    document.getElementById(id).style.visibility = "hidden"
+    // document.getElementById(id).style.visibility = "hidden"
+    // document.getElementById(id).children[0].children[0].classList.remove("fa-solid")
 }
 
 /**
