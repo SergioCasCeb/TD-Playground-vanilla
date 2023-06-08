@@ -178,8 +178,9 @@ function onmouseupY(e) {
 
 /*** Monaco editor initialization ***/
 // require.config({ paths: { vs: '../node_modules/monaco-editor/min/vs' } });
-require.config({ paths: { vs: '../monaco-editor/min/vs' } });
-require(['vs/editor/editor.main'],async function () {
+// require.config({ paths: { vs: '../monaco-editor/min/vs' } });
+require.config({ paths: { 'vs': '../node_modules/monaco-editor/min/vs' } });
+require(['vs/editor/editor.main'], async function () {
   //Get new monochrome theme from monochrome.js file
   monaco.editor.defineTheme('monochrome', themeData);
   document.onload = setTheme()
@@ -420,10 +421,10 @@ function createIde(ideNumber, exampleValue){
   newIde.classList.add("active")
   //Create the new tab depending if its a TM or TD
   if(JSON.parse(defaultValue)["@type"] === "tm:ThingModel"){
-    createTab(ideNumber,JSON.parse(defaultValue)["$title"],"TM")
+    createTab(ideNumber,JSON.parse(defaultValue)["title"],"TM")
   }
   else{
-    createTab(ideNumber,JSON.parse(defaultValue)["$title"],"TD")
+    createTab(ideNumber,JSON.parse(defaultValue)["title"],"TD")
   }
 }
 
@@ -1391,7 +1392,7 @@ validateBtn.addEventListener("click", () => {
       container.classList.remove("hidden")
     }
   })
-  editorList.forEach(editor => {
+  editorList.forEach(editor => { 
     if(editor.db.classList.contains("active")){
       util.validate('manual', autoValidateBtn.checked, "td", editor);
     }
