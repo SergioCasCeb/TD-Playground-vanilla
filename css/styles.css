@@ -568,16 +568,31 @@ main .console {
   height: -moz-fit-content;
   height: fit-content;
 }
-.console__tabs .trash {
-  padding: 1rem;
+.console__tabs .console-controllers {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.console__tabs .trash i {
+.console__tabs .console-controllers .trash, .console__tabs .console-controllers .download {
+  padding: 1rem 0.5rem;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  border: none;
+  background-color: var(--clr-neutral-50);
   color: var(--clr-primary-500);
   transition: color 250ms ease;
 }
-.console__tabs .trash i:hover {
+.console__tabs .console-controllers .trash:hover, .console__tabs .console-controllers .download:hover {
   color: var(--clr-primary-900);
   cursor: pointer;
+}
+.console__tabs .console-controllers .trash:disabled, .console__tabs .console-controllers .download:disabled {
+  color: var(--clr-neutral-300);
+  cursor: auto;
+}
+.console__tabs .console-controllers .download {
+  margin-right: 1rem;
 }
 .console__tabs .visualization {
   height: 100%;
@@ -622,12 +637,6 @@ main .console {
   content: "Defaults";
 }
 .console__tabs .visualization input[type=radio]:nth-child(5)::before {
-  content: "Linting";
-}
-.console__tabs .visualization input[type=radio]:nth-child(6)::before {
-  content: "Canonicalize";
-}
-.console__tabs .visualization input[type=radio]:nth-child(7)::before {
   content: "Visualize";
 }
 .console__tabs .visualization input[type=radio]:checked {
@@ -640,8 +649,8 @@ main .console {
 .console__content {
   position: relative;
   height: 100%;
-  overflow: auto;
-  padding: 1rem 0;
+  overflow: hidden;
+  padding: 1rem;
 }
 .console__content .console-error {
   position: absolute;
@@ -684,11 +693,11 @@ main .console {
   transition: transform 250ms ease-in-out 0s, opacity 150ms ease-in-out 250ms, width 0s ease-in-out 400ms, height 0s ease-in-out 400ms;
 }
 .console__content .console-view .open-api-container, .console__content .console-view .async-api-container, .console__content .console-view .defaults-container {
-  min-height: 100%;
+  height: 100%;
   width: 100%;
 }
 .console__content .console-view.validation-view-cotainer {
-  padding: 1rem 2rem;
+  padding: 1rem;
   overflow: auto;
 }
 .console__content .console-view.validation-view-cotainer .section-header {
@@ -712,6 +721,54 @@ main .console {
 }
 .console__content .console-view.validation-view-cotainer .section-header .show-icon {
   cursor: pointer;
+}
+.console__content .open-api-view, .console__content .async-api-view, .console__content .defaults-view {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+.console__content .open-api-view .open-api-inputs, .console__content .open-api-view .async-api-inputs, .console__content .open-api-view .defaults-inputs, .console__content .async-api-view .open-api-inputs, .console__content .async-api-view .async-api-inputs, .console__content .async-api-view .defaults-inputs, .console__content .defaults-view .open-api-inputs, .console__content .defaults-view .async-api-inputs, .console__content .defaults-view .defaults-inputs {
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+.console__content .open-api-view .open-api-inputs button, .console__content .open-api-view .async-api-inputs button, .console__content .open-api-view .defaults-inputs button, .console__content .async-api-view .open-api-inputs button, .console__content .async-api-view .async-api-inputs button, .console__content .async-api-view .defaults-inputs button, .console__content .defaults-view .open-api-inputs button, .console__content .defaults-view .async-api-inputs button, .console__content .defaults-view .defaults-inputs button {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  border: none;
+  width: 100%;
+  border-radius: 5px;
+  padding: 0.5rem 1.5rem;
+  background-color: var(--clr-primary-500);
+  color: var(--clr-neutral-50);
+  font-family: var(--ff-primary);
+  font-size: var(--fs-p);
+  cursor: pointer;
+  transition: background-color 250ms ease-in-out;
+}
+.console__content .open-api-view .open-api-inputs button:hover, .console__content .open-api-view .async-api-inputs button:hover, .console__content .open-api-view .defaults-inputs button:hover, .console__content .async-api-view .open-api-inputs button:hover, .console__content .async-api-view .async-api-inputs button:hover, .console__content .async-api-view .defaults-inputs button:hover, .console__content .defaults-view .open-api-inputs button:hover, .console__content .defaults-view .async-api-inputs button:hover, .console__content .defaults-view .defaults-inputs button:hover {
+  background-color: var(--clr-primary-900);
+}
+.console__content .open-api-view .open-api-inputs button:disabled, .console__content .open-api-view .async-api-inputs button:disabled, .console__content .open-api-view .defaults-inputs button:disabled, .console__content .async-api-view .open-api-inputs button:disabled, .console__content .async-api-view .async-api-inputs button:disabled, .console__content .async-api-view .defaults-inputs button:disabled, .console__content .defaults-view .open-api-inputs button:disabled, .console__content .defaults-view .async-api-inputs button:disabled, .console__content .defaults-view .defaults-inputs button:disabled {
+  background-color: var(--clr-neutral-300);
+  cursor: auto;
+}
+.console__content .defaults-view .defaults-inputs button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.console__content .defaults-view .defaults-inputs button i {
+  font-size: var(--fs-p);
 }
 
 @keyframes rotate {

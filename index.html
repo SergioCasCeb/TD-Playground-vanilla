@@ -136,15 +136,22 @@
                             class="visualization__option async-view-btn">
                         <input type="radio" name="visualization-option" id="defaults-view"
                             class="visualization__option defaults-view-btn">
-                        <input type="radio" name="visualization-option" id="linting-view" 
+                        <!-- <input type="radio" name="visualization-option" id="linting-view" 
                             class="visualization__option linting-view-btn">
                         <input type="radio" name="visualization-option" id="canonicalize-view"
-                            class="visualization__option canonicalize-view-btn">
+                            class="visualization__option canonicalize-view-btn"> -->
                         <input type="radio" name="visualization-option" id="visualize-view"
                             class="visualization__option visualize-view-btn">
                     </div>
-                    <div class="trash">
-                        <i class="fa-solid fa-trash-can"></i>
+                    <div class="console-controllers">
+                        <!-- <div class="download">
+                            <i class="fa-solid fa-download"></i>
+                        </div> -->
+                        <!-- <div class="trash">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </div> -->
+                        <button class="download"><i class="fa-solid fa-download"></i></button>
+                        <button class="trash"><i class="fa-solid fa-trash-can"></i></button> 
                     </div>
                 </div>
                 <div class="console__content">
@@ -200,25 +207,39 @@
                         </div>
                     </div>
 
-                    <div class="console-view hidden" id="open-api-view">
+                    <div class="console-view open-api-view hidden" id="open-api-view">
                         <div class="open-api-container" id="open-api-container"></div>
+                        <div class="open-api-inputs">
+                            <button id="open-api-json">JSON</button>
+                            <button id="open-api-yaml">YAML</button>
+                        </div>
                     </div>
 
-                    <div class="console-view hidden" id="async-api-view">
+                    <div class="console-view async-api-view hidden" id="async-api-view">
                         <div class="async-api-container" id="async-api-container"></div>
+                        <div class="async-api-inputs">
+                            <button id="async-api-json">JSON</button>
+                            <button id="async-api-yaml">YAML</button>
+                        </div>
                     </div>
 
-                    <div class="console-view hidden" id="defaults-view">
+                    <div class="console-view defaults-view hidden" id="defaults-view">
                         <div class="defaults-container" id="defaults-container"></div>
+                        <div class="defaults-inputs">
+                            <button id="defaults-add"><i class="fa-solid fa-plus"></i>Defaults</button>
+                            <button id="defaults-remove"><i class="fa-solid fa-minus"></i>Defaults</button>
+                            <button id="defaults-json">JSON</button>
+                            <button id="defaults-yaml">YAML</button>
+                        </div>
                     </div>
 
-                    <div class="console-view hidden" id="linting-view">
+                    <!-- <div class="console-view hidden" id="linting-view">
 
                     </div>
 
                     <div class="console-view hidden" id="canonicalize-view">
 
-                    </div>
+                    </div> -->
 
                     <div class="console-view hidden" id="visualize-view">
 

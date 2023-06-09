@@ -169,7 +169,7 @@ function onmouseupY(e) {
   e.preventDefault();
   document.removeEventListener("mousemove", onmousemoveY);
   document.removeEventListener("mouseup", onmouseupY);
-  delete e._clientY;
+  delete e.clientY;
 }
 
 /***********************************************************/
@@ -295,6 +295,7 @@ function createIde(ideNumber, exampleValue){
       defaultValue = JSON.stringify(defaultValue, null, 2)
     }
     else{
+      clearConsole()
       delete exampleValue["$title"]
       delete exampleValue["$description"]
       defaultValue = JSON.stringify(exampleValue, null, 2)
@@ -349,15 +350,29 @@ function createIde(ideNumber, exampleValue){
     })
 
     editor.getModel().onDidChangeContent(_ => {
+      clearConsole()
+      let editorContent = ""
+      let thingType = ""
+
+      if(jsonBtn.checked === true){
+        editorContent = JSON.parse(editor.getValue())
+      }else{
+        editorContent = JSON.parse(Validators.convertTDYamlToJson(editor.getValue()))
+      }
+
+      if(editorContent["@type"] === "tm:ThingModel"){
+        thingType = "TM"
+      }else{
+        thingType = "TD"
+      }
+
+      changeThingIcon(thingType)
+
       try{
         //Only use the spell checker if file is json
         if(jsonBtn.checked === true){
-          let editorContent = JSON.parse(editor.getValue())
-          let thingType = ""
           //Get if thing type and set the respective schema
           if(editorContent["@type"] === "tm:ThingModel"){
-            //Change thing icon
-            thingType = "TM"
             // Configure JSON language support with schemas and schema associations
             monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
               validate: true,
@@ -371,7 +386,6 @@ function createIde(ideNumber, exampleValue){
             });
           }
           else{
-            thingType = "TD"
             monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
               validate: true,
               schemas: [
@@ -388,8 +402,6 @@ function createIde(ideNumber, exampleValue){
           //TODO add auto validate functionality
           util.validate('auto', autoValidateBtn.checked, thingType.toLocaleLowerCase(), editor);
           // util.validate('auto', autoValidate, docType);
-          changeThingIcon(thingType)
-          setThingVisualizations(JSON.parse(editor.getValue()))
         }
       }catch(err){
         console.log("Not a proper JSON object");
@@ -1373,17 +1385,27 @@ const validateBtn = document.querySelector("#validate-btn")
 const errorContainer = document.querySelector(".console__content #console-error")
 const errorTxt = document.querySelector(".console-error__txt")
 const eraseConsole = document.querySelector(".console__tabs .trash")
-const consoleContent = document.querySelector(".console__content")
+const downloadConsole = document.querySelector(".console__tabs .download")
 const visualizationOptions = document.querySelectorAll(".visualization__option")
 const visualizationContainers = document.querySelectorAll(".console-view")
 const openApiTab = document.querySelector(".api-view-btn")
+const openApiJsonBtn = document.querySelector("#open-api-json")
+const openApiYamlBtn = document.querySelector("#open-api-yaml")
 const asyncApiTab = document.querySelector(".async-view-btn")
+const asyncApiJsonBtn = document.querySelector("#async-api-json")
+const asyncApiYamlBtn = document.querySelector("#async-api-yaml")
 const defaultTab = document.querySelector(".defaults-view-btn")
+const defaultsJsonBtn = document.querySelector("#defaults-json")
+const defaultsYamlBtn = document.querySelector("#defaults-yaml")
+const defaultsAddBtn = document.querySelector("#defaults-add")
+const defaultsRemoveBtn = document.querySelector("#defaults-remove")
 const validationHeaderIcons = document.querySelectorAll(".validation-view-cotainer .title-icon")
 
 visualizationOptions.forEach(option => {
   option.checked = false
 })
+
+downloadConsole.disabled = true
 
 validateBtn.addEventListener("click", () => {
   visualizationContainers.forEach(container => {
@@ -1412,12 +1434,14 @@ validateBtn.addEventListener("click", () => {
 
 eraseConsole.addEventListener("click", () => {
   clearConsole()
+  clearVisualizationConsoles()
 })
 
 /**
  * Unchecks all visualizatin btns and hiddes all visualization containers
  */
 function clearConsole(){
+  downloadConsole.disabled = true
   visualizationContainers.forEach(container => {
     container.classList.add("hidden")
   })
@@ -1426,10 +1450,55 @@ function clearConsole(){
   })
 }
 
+downloadConsole.addEventListener("click", () => {
+  downloadCurrentVisualization()
+})
+
+function clearVisualizationConsoles(){
+  downloadConsole.disabled = true
+  window.openApiEditor.getModel().setValue('')
+  window.asyncApiEditor.getModel().setValue('')
+  window.defaultsEditor.getModel().setValue('')
+}
+
+function downloadCurrentVisualization(){
+  visualizationOptions.forEach(option => {
+    if(option.checked && option.id !== "validation-view"){
+      if(option.id === "open-api-view"){
+        const contentType = `application/${window.openApiEditor.db.dataset.modeId};charset=utf-8;`
+        util.offerFileDownload(
+          `OpenAPIVisualization.${openApiEditor.db.dataset.modeId}`,
+          window.openApiEditor.getModel().getValue(),
+          contentType
+        )
+      }
+      
+      if(option.id === "async-api-view"){
+        const contentType = `application/${window.asyncApiEditor.db.dataset.modeId};charset=utf-8;`
+        util.offerFileDownload(
+          `AsyncAPIVisualization.${asyncApiEditor.db.dataset.modeId}`,
+          window.asyncApiEditor.getModel().getValue(),
+          contentType
+        )
+      }
+
+      if(option.id === "defaults-view"){
+        const contentType = `application/${window.defaultsEditor.db.dataset.modeId};charset=utf-8;`
+        util.offerFileDownload(
+          `DefaultsVisualization.${defaultsEditor.db.dataset.modeId}`,
+          window.defaultsEditor.getModel().getValue(),
+          contentType
+        )
+      }
+    }
+  })
+}
+
 /*** Visualization ***/
 //TODO MAYBE CHANGE THE WAY THE CONTAINER OPEN
 visualizationOptions.forEach(option => {
   option.addEventListener("click", () => {
+    clearVisualizationConsoles()
     visualizationContainers.forEach(container => {
       container.classList.add("hidden")
       if(option.id == container.id){
@@ -1437,15 +1506,79 @@ visualizationOptions.forEach(option => {
       }
     })
 
-    if(option.id !== "open-api-view"){
-      window.openApiEditor.getModel().setValue('')
+    if(option.id === "open-api-view"){
+      editorList.forEach(editor => {
+        if(editor.db.classList.contains("active")){
+          let td = editor.getValue()
+          if(editor.db.dataset.modeId === "yaml"){
+            td = Validators.convertTDYamlToJson(td)
+            openApiJsonBtn.disabled = false
+            openApiYamlBtn.disabled = true
+          }else{
+            openApiJsonBtn.disabled = true
+            openApiYamlBtn.disabled = false
+          }
+          if(JSON.parse(td)["@type"] === "tm:ThingModel"){
+            errorTxt.innerText = "This function is only allowed for Thing Descriptions!"
+            errorContainer.classList.remove("hidden")
+          }else{
+            errorContainer.classList.add("hidden")
+            enableAPIConversionWithProtocol(editor)
+          }
+        }
+      })
     }
 
-    if(option.id !== "async-api-view"){
-      window.asyncApiEditor.getModel().setValue('')
+    if(option.id === "async-api-view"){
+      editorList.forEach(editor => {
+        if(editor.db.classList.contains("active")){
+          let td = editor.getValue()
+          if(editor.db.dataset.modeId === "yaml"){
+            td = Validators.convertTDYamlToJson(td)
+            asyncApiJsonBtn.disabled = false
+            asyncApiYamlBtn.disabled = true
+          }else{
+            asyncApiJsonBtn.disabled = true
+            asyncApiYamlBtn.disabled = false
+          }
+
+          if(JSON.parse(td)["@type"] === "tm:ThingModel"){
+            errorTxt.innerText = "This function is only allowed for Thing Descriptions!"
+            errorContainer.classList.remove("hidden")
+          }else{
+            errorContainer.classList.add("hidden")
+            enableAPIConversionWithProtocol(editor)
+          }
+        }
+      })
+    }
+
+    if(option.id === "defaults-view"){
+      editorList.forEach(editor => {
+        if(editor.db.classList.contains("active")){
+          let td = editor.getValue()
+          if(editor.db.dataset.modeId === "yaml"){
+            td = Validators.convertTDYamlToJson(td)
+            defaultsJsonBtn.disabled = false
+            defaultsYamlBtn.disabled = true
+          }else{
+            defaultsJsonBtn.disabled = true
+            defaultsYamlBtn.disabled = false
+          }
+          if(JSON.parse(td)["@type"] === "tm:ThingModel"){
+            errorTxt.innerText = "This function is only allowed for Thing Descriptions!"
+            errorContainer.classList.remove("hidden")
+          }else{
+            downloadConsole.disabled = false
+            errorContainer.classList.add("hidden")
+            util.addDefaults(editor)
+          }
+        }
+      })
     }
   })
 })
+
 
 /**
  * Enable Open/Async API elements according to the protocol schemes of a TD
@@ -1456,6 +1589,7 @@ function enableAPIConversionWithProtocol(editor) {
 	if (yamlBtn.checked === true) {
 		td = Validators.convertTDYamlToJson(td)
 	}
+
 	const protocolSchemes = Validators.detectProtocolSchemes(td)
 
 	if (protocolSchemes) {
@@ -1463,6 +1597,7 @@ function enableAPIConversionWithProtocol(editor) {
     if(openApiTab.checked === true){
       if (["http", "https"].some(p => protocolSchemes.includes(p))) {
         util.generateOAP(editor.db.dataset.modeId, editor)
+        downloadConsole.disabled = false
       } else {
         errorTxt.innerText = "Please insert a TD which uses HTTP"
         errorContainer.classList.remove("hidden")
@@ -1472,6 +1607,7 @@ function enableAPIConversionWithProtocol(editor) {
     if(asyncApiTab.checked === true){
       if (["mqtt", "mqtts"].some(p => protocolSchemes.includes(p))) {
         util.generateAAP(editor.db.dataset.modeId, editor)
+        downloadConsole.disabled = false
       } else {
         errorTxt.innerText = "Please insert a TD which uses MQTT"
         errorContainer.classList.remove("hidden")
@@ -1480,44 +1616,44 @@ function enableAPIConversionWithProtocol(editor) {
 	}
 }
 
-/**
- * Checks if thing is TD or TM and depending on that enables the respective btns
- * @param {object} thingValue - editor value
- */
-function setThingVisualizations(thingValue){
-  if(thingValue["@type"] === "tm:ThingModel"){
-    openApiTab.disabled = true
-    asyncApiTab.disabled = true
-    defaultTab.disabled = true
-  }else{
-    openApiTab.disabled = false
-    asyncApiTab.disabled = false
-    defaultTab.disabled = false
-  }
-}
-
-
 /* OpenAPI Functionality */
-visualizationOptions.forEach(option => {
-  option.addEventListener("click", () => {
-    if(option.id === "open-api-view"){
-      editorList.forEach(editor => {
-        // if(JSON.parse(editor.getValue())["@type"] === "tm:ThingModel"){
-        //   console.log(JSON.parse(editor.getValue())["@type"]);
-        //   errorTxt.innerText = "This function is only allowed for Thing Descriptions"
-        //   errorContainer.classList.remove("hidden")
-        // }else{
-        //   errorContainer.classList.add("hidden")
-        //   if(editor.db.classList.contains("active")){
-        //     enableAPIConversionWithProtocol(editor)
-        //   }
-        // }
-        if(editor.db.classList.contains("active")){
-          enableAPIConversionWithProtocol(editor)
-        }
-      })
-    } 
-  })
+// visualizationOptions.forEach(option => {
+//   option.addEventListener("click", () => {
+//     if(option.id === "open-api-view"){
+//       editorList.forEach(editor => {
+//         if(editor.db.classList.contains("active")){
+//           let td = editor.getValue()
+//           if(editor.db.dataset.modeId === "yaml"){
+//             td = Validators.convertTDYamlToJson(td)
+//             openApiJsonBtn.disabled = false
+//             openApiYamlBtn.disabled = true
+//           }else{
+//             openApiJsonBtn.disabled = true
+//             openApiYamlBtn.disabled = false
+//           }
+//           if(JSON.parse(td)["@type"] === "tm:ThingModel"){
+//             errorTxt.innerText = "This function is only allowed for Thing Descriptions!"
+//             errorContainer.classList.remove("hidden")
+//           }else{
+//             errorContainer.classList.add("hidden")
+//             enableAPIConversionWithProtocol(editor)
+//           }
+//         }
+//       })
+//     } 
+//   })
+// })
+
+openApiJsonBtn.addEventListener("click", () => {
+  util.generateTD("json", window.openApiEditor)
+  openApiJsonBtn.disabled = true
+  openApiYamlBtn.disabled = false
+})
+
+openApiYamlBtn.addEventListener("click", () => {
+  util.generateTD("yaml", window.openApiEditor)
+  openApiJsonBtn.disabled = false
+  openApiYamlBtn.disabled = true
 })
 
 require(['vs/editor/editor.main'], async function() {
@@ -1544,16 +1680,44 @@ require(['vs/editor/editor.main'], async function() {
 
 
 /* asyncAPI Functionality */
-visualizationOptions.forEach(option => {
-  option.addEventListener("click", () => {
-    if(option.id === "async-api-view"){
-      editorList.forEach(editor => {
-        if(editor.db.classList.contains("active")){
-          enableAPIConversionWithProtocol(editor)
-        }
-      })
-    } 
-  })
+// visualizationOptions.forEach(option => {
+//   option.addEventListener("click", () => {
+//     if(option.id === "async-api-view"){
+//       editorList.forEach(editor => {
+//         if(editor.db.classList.contains("active")){
+//           let td = editor.getValue()
+//           if(editor.db.dataset.modeId === "yaml"){
+//             td = Validators.convertTDYamlToJson(td)
+//             asyncApiJsonBtn.disabled = false
+//             asyncApiYamlBtn.disabled = true
+//           }else{
+//             asyncApiJsonBtn.disabled = true
+//             asyncApiYamlBtn.disabled = false
+//           }
+
+//           if(JSON.parse(td)["@type"] === "tm:ThingModel"){
+//             errorTxt.innerText = "This function is only allowed for Thing Descriptions!"
+//             errorContainer.classList.remove("hidden")
+//           }else{
+//             errorContainer.classList.add("hidden")
+//             enableAPIConversionWithProtocol(editor)
+//           }
+//         }
+//       })
+//     } 
+//   })
+// })
+
+asyncApiJsonBtn.addEventListener("click", () => {
+  util.generateTD("json", window.asyncApiEditor)
+  asyncApiJsonBtn.disabled = true
+  asyncApiYamlBtn.disabled = false
+})
+
+asyncApiYamlBtn.addEventListener("click", () => {
+  util.generateTD("yaml", window.asyncApiEditor)
+  asyncApiJsonBtn.disabled = false
+  asyncApiYamlBtn.disabled = true
 })
 
 require(['vs/editor/editor.main'], async function() {
@@ -1579,17 +1743,54 @@ require(['vs/editor/editor.main'], async function() {
 
 
 /* Defaults Functionality */
-visualizationOptions.forEach(option => {
-  option.addEventListener("click", () => {
-    if(option.id === "defaults-view"){
-      editorList.forEach(editor => {
-        if(editor.db.classList.contains("active")){
-          util.addDefaults(editor)
-        }
-      })
-    } 
-  })
+// visualizationOptions.forEach(option => {
+//   option.addEventListener("click", () => {
+//     if(option.id === "defaults-view"){
+//       editorList.forEach(editor => {
+//         if(editor.db.classList.contains("active")){
+//           let td = editor.getValue()
+//           if(editor.db.dataset.modeId === "yaml"){
+//             td = Validators.convertTDYamlToJson(td)
+//             defaultsJsonBtn.disabled = false
+//             defaultsYamlBtn.disabled = true
+//           }else{
+//             defaultsJsonBtn.disabled = true
+//             defaultsYamlBtn.disabled = false
+//           }
+//           if(JSON.parse(td)["@type"] === "tm:ThingModel"){
+//             errorTxt.innerText = "This function is only allowed for Thing Descriptions!"
+//             errorContainer.classList.remove("hidden")
+//           }else{
+//             downloadConsole.disabled = false
+//             errorContainer.classList.add("hidden")
+//             util.addDefaults(editor)
+//           }
+//         }
+//       })
+//     } 
+//   })
+// })
+
+defaultsJsonBtn.addEventListener("click", () => {
+  util.generateTD("json", window.defaultsEditor)
+  defaultsJsonBtn.disabled = true
+  defaultsYamlBtn.disabled = false
 })
+
+defaultsYamlBtn.addEventListener("click", () => {
+  util.generateTD("yaml", window.defaultsEditor)
+  defaultsYamlBtn.disabled = true
+  defaultsJsonBtn.disabled = false
+})
+
+defaultsAddBtn.addEventListener("click", () => {
+  util.addDefaults(window.defaultsEditor)
+})
+
+defaultsRemoveBtn.addEventListener("click", () => {
+  util.removeDefaults(window.defaultsEditor)
+})
+
 
 require(['vs/editor/editor.main'], async function() {
   //assing the new monaco edito to the previously created container and assign the new value, language and other necessary properties

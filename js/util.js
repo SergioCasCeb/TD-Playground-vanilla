@@ -51,31 +51,33 @@ function getTextUrl(urlAddr){
     })
 }
 
+
+//TODO Delete this function
 /**
  * Generate html output from the example information
  * @param {*} urlAddrObject Name, address and type of every example TD
  */
-export function populateExamples(urlAddrObject){
+// export function populateExamples(urlAddrObject){
 
-    const loadExample = document.getElementById("load_example");
-    loadExample.innerHTML = '<option class="btn-info" value="select_none">Select None</option>';
-    let examplesHtml = "";
+//     const loadExample = document.getElementById("load_example");
+//     loadExample.innerHTML = '<option class="btn-info" value="select_none">Select None</option>';
+//     let examplesHtml = "";
 
-    Object.keys(urlAddrObject).forEach( name => {
-        const data = urlAddrObject[name]
-        if (data.type === "valid") {
-            examplesHtml+='<option class="btn-success" value=' + name + '>' + name + ' &check;</option>';
-        }
-		if (data.type === "warning") {
-            examplesHtml+='<option class="btn-warning" value=' + name + '>' + name + ' !</option>';
-        }
-		if (data.type === "invalid"){
-			examplesHtml+='<option class="btn-danger" value=' +name + '>' + name + ' &cross;</option>';
-        }
-    })
+//     Object.keys(urlAddrObject).forEach( name => {
+//         const data = urlAddrObject[name]
+//         if (data.type === "valid") {
+//             examplesHtml+='<option class="btn-success" value=' + name + '>' + name + ' &check;</option>';
+//         }
+// 		if (data.type === "warning") {
+//             examplesHtml+='<option class="btn-warning" value=' + name + '>' + name + ' !</option>';
+//         }
+// 		if (data.type === "invalid"){
+// 			examplesHtml+='<option class="btn-danger" value=' +name + '>' + name + ' &cross;</option>';
+//         }
+//     })
 
-    loadExample.innerHTML += examplesHtml;
-}
+//     loadExample.innerHTML += examplesHtml;
+// }
 
 /**
  * Executes an assertion test and
@@ -247,9 +249,15 @@ export function generateAAP(fileType, editor){
  * to the TD in the editor
  */
 export function addDefaults(editor) {
-    const tdToExtend = JSON.parse(editor.getValue())
+    const tdToExtend = editor.db.dataset.modeId === "json"
+             ? JSON.parse(editor.getValue())
+             : JSON.parse(Validators.convertTDYamlToJson(editor.getValue()))
     tdDefaults.addDefaults(tdToExtend)
     window.defaultsEditor.getModel().setValue(JSON.stringify(tdToExtend, undefined, 4))
+    monaco.editor.setModelLanguage(window.defaultsEditor.getModel(), editor.db.dataset.modeId)
+    if(editor.db.dataset.modeId === "yaml"){
+        generateTD("yaml", window.defaultsEditor)
+    }
 }
 
 /**
@@ -257,10 +265,16 @@ export function addDefaults(editor) {
  * default values from the TD
  * in the editor
  */
-export function removeDefaults() {
-    const tdToReduce = JSON.parse(window.editor.getValue())
+export function removeDefaults(editor) {
+    const tdToReduce = editor.db.dataset.modeId === "json"
+             ? JSON.parse(editor.getValue())
+             : JSON.parse(Validators.convertTDYamlToJson(editor.getValue()))
     tdDefaults.removeDefaults(tdToReduce)
-    window.editor.setValue(JSON.stringify(tdToReduce, undefined, 4))
+    window.defaultsEditor.getModel().setValue(JSON.stringify(tdToReduce, undefined, 4))
+    monaco.editor.setModelLanguage(window.defaultsEditor.getModel(), editor.db.dataset.modeId)
+    if(editor.db.dataset.modeId === "yaml"){
+        generateTD("yaml", window.defaultsEditor)
+    } 
 }
 
 /**
@@ -289,81 +303,82 @@ function hideValidationStatusTable() {
     document.getElementById("table_head_arrow").setAttribute("class", "or-down")
 }
 
+//TODO Delete this function
 /**
  * Name, Address and type ("valid", "warning", "invalid") of all example TDs
  * @param {string} docType "td" or "tm"
  */
-export function getExamplesList(docType){
-    return (docType === 'td')
-        ? {
-            "SimpleTDWithDefaults": {
-                "addr": "./node_modules/@thing-description-playground/core/examples/tds/valid/simpleWithDefaults.json",
-                "type": "valid"
-            },
-            "MultipleOpWithDefaults": {
-                "addr": "./node_modules/@thing-description-playground/core/examples/tds/valid/formOpArrayWithDefaults.json",
-                "type": "valid"
-            },
-            "SimpleTD": {
-                "addr": "./node_modules/@thing-description-playground/core/examples/tds/valid/simple.json",
-                "type": "warning"
-            },
-            "MultipleOp": {
-                "addr": "./node_modules/@thing-description-playground/core/examples/tds/valid/formOpArray.json",
-                "type": "warning"
-            },
-            "EnumConstContradiction": {
-                "addr": "./node_modules/@thing-description-playground/core/examples/tds/warning/enumConst.json",
-                "type": "warning"
-            },
-            "ArrayWithNoItems": {
-                "addr": "./node_modules/@thing-description-playground/core/examples/tds/warning/arrayNoItems.json",
-                "type": "warning"
-            },
-            "InvalidOperation": {
-                "addr": "./node_modules/@thing-description-playground/core/examples/tds/invalid/invalidOp.json",
-                "type": "invalid"
-            },
-            "EmptySecurityDefs": {
-                "addr": "./node_modules/@thing-description-playground/core/examples/tds/invalid/emptySecDef.json",
-                "type": "invalid"
-            }
-        }
-        : {
-            "Placeholder": {
-                "addr": "./node_modules/@thing-description-playground/core/examples/tms/valid/placeholder.json",
-                "type": "valid"
-            },
-            "Reference": {
-                "addr": "./node_modules/@thing-description-playground/core/examples/tms/valid/ref.json",
-                "type": "valid"
-            },
-            "Extend": {
-                "addr": "./node_modules/@thing-description-playground/core/examples/tms/valid/extend.json",
-                "type": "valid"
-            },
-            "Affordances": {
-                "addr": "./node_modules/@thing-description-playground/core/examples/tms/valid/affordances.json",
-                "type": "valid"
-            },
-            "AbsentContext": {
-                "addr": "./node_modules/@thing-description-playground/core/examples/tms/invalid/absent_context.json",
-                "type": "invalid"
-            },
-            "AbsentTM": {
-                "addr": "./node_modules/@thing-description-playground/core/examples/tms/invalid/absent_tm.json",
-                "type": "invalid"
-            },
-            "NoCurlyBracket": {
-                "addr": "./node_modules/@thing-description-playground/core/examples/tms/invalid/no_curly_bracket.json",
-                "type": "invalid"
-            },
-            "SingleCurlyBracket": {
-                "addr": "./node_modules/@thing-description-playground/core/examples/tms/invalid/single_curly_bracket.json",
-                "type": "invalid"
-            }
-        }
-}
+// export function getExamplesList(docType){
+//     return (docType === 'td')
+//         ? {
+//             "SimpleTDWithDefaults": {
+//                 "addr": "./node_modules/@thing-description-playground/core/examples/tds/valid/simpleWithDefaults.json",
+//                 "type": "valid"
+//             },
+//             "MultipleOpWithDefaults": {
+//                 "addr": "./node_modules/@thing-description-playground/core/examples/tds/valid/formOpArrayWithDefaults.json",
+//                 "type": "valid"
+//             },
+//             "SimpleTD": {
+//                 "addr": "./node_modules/@thing-description-playground/core/examples/tds/valid/simple.json",
+//                 "type": "warning"
+//             },
+//             "MultipleOp": {
+//                 "addr": "./node_modules/@thing-description-playground/core/examples/tds/valid/formOpArray.json",
+//                 "type": "warning"
+//             },
+//             "EnumConstContradiction": {
+//                 "addr": "./node_modules/@thing-description-playground/core/examples/tds/warning/enumConst.json",
+//                 "type": "warning"
+//             },
+//             "ArrayWithNoItems": {
+//                 "addr": "./node_modules/@thing-description-playground/core/examples/tds/warning/arrayNoItems.json",
+//                 "type": "warning"
+//             },
+//             "InvalidOperation": {
+//                 "addr": "./node_modules/@thing-description-playground/core/examples/tds/invalid/invalidOp.json",
+//                 "type": "invalid"
+//             },
+//             "EmptySecurityDefs": {
+//                 "addr": "./node_modules/@thing-description-playground/core/examples/tds/invalid/emptySecDef.json",
+//                 "type": "invalid"
+//             }
+//         }
+//         : {
+//             "Placeholder": {
+//                 "addr": "./node_modules/@thing-description-playground/core/examples/tms/valid/placeholder.json",
+//                 "type": "valid"
+//             },
+//             "Reference": {
+//                 "addr": "./node_modules/@thing-description-playground/core/examples/tms/valid/ref.json",
+//                 "type": "valid"
+//             },
+//             "Extend": {
+//                 "addr": "./node_modules/@thing-description-playground/core/examples/tms/valid/extend.json",
+//                 "type": "valid"
+//             },
+//             "Affordances": {
+//                 "addr": "./node_modules/@thing-description-playground/core/examples/tms/valid/affordances.json",
+//                 "type": "valid"
+//             },
+//             "AbsentContext": {
+//                 "addr": "./node_modules/@thing-description-playground/core/examples/tms/invalid/absent_context.json",
+//                 "type": "invalid"
+//             },
+//             "AbsentTM": {
+//                 "addr": "./node_modules/@thing-description-playground/core/examples/tms/invalid/absent_tm.json",
+//                 "type": "invalid"
+//             },
+//             "NoCurlyBracket": {
+//                 "addr": "./node_modules/@thing-description-playground/core/examples/tms/invalid/no_curly_bracket.json",
+//                 "type": "invalid"
+//             },
+//             "SingleCurlyBracket": {
+//                 "addr": "./node_modules/@thing-description-playground/core/examples/tms/invalid/single_curly_bracket.json",
+//                 "type": "invalid"
+//             }
+//         }
+// }
 
 /**
  * Clear the editor, or paste TD -> according to user selection
