@@ -16,6 +16,7 @@ Try it online: https://td-playground-beta.netlify.app/ (currently under maintena
 - An AsyncAPI visualization section that allows the user to transfer the current TD into Async API (with JSON and yaml conversion)
 - A Visualize section that allows the user to visualize their current TD/TM as a graph or a tree, each with the possibility to download as SVG or PNG
 - A Validation section where the user can check if their current TD/TM passes the different validation tests (JSON validation, JSON schema validation, JSON schema validation with defaults, JSON-LD validation and additional checks)
+- (possible later on) a canonicalize and a linting section.
 
 ## Installation and running the application
 - Install all packages and their dependencies via `npm install` in the root directory.
