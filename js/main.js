@@ -177,9 +177,9 @@ function onmouseupY(e) {
 /***********************************************************/
 
 /*** Monaco editor initialization ***/
-// require.config({ paths: { vs: '../node_modules/monaco-editor/min/vs' } });
+// require.config({ paths: { vs: 'node_modules/monaco-editor/min/vs' } });
 // require.config({ paths: { vs: '../monaco-editor/min/vs' } });
-require.config({ paths: { 'vs': '../node_modules/monaco-editor/min/vs' } });
+require.config({ paths: { 'vs': 'node_modules/monaco-editor/min/vs' } });
 require(['vs/editor/editor.main'], async function () {
   //Get new monochrome theme from monochrome.js file
   monaco.editor.defineTheme('monochrome', themeData);
@@ -198,7 +198,6 @@ let tabsLeft = document.querySelectorAll(".ide__tabs__left li:not(:last-child)")
 //Editor list array where all the generated editor will be added and referenced from
 let editorList = []
 let i = 1
-// let j = 1
 
 //Initiate by generating the first editor and the respective tab
 createIde(i)
@@ -479,11 +478,11 @@ function changeThingIcon(thingType){
 
 /**
  * Create a new editor and respective tab when clicking on the plus tab
+ * Always initialized the new added thing as a TD
+ * Set the json btn to true
  */
 addTab.addEventListener("click", () => {
   createIde(++i)
-  //Always initialized the new added thing as a TD
-  //Set the json btn to true
   jsonBtn.checked = true
 })
 
@@ -915,7 +914,7 @@ getCategories()
  * Get all the td and tm names, description and id from the paths file
  */
 async function getCategories(){
-  const res = await fetch('../examples-paths.json')
+  const res = await fetch('examples-paths.json')
   const data = await res.json()
 
   const categoriesTD = Object.entries(data["td"])
@@ -1040,7 +1039,7 @@ function populateCategories(){
  * @param {string} thingType - td or tm
  */
 async function getAllExamples(categoryId, thingType){
-  const res = await fetch('../examples-paths.json')
+  const res = await fetch('examples-paths.json')
   const data = await res.json()
   const examples = Object.entries(data[thingType][categoryId]["examples"])
   examples.forEach(example => {
@@ -1410,28 +1409,24 @@ visualizationOptions.forEach(option => {
 })
 
 validateBtn.addEventListener("click", () => {
-  visualizationContainers.forEach(container => {
-    container.classList.add("hidden")
-    if(container.id === "validation-view"){
-      container.classList.remove("hidden")
+  visualizationOptions.forEach(option => {
+    if(option.id === "validation-view"){
+      option.checked = true
     }
+    visualizationContainers.forEach(container => {
+      container.classList.add("hidden")
+      if(container.id === "validation-view"){
+        container.classList.remove("hidden")
+      }
+    })
   })
+  // clearConsole()
+  // clearVisualizationConsoles()
   editorList.forEach(editor => { 
     if(editor.db.classList.contains("active")){
       util.validate('manual', autoValidateBtn.checked, "td", editor);
     }
   })
-  // visualizationOptions.forEach(option => {
-  //   if(option.id === "validation-view"){
-  //     option.checked = true
-  //   }
-  //   visualizationContainers.forEach(container => {
-  //     container.classList.add("hidden")
-  //     if(container.id === "validation-view"){
-  //       container.classList.remove("hidden")
-  //     }
-  //   })
-  // })
 })
 
 eraseConsole.addEventListener("click", () => {
@@ -1491,38 +1486,6 @@ defaultsDownload.addEventListener("click", () => {
     contentType
   )
 })
-// function downloadCurrentVisualization(){
-//   visualizationOptions.forEach(option => {
-//     if(option.checked && option.id !== "validation-view"){
-//       if(option.id === "open-api-view"){
-        // const contentType = `application/${window.openApiEditor.db.dataset.modeId};charset=utf-8;`
-        // util.offerFileDownload(
-        //   `OpenAPIVisualization.${openApiEditor.db.dataset.modeId}`,
-        //   window.openApiEditor.getModel().getValue(),
-        //   contentType
-        // )
-//       }
-      
-//       if(option.id === "async-api-view"){
-        // const contentType = `application/${window.asyncApiEditor.db.dataset.modeId};charset=utf-8;`
-        // util.offerFileDownload(
-        //   `AsyncAPIVisualization.${asyncApiEditor.db.dataset.modeId}`,
-        //   window.asyncApiEditor.getModel().getValue(),
-        //   contentType
-        // )
-//       }
-
-//       if(option.id === "defaults-view"){
-//         const contentType = `application/${window.defaultsEditor.db.dataset.modeId};charset=utf-8;`
-//         util.offerFileDownload(
-//           `DefaultsVisualization.${defaultsEditor.db.dataset.modeId}`,
-//           window.defaultsEditor.getModel().getValue(),
-//           contentType
-//         )
-//       }
-//     }
-//   })
-// }
 
 /*** Visualization ***/
 //TODO MAYBE CHANGE THE WAY THE CONTAINER OPEN
@@ -1643,34 +1606,6 @@ function enableAPIConversionWithProtocol(editor) {
 	}
 }
 
-/* OpenAPI Functionality */
-// visualizationOptions.forEach(option => {
-//   option.addEventListener("click", () => {
-//     if(option.id === "open-api-view"){
-//       editorList.forEach(editor => {
-//         if(editor.db.classList.contains("active")){
-//           let td = editor.getValue()
-//           if(editor.db.dataset.modeId === "yaml"){
-//             td = Validators.convertTDYamlToJson(td)
-//             openApiJsonBtn.disabled = false
-//             openApiYamlBtn.disabled = true
-//           }else{
-//             openApiJsonBtn.disabled = true
-//             openApiYamlBtn.disabled = false
-//           }
-//           if(JSON.parse(td)["@type"] === "tm:ThingModel"){
-//             errorTxt.innerText = "This function is only allowed for Thing Descriptions!"
-//             errorContainer.classList.remove("hidden")
-//           }else{
-//             errorContainer.classList.add("hidden")
-//             enableAPIConversionWithProtocol(editor)
-//           }
-//         }
-//       })
-//     } 
-//   })
-// })
-
 openApiJsonBtn.addEventListener("click", () => {
   util.generateTD("json", window.openApiEditor)
   openApiJsonBtn.disabled = true
@@ -1705,36 +1640,6 @@ require(['vs/editor/editor.main'], async function() {
 
 })
 
-
-/* asyncAPI Functionality */
-// visualizationOptions.forEach(option => {
-//   option.addEventListener("click", () => {
-//     if(option.id === "async-api-view"){
-//       editorList.forEach(editor => {
-//         if(editor.db.classList.contains("active")){
-//           let td = editor.getValue()
-//           if(editor.db.dataset.modeId === "yaml"){
-//             td = Validators.convertTDYamlToJson(td)
-//             asyncApiJsonBtn.disabled = false
-//             asyncApiYamlBtn.disabled = true
-//           }else{
-//             asyncApiJsonBtn.disabled = true
-//             asyncApiYamlBtn.disabled = false
-//           }
-
-//           if(JSON.parse(td)["@type"] === "tm:ThingModel"){
-//             errorTxt.innerText = "This function is only allowed for Thing Descriptions!"
-//             errorContainer.classList.remove("hidden")
-//           }else{
-//             errorContainer.classList.add("hidden")
-//             enableAPIConversionWithProtocol(editor)
-//           }
-//         }
-//       })
-//     } 
-//   })
-// })
-
 asyncApiJsonBtn.addEventListener("click", () => {
   util.generateTD("json", window.asyncApiEditor)
   asyncApiJsonBtn.disabled = true
@@ -1767,35 +1672,6 @@ require(['vs/editor/editor.main'], async function() {
     setFontSize(window.asyncApiEditor)
   })
 })
-
-
-/* Defaults Functionality */
-// visualizationOptions.forEach(option => {
-//   option.addEventListener("click", () => {
-//     if(option.id === "defaults-view"){
-//       editorList.forEach(editor => {
-//         if(editor.db.classList.contains("active")){
-//           let td = editor.getValue()
-//           if(editor.db.dataset.modeId === "yaml"){
-//             td = Validators.convertTDYamlToJson(td)
-//             defaultsJsonBtn.disabled = false
-//             defaultsYamlBtn.disabled = true
-//           }else{
-//             defaultsJsonBtn.disabled = true
-//             defaultsYamlBtn.disabled = false
-//           }
-//           if(JSON.parse(td)["@type"] === "tm:ThingModel"){
-//             errorTxt.innerText = "This function is only allowed for Thing Descriptions!"
-//             errorContainer.classList.remove("hidden")
-//           }else{
-//             errorContainer.classList.add("hidden")
-//             util.addDefaults(editor)
-//           }
-//         }
-//       })
-//     } 
-//   })
-// })
 
 defaultsJsonBtn.addEventListener("click", () => {
   util.generateTD("json", window.defaultsEditor)
