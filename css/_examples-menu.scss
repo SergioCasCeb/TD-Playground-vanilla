@@ -43,6 +43,7 @@
             align-items: center;
             justify-content: flex-start;
             gap: 2rem;
+            flex-wrap: wrap;
             font-size: var(--fs-p);
 
             p{
@@ -51,6 +52,7 @@
             }
 
             .form-field{
+                width: 100%;
                 display: flex;
                 flex-direction: row;
                 align-items: center;
@@ -64,6 +66,7 @@
 
                 .select-container{
                     position: relative;
+                    width: 100%;
 
                     &::after{
                         position: absolute;
@@ -91,22 +94,23 @@
                 }
 
                 select, .search-input{
-                    padding: .8rem 4rem .8rem 2rem;
-                    min-width: 20rem;
+                    padding: .8rem 6rem .8rem 2rem;
                     appearance: none;
                     cursor: pointer;
                 }
 
                 select{
+                    width: 100%;
                     border-radius: 5px;
                     text-transform: capitalize;
                 }
 
-                .thing-category{
-                    min-width: 30rem;
-                }
+                // .thing-category{
+                //    width: fit-content;
+                // }
 
                 .search-bar{
+                    width: 100%;
                     overflow: hidden;
                     display: flex;
                     align-items: center;
@@ -340,5 +344,55 @@
         transform: scale(0);
         opacity: 0;
         pointer-events: none;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .examples-menu{
+        .examples-menu-container{
+    
+            &__filter{
+                width: 100%;
+                flex-wrap: wrap;
+    
+                .form-field{
+                    width: calc(33% - 4rem);
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+    
+                    .select-container{
+                        position: relative;
+                        width: 100%;
+    
+                        &::after{
+                            position: absolute;
+                            top: 50%;
+                            right: 2rem;
+                            transform: translateY(-50%);
+                            display: inline-block;
+                            text-rendering: auto;
+                            -webkit-font-smoothing: antialiased;
+                            font: var(--fa-font-solid);
+                            content: "\f0d7";
+                            pointer-events: none;
+                        }
+                    }
+    
+                    select{
+                        width: 100%;
+                    }
+    
+                    // .thing-category{
+                    //    width: fit-content;
+                    // }
+    
+                    .search-bar{
+                        width: 100%;
+                    }
+                }
+            }
+        }
     }
 }

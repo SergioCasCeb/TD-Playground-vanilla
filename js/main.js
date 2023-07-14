@@ -1385,7 +1385,6 @@ const validateBtn = document.querySelector("#validate-btn")
 const errorContainer = document.querySelector(".console__content #console-error")
 const errorTxt = document.querySelector(".console-error__txt")
 const eraseConsole = document.querySelector(".console__tabs .trash")
-const downloadConsole = document.querySelector(".console__tabs .download")
 const visualizationOptions = document.querySelectorAll(".visualization__option")
 const visualizationContainers = document.querySelectorAll(".console-view")
 const openApiTab = document.querySelector(".api-view-btn")
@@ -1401,11 +1400,14 @@ const defaultsAddBtn = document.querySelector("#defaults-add")
 const defaultsRemoveBtn = document.querySelector("#defaults-remove")
 const validationHeaderIcons = document.querySelectorAll(".validation-view-cotainer .title-icon")
 
+//Visualizations download btns
+const openApiDownload = document.querySelector("#open-api-download")
+const asyncApiDownload = document.querySelector("#async-api-download")
+const defaultsDownload = document.querySelector("#defaults-download")
+
 visualizationOptions.forEach(option => {
   option.checked = false
 })
-
-downloadConsole.disabled = true
 
 validateBtn.addEventListener("click", () => {
   visualizationContainers.forEach(container => {
@@ -1441,7 +1443,6 @@ eraseConsole.addEventListener("click", () => {
  * Unchecks all visualizatin btns and hiddes all visualization containers
  */
 function clearConsole(){
-  downloadConsole.disabled = true
   visualizationContainers.forEach(container => {
     container.classList.add("hidden")
   })
@@ -1450,49 +1451,78 @@ function clearConsole(){
   })
 }
 
-downloadConsole.addEventListener("click", () => {
-  downloadCurrentVisualization()
-})
-
 function clearVisualizationConsoles(){
-  downloadConsole.disabled = true
   window.openApiEditor.getModel().setValue('')
   window.asyncApiEditor.getModel().setValue('')
   window.defaultsEditor.getModel().setValue('')
 }
 
-function downloadCurrentVisualization(){
-  visualizationOptions.forEach(option => {
-    if(option.checked && option.id !== "validation-view"){
-      if(option.id === "open-api-view"){
-        const contentType = `application/${window.openApiEditor.db.dataset.modeId};charset=utf-8;`
-        util.offerFileDownload(
-          `OpenAPIVisualization.${openApiEditor.db.dataset.modeId}`,
-          window.openApiEditor.getModel().getValue(),
-          contentType
-        )
-      }
-      
-      if(option.id === "async-api-view"){
-        const contentType = `application/${window.asyncApiEditor.db.dataset.modeId};charset=utf-8;`
-        util.offerFileDownload(
-          `AsyncAPIVisualization.${asyncApiEditor.db.dataset.modeId}`,
-          window.asyncApiEditor.getModel().getValue(),
-          contentType
-        )
-      }
+//Donwload visualizations
 
-      if(option.id === "defaults-view"){
-        const contentType = `application/${window.defaultsEditor.db.dataset.modeId};charset=utf-8;`
-        util.offerFileDownload(
-          `DefaultsVisualization.${defaultsEditor.db.dataset.modeId}`,
-          window.defaultsEditor.getModel().getValue(),
-          contentType
-        )
-      }
-    }
-  })
-}
+openApiDownload.addEventListener("click", () => {
+  const contentType = `application/${window.openApiEditor.db.dataset.modeId};charset=utf-8;`
+  let visualizationName = JSON.parse(Validators.convertTDYamlToJson(window.openApiEditor.getModel().getValue()))["info"]["title"]
+  visualizationName = visualizationName.replace(/\s/g, "-")
+  util.offerFileDownload(
+    `${visualizationName}-OpenAPI.${openApiEditor.db.dataset.modeId}`,
+    window.openApiEditor.getModel().getValue(),
+    contentType
+  )
+})
+
+asyncApiDownload.addEventListener("click", () => {
+  const contentType = `application/${window.asyncApiEditor.db.dataset.modeId};charset=utf-8;`
+  let visualizationName = JSON.parse(Validators.convertTDYamlToJson(window.asyncApiEditor.getModel().getValue()))["info"]["title"]
+  visualizationName = visualizationName.replace(/\s/g, "-")
+  util.offerFileDownload(
+    `${visualizationName}-AsyncAPI.${asyncApiEditor.db.dataset.modeId}`,
+    window.asyncApiEditor.getModel().getValue(),
+    contentType
+  )
+})
+
+defaultsDownload.addEventListener("click", () => {
+  const contentType = `application/${window.defaultsEditor.db.dataset.modeId};charset=utf-8;`
+  let visualizationName = JSON.parse(Validators.convertTDYamlToJson(window.defaultsEditor.getModel().getValue()))["title"]
+  visualizationName = visualizationName.replace(/\s/g, "-")
+  util.offerFileDownload(
+    `${visualizationName}-Defaults.${defaultsEditor.db.dataset.modeId}`,
+    window.defaultsEditor.getModel().getValue(),
+    contentType
+  )
+})
+// function downloadCurrentVisualization(){
+//   visualizationOptions.forEach(option => {
+//     if(option.checked && option.id !== "validation-view"){
+//       if(option.id === "open-api-view"){
+        // const contentType = `application/${window.openApiEditor.db.dataset.modeId};charset=utf-8;`
+        // util.offerFileDownload(
+        //   `OpenAPIVisualization.${openApiEditor.db.dataset.modeId}`,
+        //   window.openApiEditor.getModel().getValue(),
+        //   contentType
+        // )
+//       }
+      
+//       if(option.id === "async-api-view"){
+        // const contentType = `application/${window.asyncApiEditor.db.dataset.modeId};charset=utf-8;`
+        // util.offerFileDownload(
+        //   `AsyncAPIVisualization.${asyncApiEditor.db.dataset.modeId}`,
+        //   window.asyncApiEditor.getModel().getValue(),
+        //   contentType
+        // )
+//       }
+
+//       if(option.id === "defaults-view"){
+//         const contentType = `application/${window.defaultsEditor.db.dataset.modeId};charset=utf-8;`
+//         util.offerFileDownload(
+//           `DefaultsVisualization.${defaultsEditor.db.dataset.modeId}`,
+//           window.defaultsEditor.getModel().getValue(),
+//           contentType
+//         )
+//       }
+//     }
+//   })
+// }
 
 /*** Visualization ***/
 //TODO MAYBE CHANGE THE WAY THE CONTAINER OPEN
@@ -1569,7 +1599,6 @@ visualizationOptions.forEach(option => {
             errorTxt.innerText = "This function is only allowed for Thing Descriptions!"
             errorContainer.classList.remove("hidden")
           }else{
-            downloadConsole.disabled = false
             errorContainer.classList.add("hidden")
             util.addDefaults(editor)
           }
@@ -1597,7 +1626,6 @@ function enableAPIConversionWithProtocol(editor) {
     if(openApiTab.checked === true){
       if (["http", "https"].some(p => protocolSchemes.includes(p))) {
         util.generateOAP(editor.db.dataset.modeId, editor)
-        downloadConsole.disabled = false
       } else {
         errorTxt.innerText = "Please insert a TD which uses HTTP"
         errorContainer.classList.remove("hidden")
@@ -1607,7 +1635,6 @@ function enableAPIConversionWithProtocol(editor) {
     if(asyncApiTab.checked === true){
       if (["mqtt", "mqtts"].some(p => protocolSchemes.includes(p))) {
         util.generateAAP(editor.db.dataset.modeId, editor)
-        downloadConsole.disabled = false
       } else {
         errorTxt.innerText = "Please insert a TD which uses MQTT"
         errorContainer.classList.remove("hidden")
@@ -1761,7 +1788,6 @@ require(['vs/editor/editor.main'], async function() {
 //             errorTxt.innerText = "This function is only allowed for Thing Descriptions!"
 //             errorContainer.classList.remove("hidden")
 //           }else{
-//             downloadConsole.disabled = false
 //             errorContainer.classList.add("hidden")
 //             util.addDefaults(editor)
 //           }

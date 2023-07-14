@@ -647,6 +647,7 @@ main .console {
   cursor: not-allowed;
 }
 .console__content {
+  width: 100%;
   position: relative;
   height: 100%;
   overflow: hidden;
@@ -692,10 +693,6 @@ main .console {
   pointer-events: none;
   transition: transform 250ms ease-in-out 0s, opacity 150ms ease-in-out 250ms, width 0s ease-in-out 400ms, height 0s ease-in-out 400ms;
 }
-.console__content .console-view .open-api-container, .console__content .console-view .async-api-container, .console__content .console-view .defaults-container {
-  height: 100%;
-  width: 100%;
-}
 .console__content .console-view.validation-view-cotainer {
   padding: 1rem;
   overflow: auto;
@@ -729,15 +726,18 @@ main .console {
   justify-content: flex-start;
   gap: 1rem;
 }
+.console__content .open-api-view .open-api-container, .console__content .open-api-view .async-api-container, .console__content .open-api-view .defaults-container, .console__content .async-api-view .open-api-container, .console__content .async-api-view .async-api-container, .console__content .async-api-view .defaults-container, .console__content .defaults-view .open-api-container, .console__content .defaults-view .async-api-container, .console__content .defaults-view .defaults-container {
+  height: 100%;
+  width: calc(100% - 15rem);
+}
 .console__content .open-api-view .open-api-inputs, .console__content .open-api-view .async-api-inputs, .console__content .open-api-view .defaults-inputs, .console__content .async-api-view .open-api-inputs, .console__content .async-api-view .async-api-inputs, .console__content .async-api-view .defaults-inputs, .console__content .defaults-view .open-api-inputs, .console__content .defaults-view .async-api-inputs, .console__content .defaults-view .defaults-inputs {
+  width: 15rem;
   padding: 0 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  width: -moz-fit-content;
-  width: fit-content;
 }
 .console__content .open-api-view .open-api-inputs button, .console__content .open-api-view .async-api-inputs button, .console__content .open-api-view .defaults-inputs button, .console__content .async-api-view .open-api-inputs button, .console__content .async-api-view .async-api-inputs button, .console__content .async-api-view .defaults-inputs button, .console__content .defaults-view .open-api-inputs button, .console__content .defaults-view .async-api-inputs button, .console__content .defaults-view .defaults-inputs button {
   -webkit-appearance: none;
@@ -746,13 +746,17 @@ main .console {
   border: none;
   width: 100%;
   border-radius: 5px;
-  padding: 0.5rem 1.5rem;
+  padding: 0.75rem 1.5rem;
   background-color: var(--clr-primary-500);
   color: var(--clr-neutral-50);
   font-family: var(--ff-primary);
   font-size: var(--fs-p);
   cursor: pointer;
   transition: background-color 250ms ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
 }
 .console__content .open-api-view .open-api-inputs button:hover, .console__content .open-api-view .async-api-inputs button:hover, .console__content .open-api-view .defaults-inputs button:hover, .console__content .async-api-view .open-api-inputs button:hover, .console__content .async-api-view .async-api-inputs button:hover, .console__content .async-api-view .defaults-inputs button:hover, .console__content .defaults-view .open-api-inputs button:hover, .console__content .defaults-view .async-api-inputs button:hover, .console__content .defaults-view .defaults-inputs button:hover {
   background-color: var(--clr-primary-900);
@@ -1031,6 +1035,7 @@ main .console {
   align-items: center;
   justify-content: flex-start;
   gap: 2rem;
+  flex-wrap: wrap;
   font-size: var(--fs-p);
 }
 .examples-menu .examples-menu-container__filter p {
@@ -1038,6 +1043,7 @@ main .console {
   font-size: inherit;
 }
 .examples-menu .examples-menu-container__filter .form-field {
+  width: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -1050,6 +1056,7 @@ main .console {
 }
 .examples-menu .examples-menu-container__filter .form-field .select-container {
   position: relative;
+  width: 100%;
 }
 .examples-menu .examples-menu-container__filter .form-field .select-container::after {
   position: absolute;
@@ -1073,21 +1080,19 @@ main .console {
   border: 2px solid var(--clr-neutral-300);
 }
 .examples-menu .examples-menu-container__filter .form-field select, .examples-menu .examples-menu-container__filter .form-field .search-input {
-  padding: 0.8rem 4rem 0.8rem 2rem;
-  min-width: 20rem;
+  padding: 0.8rem 6rem 0.8rem 2rem;
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
   cursor: pointer;
 }
 .examples-menu .examples-menu-container__filter .form-field select {
+  width: 100%;
   border-radius: 5px;
   text-transform: capitalize;
 }
-.examples-menu .examples-menu-container__filter .form-field .thing-category {
-  min-width: 30rem;
-}
 .examples-menu .examples-menu-container__filter .form-field .search-bar {
+  width: 100%;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -1285,6 +1290,41 @@ main .console {
   pointer-events: none;
 }
 
+@media screen and (min-width: 1024px) {
+  .examples-menu .examples-menu-container__filter {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .examples-menu .examples-menu-container__filter .form-field {
+    width: calc(33% - 4rem);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+  .examples-menu .examples-menu-container__filter .form-field .select-container {
+    position: relative;
+    width: 100%;
+  }
+  .examples-menu .examples-menu-container__filter .form-field .select-container::after {
+    position: absolute;
+    top: 50%;
+    right: 2rem;
+    transform: translateY(-50%);
+    display: inline-block;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    font: var(--fa-font-solid);
+    content: "\f0d7";
+    pointer-events: none;
+  }
+  .examples-menu .examples-menu-container__filter .form-field select {
+    width: 100%;
+  }
+  .examples-menu .examples-menu-container__filter .form-field .search-bar {
+    width: 100%;
+  }
+}
 .save-menu {
   position: absolute;
   top: 0;
