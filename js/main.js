@@ -179,7 +179,7 @@ function onmouseupY(e) {
 /*** Monaco editor initialization ***/
 // require.config({ paths: { vs: 'node_modules/monaco-editor/min/vs' } });
 // require.config({ paths: { vs: '../monaco-editor/min/vs' } });
-require.config({ paths: { 'vs': 'node_modules/monaco-editor/min/vs' } });
+require.config({ paths: { 'vs': '../node_modules/monaco-editor/min/vs' } });
 require(['vs/editor/editor.main'], async function () {
   //Get new monochrome theme from monochrome.js file
   monaco.editor.defineTheme('monochrome', themeData);
@@ -914,7 +914,7 @@ getCategories()
  * Get all the td and tm names, description and id from the paths file
  */
 async function getCategories(){
-  const res = await fetch('examples-paths.json')
+  const res = await fetch('../examples-paths.json')
   const data = await res.json()
 
   const categoriesTD = Object.entries(data["td"])
@@ -1039,7 +1039,7 @@ function populateCategories(){
  * @param {string} thingType - td or tm
  */
 async function getAllExamples(categoryId, thingType){
-  const res = await fetch('examples-paths.json')
+  const res = await fetch('../examples-paths.json')
   const data = await res.json()
   const examples = Object.entries(data[thingType][categoryId]["examples"])
   examples.forEach(example => {
