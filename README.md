@@ -3,17 +3,20 @@ The goal of this project is to recreate and redesign the current [Thing Descript
 
 Try it online: https://td-playground-beta.netlify.app/ (currently under maintenance)
 
-## Current Implementations
-As of now, the application has the following working implementations:
+## Main Implementations
 - A main editor where the Thing Descriptions and Thing Models can be edited and modified
-- A tab system to have multiple editors open
+- A tab system to have multiple editors open (tab names can be changed by the user)
 - A JSON to YAML and YAML to JSON conversion
-- An examples menu with the newest TD/TM examples, which can be used by the users as templates
-- A save menu, which allows you to share your current TD/TM as a URL as well as to download it
+- Spellchecking/suggestions for typos int he current editor
+- An examples menu with the newest TD/TM examples, which can be used by the users as templates and call also show snipets of the most relevant information for the respective TD/TM
+- A save menu, which allows you to share your current TD/TM as a URL, download it as yaml/json and in supported browser syncing with your file manager system
 - A settings menu, where user preferences can be changed such as font size and editor theme
-- A defaults visualization section that allows the user to see their current TD with or without defaults
+- A defaults visualization section that allows the user to see their current TD with or without defaults (with JSON and yaml conversion)
 - An OpenAPI visualization section that allows the user to transfer the current TD into Open API (with JSON and yaml conversion)
 - An AsyncAPI visualization section that allows the user to transfer the current TD into Async API (with JSON and yaml conversion)
+- A Visualize section that allows the user to visualize their current TD/TM as a graph or a tree, each with the possibility to download as SVG or PNG
+- A Validation section where the user can check if their current TD/TM passes the different validation tests (JSON validation, JSON schema validation, JSON schema validation with defaults, JSON-LD validation and additional checks)
+- (possible later on) a canonicalize and a linting section.
 
 ## Installation and running the application
 - Install all packages and their dependencies via `npm install` in the root directory.
