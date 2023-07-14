@@ -178,7 +178,7 @@ function onmouseupY(e) {
 
 /*** Monaco editor initialization ***/
 // require.config({ paths: { vs: 'node_modules/monaco-editor/min/vs' } });
-require.config({ paths: { vs: '../monaco-editor/min/vs' } });
+require.config({ paths: { vs: 'monaco-editor/min/vs' } });
 // require.config({ paths: { 'vs': '../node_modules/monaco-editor/min/vs' } });
 require(['vs/editor/editor.main'], async function () {
   //Get new monochrome theme from monochrome.js file
