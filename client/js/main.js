@@ -5,6 +5,7 @@
  * to integrate the monaco editor
  */
 
+
 import * as util from "./util.js"
 import * as jVis from "./jsonld-vis.js"
 import * as vVis from "./vega-vis.js"
@@ -178,8 +179,8 @@ function onmouseupY(e) {
 
 /*** Monaco editor initialization ***/
 // require.config({ paths: { vs: 'node_modules/monaco-editor/min/vs' } });
-require.config({ paths: { vs: '../monaco-editor/min/vs' } });
-// require.config({ paths: { 'vs': '../node_modules/monaco-editor/min/vs' } });
+// require.config({ paths: { vs: '../monaco-editor/min/vs' } });
+require.config({ paths: { 'vs': '../node_modules/monaco-editor/min/vs' } });
 require(['vs/editor/editor.main'], async function () {
   //Get new monochrome theme from monochrome.js file
   monaco.editor.defineTheme('monochrome', themeData);
@@ -334,8 +335,8 @@ function createIde(ideNumber, exampleValue){
     })
 
     //Get the td/tm schemas
-    const tdSchema = await (await fetch('./node_modules/@thing-description-playground/core/td-schema.json')).json();
-	  const tmSchema = await (await fetch('./node_modules/@thing-description-playground/core/tm-schema.json')).json();
+    const tdSchema = await (await fetch('../node_modules/@thing-description-playground/core/td-schema.json')).json();
+	  const tmSchema = await (await fetch('../node_modules/@thing-description-playground/core/tm-schema.json')).json();
 
     //Bind the font size slider from the settings to the editor and assign the specified font size
     document.onload = setFontSize(editor)
@@ -914,7 +915,7 @@ getCategories()
  * Get all the td and tm names, description and id from the paths file
  */
 async function getCategories(){
-  const res = await fetch('../examples-paths.json')
+  const res = await fetch('./examples-paths.json')
   const data = await res.json()
 
   const categoriesTD = Object.entries(data["td"])
@@ -1039,7 +1040,7 @@ function populateCategories(){
  * @param {string} thingType - td or tm
  */
 async function getAllExamples(categoryId, thingType){
-  const res = await fetch('../examples-paths.json')
+  const res = await fetch('./examples-paths.json')
   const data = await res.json()
   const examples = Object.entries(data[thingType][categoryId]["examples"])
   examples.forEach(example => {

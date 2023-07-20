@@ -1,7 +1,9 @@
 {
   "dependencies": {
     "@thing-description-playground/web": "^1.6.0",
+    "express": "^4.18.2",
     "monaco-editor": "^0.36.1",
+    "requirejs": "^2.3.6",
     "yaml": "^2.2.2"
   },
   "name": "playground-vanilla",
@@ -9,11 +11,16 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "examples": "node js/examples.js"
+    "examples": "node js/examples.js",
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js"
   },
   "author": "Sergio Eduardo Castro Ceballos",
   "license": "ISC",
   "directories": {
     "example": "examples"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
